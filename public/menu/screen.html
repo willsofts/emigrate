@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Session Timeout</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+        .overlay-content {
+            background: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Welcome to the Web Application</h1>
+        <p>Your session will expire after 30 minutes of inactivity.</p>
+    </div>
+
+    <div class="overlay" id="sessionOverlay">
+        <div class="overlay-content">
+            <h2>Session Expired</h2>
+            <p>Please log in again to continue.</p>
+            <input type="password" class="form-control mb-2" id="overlayPassword" placeholder="Password" required>
+            <button class="btn btn-primary" onclick="unlockScreen()">Log In</button>
+        </div>
+    </div>
+
+    <script>
+        const sessionTimeout = 30 * 60 * 1000; // 30 minutes
+        const alertBefore = 5 * 60 * 1000; // 5 minutes before
+
+        let timeoutAlert;
+        let sessionTimer;
+
+        function startSessionTimer() {
+            clearTimeout(timeoutAlert);
+            clearTimeout(sessionTimer);
+
+            timeoutAlert = setTimeout(() => {
+                alert('Your session is about to expire. Please save your work.');
+            }, sessionTimeout - alertBefore);
+
+            sessionTimer = setTimeout(() => {
+                lockScreen();
+            }, sessionTimeout);
+            console.log("start session timer ...");
+        }
+
+        function lockScreen() {
+            document.getElementById('sessionOverlay').style.display = 'flex';
+        }
+
+        function unlockScreen() {
+            const passwordInput = document.getElementById('overlayPassword').value;
+            // Add your password validation logic here
+            if (passwordInput === 'yourpassword') { // Replace 'yourpassword' with actual validation
+                document.getElementById('sessionOverlay').style.display = 'none';
+                startSessionTimer(); // Restart session timer
+            } else {
+                alert('Incorrect password. Please try again.');
+            }
+        }
+
+        window.onload = startSessionTimer;
+        document.addEventListener('mousemove', startSessionTimer);
+        document.addEventListener('keydown', startSessionTimer);
+    </script>
+</body>
+</html>

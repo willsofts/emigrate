@@ -1,0 +1,65 @@
+Testing
+- migrate (goto path test)
+
+curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/migrate/insert -d "{\"taskid\":\"tmigrate\", \"dataset\":[{\"field1\": \"1111-1\", \"field2\": 2500.55, \"field3\": 100, \"field4\": \"2024-12-17\", \"field5\": \"10:10:10\", \"field6\": \"2024-12-17 10:10:10\", \"field7\": \"A\"}]}"
+
+curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/migrate/insert -d "{\"taskid\":\"tmigratesimple\", \"dataset\":[{\"field1\": \"1111-1\", \"field2\": 2500.55, \"field3\": 100, \"field4\": \"2024-12-17\", \"field5\": \"10:10:10\", \"field6\": \"2024-12-17 10:10:10\", \"field7\": \"A\"}]}"
+
+curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/migrate/insert -d @test_simple.json
+
+curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/migrate/insert -d @test_handler.json
+
+curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/migrate/insert -d @test_mapper_simple.json
+
+curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/migrate/insert -d @test_mapper_complex.json
+
+curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/migrate/insert -d @test_xpath.json
+
+curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/migrate/insert -d @test_xpath_complex.json
+
+curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/migrate/insert -d @test_xpath_complex_mapper_struct.json
+
+curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/migrate/insert -d @test_simple_call_api.json
+
+curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/migrate/insert -d @test_simple_call_api_list.json
+{"head":{"model":"api","method":"category.lists","errorcode":"0","errorflag":"N","errordesc":""},"body":[{"tablename":"tconstant","category":"tkappstype","resultset":{"rows":[{"typeid":"W","nameen":"Web","nameth":"Web","seqno":1},{"typeid":"M","nameen":"Mobile","nameth":"Mobile","seqno":2}]}}]}
+curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/migrate/insert -d @test_simple_call_api_list_handler.json
+
+mapping alias:
+testing:
+curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/fetch/context/test_data_array -d @test_simple_data_array.json
+
+tasking:
+
+curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/migrate/task -d @test_simple.json
+
+curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/migrate/task -d @test_handler.json
+
+curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/migrate/task -d @test_mapper_simple.json
+
+curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/migrate/task -d @test_mapper_complex.json
+
+curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/migrate/task -d @test_xpath.json
+
+curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/migrate/task -d @test_xpath_complex.json
+
+curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/migrate/task -d @test_xpath_complex_mapper_struct.json
+
+curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/migrate/task -d @test_simple_call_api.json
+
+curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/migrate/task -d @test_simple_call_api_list.json
+
+curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/migrate/task -d @test_simple_call_api_list_handler.json
+
+curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/migrate/task -d @test_simple_call_db.json
+
+curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/migrate/task -d @test_simple_call_db_handler.json
+
+tasking rest:
+curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/migrate/task/test_simple_dataset -d @test_simple_dataset.json
+
+curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/migrate/task/test_simple_dataset_array -d @test_simple_dataset_array.json
+
+curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/migrate/task/test_simple_data_array -d @test_simple_data_array.json
+
+curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/migrate/task/test_simple_data_array_list -d @test_simple_data_array_list.json

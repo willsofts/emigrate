@@ -1,0 +1,12 @@
+{
+    "taskid":"test_mapper_complex", 
+    "dataset":[
+        {
+            "entity": { "reporter": "Admin", "asdate": "2024-12-20", "astime": "10:10:10" },
+            "counter": 100,
+            "amount": 275.75,
+            "vat": 7,
+            "field7": "C"
+        }
+    ]
+}

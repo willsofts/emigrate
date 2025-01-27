@@ -1,0 +1,25 @@
+{
+    "HTTP_PORT": 8080,
+    "BASE_URL": "",
+    "BASE_STORAGE": "session",
+    "SECRET_KEY": "ASSURE_OF_SECRET_KEY",
+    "VALIDATE_TOKEN": "false",
+    "VALIDATE_ANOMYMOUS_TOKEN": "false",
+    "ALWAYS_ACTIVATE_ACCOUNT": "false",
+    "ALWAYS_DB_TRACKING": "false",
+    "ALLOW_AUTHEN_SAML": "false",
+    "XFRAME_OPTION": "false",
+    "EXCEPT_LAUNCH_PATH": "page_forgot,page_register",
+    "EXCEPT_AUTHORIZE_PATH": "/api-docs,/health,/sign,/passwordpolicy,/fetch,/forgot,/captcha,/login,/auth,/category,/register",
+    "PRIVATE_SECTION": "PROMPTDB",
+    "DB_SECTION": "AUTHDB",
+    "DB_TRACKER": "AUTHDB",
+    "AUTHDB" : { "alias": "mysql2", "dialect": "mysql", "url":"", "user": "root", "password": "root", "host": "localhost", "port": 3306, "database": "migrateauth", "options": { "charset": "utf8", "connectionLimit": 1000 } },
+    "PROMPTDB" : { "alias": "mysql2", "dialect": "mysql", "url":"", "user": "root", "password": "root", "host": "localhost", "port": 3306, "database": "migratedb", "options": { "charset": "utf8", "connectionLimit": 1000 } },
+    "authentications": [
+        { "authtype":"SYSTEM", "domainname":"freewillgroup.com", "tenanturl":"", "basedn":"" , "enabled": true }
+    ],
+    "META_INFO": {"appstype":"", "register": true},
+    "CONTENT_SECURITY_PATH": "/,/home,/welcome,/main,/index,/gui",
+    "CONTENT_SECURITY_POLICY": "default-src 'self' 'nonce-YXNzdXJl' ws://localhost:9000 http://localhost:9000 https://cdn.jsdelivr.net https://login.microsoftonline.com https://tassanorg.b2clogin.com;base-uri 'self';form-action 'self';frame-ancestors 'self';img-src 'self' https://cdn.jsdelivr.net data:;object-src 'none';script-src 'self' 'nonce-YXNzdXJl' https://cdn.jsdelivr.net;script-src-attr 'self' 'nonce-YXNzdXJl' https://cdn.jsdelivr.net;style-src 'self' https://cdn.jsdelivr.net 'unsafe-inline';upgrade-insecure-requests"
+}

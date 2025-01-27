@@ -1,0 +1,15 @@
+{
+    "taskid":"test_xpath_complex_mapper_struct", 
+    "dataset": {
+            "entity": { "reporter": "Admin", "asdate": "2024-12-20", "astime": "10:10:10" },
+            "counter": 100,
+            "amount": 275.75,
+            "vat": 7,
+            "datarow": { 
+                "rows": [
+                    { "field7": "A" },
+                    { "field7": "B" }
+                ]
+            }            
+        }    
+}

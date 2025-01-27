@@ -1,0 +1,434 @@
+{
+    "test_simple": {
+        "name": "tmigratetest",
+        "alias": { "privateAlias": "PROMPTDB" },
+        "fields": {
+            "field1": { "type": "STRING", "key": true },
+            "field2": { "type": "DECIMAL" },
+            "field3": { "type": "INTEGER" },
+            "field4": { "type": "DATE" },
+            "field5": { "type": "TIME" },
+            "field6": { "type": "DATETIME" },
+            "field7": { "type": "STRING" },
+            "field8": { "type": "STRING" },
+            "field9": { "type": "STRING" },
+            "field10": { "type": "STRING" },
+            "field11": { "type": "STRING" },
+            "field12": { "type": "STRING" },
+            "curtime": { "type": "DATETIME", "defaultValue": "#current_timestamp" },
+            "remark": { "type": "STRING", "defaultValue": "test_simple" }
+        }
+    },
+    "test_handler": {
+        "name": "tmigratetest",
+        "alias": { "privateAlias": "PROMPTDB" },
+        "fields": {
+            "field1": { "type": "STRING", "key": true },
+            "field2": { "type": "DECIMAL" },
+            "field3": { "type": "INTEGER" },
+            "field4": { "type": "DATE" },
+            "field5": { "type": "TIME" },
+            "field6": { "type": "DATETIME" },
+            "field7": { "type": "STRING" , "options": {
+                    "handlerType": "procedure",
+                    "handler": "function handler(data,dataset,model,context) { console.log('model',model,'data',data,'dataset',dataset); switch(data.field7) { case 'A': data.field8 = 'Anonymous'; break; case 'B': data.field8 = 'Bad Request'; break; case 'C': data.field8 = 'Counter Attack'; break; } }"
+                }
+            },
+            "field8": { "type": "STRING" },
+            "field9": { "type": "STRING" , "options": { 
+                    "handlerType": "function",
+                    "handler": "function handler(data) { if(data.field7=='A') return null; return data.field1 + '-' + data.field3; }"
+                }
+            },
+            "field10": { "type": "STRING" },
+            "field11": { "type": "STRING" },
+            "field12": { "type": "STRING" },
+            "curtime": { "type": "DATETIME", "defaultValue": "#current_timestamp" },
+            "remark": { "type": "STRING", "defaultValue": "test_handler" }
+        }
+    },
+    "test_mapper_simple": {
+        "name": "tmigratetest",
+        "alias": { "privateAlias": "PROMPTDB" },
+        "fields": {
+            "field1": { "type": "STRING", "key": true },
+            "field2": { "type": "DECIMAL" },
+            "field3": { "type": "INTEGER" },
+            "field4": { "type": "DATE" },
+            "field5": { "type": "TIME" },
+            "field6": { "type": "DATETIME" },
+            "field7": { "type": "STRING" , "options": {
+                    "handlerType": "procedure",
+                    "handler": "function handler(data,dataset,model,context) { console.log('model',model,'data',data,'dataset',dataset); switch(data.field7) { case 'A': data.field8 = 'Anonymous'; break; case 'B': data.field8 = 'Bad Request'; break; case 'C': data.field8 = 'Counter Attack'; break; } }"
+                }
+            },
+            "field8": { "type": "STRING" },
+            "field9": { "type": "STRING" , "options": { 
+                    "handlerType": "function", 
+                    "handler": "function handler(data) { if(data.field7=='A') return null; return data.field1 + '-' + data.field3; }"
+                }
+            },
+            "field10": { "type": "STRING", "options": { "mapper": ["field1","-","field3"] } },
+            "field11": { "type": "STRING" },
+            "field12": { "type": "STRING" },
+            "curtime": { "type": "DATETIME", "defaultValue": "#current_timestamp" },
+            "remark": { "type": "STRING", "defaultValue": "test_mapper_simple" }
+        }
+    },
+    "test_mapper_complex": {
+        "name": "tmigratetest",
+        "alias": { "privateAlias": "PROMPTDB" },
+        "fields": {
+            "field1": { "type": "STRING", "key": true, "defaultValue": "#current_uuid" },
+            "field2": { "type": "DECIMAL", "options": { "mapper": "amount" } },
+            "field3": { "type": "INTEGER", "options": { "mapper": "counter" } },
+            "field4": { "type": "DATE", "options": { "mapper": "entity.asdate" } },
+            "field5": { "type": "TIME", "options": { "mapper": "entity.astime" } },
+            "field6": { "type": "DATETIME", "options": { "mapper": ["entity.asdate"," ","entity.astime"] } },
+            "field7": { "type": "STRING" , "options": {
+                    "handlerType": "procedure",
+                    "handler": "function handler(data,dataset,model,context) { console.log('model',model,'data',data,'dataset',dataset); switch(data.field7) { case 'A': data.field8 = 'Anonymous'; break; case 'B': data.field8 = 'Bad Request'; break; case 'C': data.field8 = 'Counter Attack'; break; } }"
+                }
+            },
+            "field8": { "type": "STRING" },
+            "field9": { "type": "STRING" , "options": { 
+                    "handlerType": "function",
+                    "handler": "function handler(data) { if(data.field7=='A') return null; return data.field1 + '-' + data.field3; }"
+                }
+            },
+            "field10": { "type": "STRING", "options": { "mapper": ["entity.reporter","-","counter","-","#current_uuid"] } },
+            "field11": { "type": "STRING" },
+            "field12": { "type": "STRING" },
+            "curtime": { "type": "DATETIME", "defaultValue": "#current_timestamp" },
+            "remark": { "type": "STRING", "defaultValue": "test_mapper_complex" }
+        }
+    },
+    "test_xpath": {
+        "name": "tmigratetest",
+        "alias": { "privateAlias": "PROMPTDB" },
+        "fields": {
+            "field1": { "type": "STRING", "key": true },
+            "field2": { "type": "DECIMAL" },
+            "field3": { "type": "INTEGER" },
+            "field4": { "type": "DATE" },
+            "field5": { "type": "TIME" },
+            "field6": { "type": "DATETIME" },
+            "field7": { "type": "STRING" , "options": {
+                    "handlerType": "procedure",
+                    "handler": "function handler(data,dataset,model,context) { console.log('model',model,'data',data,'dataset',dataset); switch(data.field7) { case 'A': data.field8 = 'Anonymous'; break; case 'B': data.field8 = 'Bad Request'; break; case 'C': data.field8 = 'Counter Attack'; break; } }"
+                }
+            },
+            "field8": { "type": "STRING" },
+            "field9": { "type": "STRING" , "options": { 
+                    "handlerType": "function",
+                    "handler": "function handler(data) { if(data.field7=='A') return null; return data.field1 + '-' + data.field3; }"
+                }
+            },
+            "field10": { "type": "STRING", "options": { "mapper": ["field1","-","field3"] } },
+            "field11": { "type": "STRING" },
+            "field12": { "type": "STRING" },
+            "curtime": { "type": "DATETIME", "defaultValue": "#current_timestamp" },
+            "remark": { "type": "STRING", "defaultValue": "test_xpath" }
+        },
+        "xpath": "datarow.rows"
+    },
+    "test_xpath_complex": {
+        "name": "tmigratetest",
+        "alias": { "privateAlias": "PROMPTDB" },
+        "fields": {
+            "field1": { "type": "STRING", "key": true, "defaultValue": "#current_uuid" },
+            "field2": { "type": "DECIMAL", "options": { "mapper": "@amount" } },
+            "field3": { "type": "INTEGER", "options": { "mapper": "@counter" } },
+            "field4": { "type": "DATE", "options": { "mapper": "@entity.asdate" } },
+            "field5": { "type": "TIME", "options": { "mapper": "@entity.astime" } },
+            "field6": { "type": "DATETIME", "options": { "mapper": ["@entity.asdate"," ","@entity.astime"] } },
+            "field7": { "type": "STRING" , "options": {
+                    "handlerType": "procedure",
+                    "handler": "function handler(data,dataset,model,context) { console.log('model',model,data,dataset); switch(data.field7) { case 'A': data.field8 = 'Anonymous'; break; case 'B': data.field8 = 'Bad Request'; break; case 'C': data.field8 = 'Counter Attack'; break; } }"
+                }
+            },
+            "field8": { "type": "STRING" },
+            "field9": { "type": "STRING" , "options": { 
+                    "handlerType": "function", 
+                    "handler": "function handler(data) { if(data.field7=='A') return null; return data.field1 + '-' + data.field3; }"
+                }
+            },
+            "field10": { "type": "STRING", "options": { "mapper": ["@entity.reporter","-","@counter"] } },
+            "field11": { "type": "STRING" },
+            "field12": { "type": "STRING" },
+            "curtime": { "type": "DATETIME", "defaultValue": "#current_timestamp" },
+            "remark": { "type": "STRING", "defaultValue": "test_xpath_complex" }
+        },
+        "xpath": "datarow.rows"
+    },
+    "test_xpath_complex_mapper_struct": {
+        "name": "tmigratetest",
+        "alias": { "privateAlias": "PROMPTDB" },
+        "fields": {
+            "field1": { "type": "STRING", "key": true, "defaultValue": "#current_uuid" },
+            "field2": { "type": "DECIMAL", "options": { "mapper": { "ref": "@", "name": "amount" } } },
+            "field3": { "type": "INTEGER", "options": { "mapper": { "ref": "@", "name": "counter" } } },
+            "field4": { "type": "DATE", "options": { "mapper": { "ref": "@", "name": "entity.asdate" } } },
+            "field5": { "type": "TIME", "options": { "mapper": { "ref": "@", "name": "entity.astime" } } },
+            "field6": { "type": "DATETIME", "options": { "mapper": [
+                { "ref": "@", "name": "entity.asdate" }, " ",
+                { "ref": "@", "name": "entity.astime" } ] } },
+            "field7": { "type": "STRING" , "options": {
+                    "handlerType": "procedure", 
+                    "handler": "function handler(data,dataset,model,context) { console.log('model',model,data,dataset); switch(data.field7) { case 'A': data.field8 = 'Anonymous'; break; case 'B': data.field8 = 'Bad Request'; break; case 'C': data.field8 = 'Counter Attack'; break; } }"
+                }
+            },
+            "field8": { "type": "STRING" },
+            "field9": { "type": "STRING" , "options": { 
+                    "handlerType": "function", 
+                    "handler": "function handler(data) { if(data.field7=='A') return null; return data.field1 + '-' + data.field3; }"
+                }
+            },
+            "field10": { "type": "STRING", "options": { "mapper": [
+                { "ref": "@", "name": "entity.reporter", "desc": "@ sign point to root data reference" }, 
+                { "ref": "#", "name": "-", "desc": "# sign mean constance value or reserved value" },
+                { "ref": "$", "name": "field7", "desc": "$ sign refer to current object" },
+                { "ref": "#", "name": "-" },
+                { "ref": "%", "name": "DB_SECTION", "desc": "% sign obtain from config or environment setting" } ] } },
+            "field11": { "type": "STRING" },
+            "field12": { "type": "STRING" },
+            "curtime": { "type": "DATETIME", "defaultValue": "#current_timestamp" },
+            "remark": { "type": "STRING", "defaultValue": "test_xpath_complex_mapper_struct" }
+        },
+        "xpath": "datarow.rows"
+    },
+    "test_simple_call_api": {
+        "name": "tmigratetest",
+        "alias": { "privateAlias": "PROMPTDB" },
+        "fields": {
+            "field1": { "type": "STRING", "key": true },
+            "field2": { "type": "DECIMAL" },
+            "field3": { "type": "INTEGER" },
+            "field4": { "type": "DATE" },
+            "field5": { "type": "TIME" },
+            "field6": { "type": "DATETIME" },
+            "field7": { "type": "STRING" },
+            "field8": { "type": "STRING" },
+            "field9": { "type": "STRING" },
+            "field10": { "type": "STRING" },
+            "field11": { "type": "STRING" },
+            "field12": { "type": "STRING", "options": {
+                    "mapper": "field11",
+                    "connection": {
+                        "type": "API",
+                        "api": "http://localhost:8080/api/category/groups?names=tkappstype", 
+                        "setting": {},
+                        "body": {},
+                        "mapper": "@body.tkappstype"
+                    }
+                }
+            },
+            "curtime": { "type": "DATETIME", "defaultValue": "#current_timestamp" },
+            "remark": { "type": "STRING", "defaultValue": "test_simple_call_api" }
+        }
+    },
+    "test_simple_call_api_list": {
+        "name": "tmigratetest",
+        "alias": { "privateAlias": "PROMPTDB" },
+        "fields": {
+            "field1": { "type": "STRING", "key": true },
+            "field2": { "type": "DECIMAL" },
+            "field3": { "type": "INTEGER" },
+            "field4": { "type": "DATE" },
+            "field5": { "type": "TIME" },
+            "field6": { "type": "DATETIME" },
+            "field7": { "type": "STRING" },
+            "field8": { "type": "STRING" },
+            "field9": { "type": "STRING" },
+            "field10": { "type": "STRING" },
+            "field11": { "type": "STRING" },
+            "field12": { "type": "STRING", "options": {
+                    "mapper": "field11",
+                    "connection": {
+                        "type": "API",
+                        "api": "http://localhost:8080/api/category/lists", 
+                        "setting": {},
+                        "body": { "names" : "tkappstype" },
+                        "mapper": "@body[0].resultset.rows",
+                        "fieldname": "typeid",
+                        "fieldvalue": "nameen"
+                    }
+                }
+            },
+            "curtime": { "type": "DATETIME", "defaultValue": "#current_timestamp" },
+            "remark": { "type": "STRING", "defaultValue": "test_simple_call_api_list" }
+        }
+    },
+    "test_simple_call_api_list_handler": {
+        "name": "tmigratetest",
+        "alias": { "privateAlias": "PROMPTDB" },
+        "fields": {
+            "field1": { "type": "STRING", "key": true },
+            "field2": { "type": "DECIMAL" },
+            "field3": { "type": "INTEGER" },
+            "field4": { "type": "DATE" },
+            "field5": { "type": "TIME" },
+            "field6": { "type": "DATETIME" },
+            "field7": { "type": "STRING" },
+            "field8": { "type": "STRING" },
+            "field9": { "type": "STRING" },
+            "field10": { "type": "STRING" },
+            "field11": { "type": "STRING" },
+            "field12": { "type": "STRING", "options": {
+                    "mapper": "field11",
+                    "connection": {
+                        "type": "API",
+                        "api": "http://localhost:8080/api/category/lists", 
+                        "setting": {},
+                        "body": { "names" : "tkappstype" },
+                        "handler": "function apihandler(response,data,dataset) { console.log('res',response,'data',data); let rec = response.body[0].resultset.rows.find((row) => row.typeid == data.field11); console.log('record',rec); if(rec) { return rec.nameen; } return data.field12; }"
+                    }
+                }
+            },
+            "curtime": { "type": "DATETIME", "defaultValue": "#current_timestamp" },
+            "remark": { "type": "STRING", "defaultValue": "test_simple_call_api_list_handler" }
+        }
+    },
+    "test_simple_call_db": {
+        "name": "tmigratetest",
+        "alias": { "privateAlias": "PROMPTDB" },
+        "fields": {
+            "field1": { "type": "STRING", "key": true },
+            "field2": { "type": "DECIMAL" },
+            "field3": { "type": "INTEGER" },
+            "field4": { "type": "DATE" },
+            "field5": { "type": "TIME" },
+            "field6": { "type": "DATETIME" },
+            "field7": { "type": "STRING" },
+            "field8": { "type": "STRING" },
+            "field9": { "type": "STRING" },
+            "field10": { "type": "STRING" },
+            "field11": { "type": "STRING" },
+            "field12": { "type": "STRING", "options": {
+                    "mapper": "field11",
+                    "connection": {
+                        "type": "DB",
+                        "query": "select * from tconstant where typename='tappstype'",
+                        "mapper": "rows",
+                        "fieldname": "typeid",
+                        "fieldvalue": "nameen",
+                        "schema": "test_simple_query_db",
+                        "alias": "mysql2", "dialect": "mysql", "url":"", "user": "root", "password": "root", "host": "localhost", "port": 3306, "database": "migrateauth", "options": { "charset": "utf8", "connectionLimit": 1000 }
+                    }
+                }
+            },
+            "curtime": { "type": "DATETIME", "defaultValue": "#current_timestamp" },
+            "remark": { "type": "STRING", "defaultValue": "test_simple_call_db" }
+        }
+    },
+    "test_simple_call_db_handler": {
+        "name": "tmigratetest",
+        "alias": { "privateAlias": "PROMPTDB" },
+        "fields": {
+            "field1": { "type": "STRING", "key": true },
+            "field2": { "type": "DECIMAL" },
+            "field3": { "type": "INTEGER" },
+            "field4": { "type": "DATE" },
+            "field5": { "type": "TIME" },
+            "field6": { "type": "DATETIME" },
+            "field7": { "type": "STRING" },
+            "field8": { "type": "STRING" },
+            "field9": { "type": "STRING" },
+            "field10": { "type": "STRING" },
+            "field11": { "type": "STRING" },
+            "field12": { "type": "STRING", "options": {
+                    "mapper": "field11",
+                    "connection": {
+                        "type": "DB",
+                        "query": "select * from tconstant where typename='tappstype'",
+                        "handler": "function dbhandler(response,data,dataset) { console.log('res',response,'data',data); let rec = response.rows.find((row) => row.typeid == data.field11); console.log('record',rec); if(rec) { return rec.nameen; } return data.field12; }",
+                        "schema": "test_simple_query_db_handler",
+                        "alias": "mysql2", "dialect": "mysql", "url":"", "user": "root", "password": "root", "host": "localhost", "port": 3306, "database": "migrateauth", "options": { "charset": "utf8", "connectionLimit": 1000 }
+                    }
+                }
+            },
+            "curtime": { "type": "DATETIME", "defaultValue": "#current_timestamp" },
+            "remark": { "type": "STRING", "defaultValue": "test_simple_call_db_handler" }
+        }
+    },
+    "test_simple_dataset": {
+        "name": "tmigratetest",
+        "alias": { "privateAlias": "PROMPTDB" },
+        "fields": {
+            "field1": { "type": "STRING", "key": true },
+            "field2": { "type": "DECIMAL" },
+            "field3": { "type": "INTEGER" },
+            "field4": { "type": "DATE" },
+            "field5": { "type": "TIME" },
+            "field6": { "type": "DATETIME" },
+            "field7": { "type": "STRING" },
+            "field8": { "type": "STRING" },
+            "field9": { "type": "STRING" },
+            "field10": { "type": "STRING" },
+            "field11": { "type": "STRING" },
+            "field12": { "type": "STRING" },
+            "curtime": { "type": "DATETIME", "defaultValue": "#current_timestamp" },
+            "remark": { "type": "STRING", "defaultValue": "test_simple_dataset" }
+        }
+    },
+    "test_simple_dataset_array": {
+        "name": "tmigratetest",
+        "alias": { "privateAlias": "PROMPTDB" },
+        "fields": {
+            "field1": { "type": "STRING", "key": true },
+            "field2": { "type": "DECIMAL" },
+            "field3": { "type": "INTEGER" },
+            "field4": { "type": "DATE" },
+            "field5": { "type": "TIME" },
+            "field6": { "type": "DATETIME" },
+            "field7": { "type": "STRING" },
+            "field8": { "type": "STRING" },
+            "field9": { "type": "STRING" },
+            "field10": { "type": "STRING" },
+            "field11": { "type": "STRING" },
+            "field12": { "type": "STRING" },
+            "curtime": { "type": "DATETIME", "defaultValue": "#current_timestamp" },
+            "remark": { "type": "STRING", "defaultValue": "test_simple_dataset_array" }
+        }
+    },
+    "test_simple_data_array": {
+        "name": "tmigratetest",
+        "alias": { "privateAlias": "PROMPTDB" },
+        "fields": {
+            "field1": { "type": "STRING", "key": true },
+            "field2": { "type": "DECIMAL" },
+            "field3": { "type": "INTEGER" },
+            "field4": { "type": "DATE" },
+            "field5": { "type": "TIME" },
+            "field6": { "type": "DATETIME" },
+            "field7": { "type": "STRING" },
+            "field8": { "type": "STRING" },
+            "field9": { "type": "STRING" },
+            "field10": { "type": "STRING" },
+            "field11": { "type": "STRING" },
+            "field12": { "type": "STRING" },
+            "curtime": { "type": "DATETIME", "defaultValue": "#current_timestamp" },
+            "remark": { "type": "STRING", "defaultValue": "test_simple_data_array" }
+        }
+    },
+    "test_simple_data_array_list": {
+        "name": "tmigratetest",
+        "alias": { "privateAlias": "PROMPTDB" },
+        "fields": {
+            "field1": { "type": "STRING", "key": true, "options": { "arrayIndex": 0 } },
+            "field2": { "type": "DECIMAL", "options": { "arrayIndex": 1 } },
+            "field3": { "type": "INTEGER", "options": { "arrayIndex": 2 } },
+            "field4": { "type": "DATE", "options": { "arrayIndex": 3 } },
+            "field5": { "type": "TIME", "options": { "arrayIndex": 4 } },
+            "field6": { "type": "DATETIME", "options": { "arrayIndex": 5 } },
+            "field7": { "type": "STRING", "options": { "arrayIndex": 6 } },
+            "field8": { "type": "STRING" },
+            "field9": { "type": "STRING" },
+            "field10": { "type": "STRING" },
+            "field11": { "type": "STRING" },
+            "field12": { "type": "STRING" },
+            "curtime": { "type": "DATETIME", "defaultValue": "#current_timestamp" },
+            "remark": { "type": "STRING", "defaultValue": "test_simple_data_array_list" }
+        }
+    }
+}

@@ -1,0 +1,60 @@
+{
+  "name": "emigrate",
+  "version": "1.0.0",
+  "description": "This is project introduce to node application with http server and express framework under moleculer engine",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc --project ./",
+    "dev": "ts-node-dev src/server.ts ./dist/services ./dist/workers ./dist/operators",
+    "serve": "node dist/server.js ./dist/services ./dist/workers ./dist/operators",
+    "start": "node dist/server.js --instances cpu ./dist/services ./dist/workers ./dist/operators",
+    "broker": "node dist/broker.js ./dist/services ./dist/workers ./dist/operators",
+    "runner": "kn-runner ./dist/services ./dist/workers ./dist/operators ./dist/gateway",
+    "runins": "kn-runner --instances cpu ./dist/services ./dist/worker ./dist/operators ./dist/gateway",
+    "worker": "kn-runner --repl ./dist/services ./dist/workers ./dist/operators",
+    "gateway": "kn-runner ./dist/gateway",
+    "gateways": "kn-runner ./dist/services ./dist/workers ./dist/gateway",
+    "service": "kn-runner ./dist/services ./dist/workers ./dist/operators",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "tassan_oro@freewillsolutions.com",
+  "license": "ISC",
+  "dependencies": {
+    "@willsofts/will-api": "^1.0.13",
+    "@willsofts/will-core": "^1.1.26",
+    "@willsofts/will-db": "^1.0.57",
+    "@willsofts/will-lib": "^1.0.28",
+    "@willsofts/will-run": "^1.0.13",
+    "@willsofts/will-serv": "^1.0.53",
+    "@willsofts/will-sql": "^1.0.32",
+    "@willsofts/will-util": "^1.0.20",
+    "axios": "^1.7.9",
+    "bcrypt": "^5.1.1",
+    "config": "^3.3.12",
+    "express": "^4.21.2",
+    "express-session": "^1.18.1",
+    "helmet": "^8.0.0",
+    "jsonwebtoken": "^9.0.2",
+    "moleculer": "^0.14.35",
+    "moleculer-io": "^2.2.0",
+    "moleculer-web": "^0.10.7",
+    "multer": "^1.4.5-lts.1",
+    "mysql2": "^3.11.5",
+    "node-rsa": "^1.1.1",
+    "nodemailer": "^6.9.16",
+    "uuid": "^11.0.3"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.0",
+    "@types/express-session": "^1.18.1",
+    "@types/node": "^22.10.2",
+    "@types/uuid": "^10.0.0",
+    "ts-node": "^10.9.2",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^5.7.2"
+  },
+  "engines": {
+    "node": ">=15"
+  }
+}
