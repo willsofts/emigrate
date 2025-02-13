@@ -84,3 +84,13 @@ This is an external data from calling API.
 6. Support Database gathering.
 This is a external data from execute query via data base connection.
 
+
+## Database Connection String
+
+| Vendor | Example |
+| -------- | ----------- |
+| MSSQL | Server=localhost,1433;Database=refdb;User Id=sa;Password=sapassword;Encrypt=false;Trusted_Connection=Yes; |
+| ORACLE | localhost:1521/ORCLCDB.localdomain |
+| POSTGRES | postgresql://postgres:root@localhost:5432/testdb |
+| ODBC | DRIVER={MySQL ODBC 8.0 Unicode Driver};SERVER=localhost;DATABASE=testdb;HOST=localhost;PORT=3306;UID=root;PWD=root; |
+

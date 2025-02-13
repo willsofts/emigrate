@@ -1,6 +1,6 @@
 {
   "name": "emigrate",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "This is project introduce to node application with http server and express framework under moleculer engine",
   "main": "index.js",
   "scripts": {
@@ -42,11 +42,15 @@
     "moleculer-io": "^2.2.0",
     "moleculer-web": "^0.10.7",
     "moment-timezone": "^0.5.47",
+    "mssql": "^11.0.1",
     "multer": "^1.4.5-lts.1",
     "mysql2": "^3.11.5",
     "n-readlines": "^1.0.1",
     "node-rsa": "^1.1.1",
     "nodemailer": "^6.9.16",
+    "odbc": "^2.4.9",
+    "oracledb": "^6.7.2",
+    "pg": "^8.13.3",
     "uuid": "^11.0.3",
     "xlsx": "^0.18.5"
   },
