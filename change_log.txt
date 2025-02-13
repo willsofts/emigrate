@@ -13,7 +13,9 @@
 2025-02-11
 + excel (lib: exceljs), xslsx,xls (lib: xlsx)
 + xml (fast-xml-parser)
-+ support sync/async (async=true)
++ support sync/async (default sync)
+    - async = true, the server treat request as background process (make reponse suddenly)
+    (reponse contain processid that can invoke api/migratelog/get)
 + support center api
     - api/migratefile/file
     - upload/migrate/file
