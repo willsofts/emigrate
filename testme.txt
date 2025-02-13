@@ -63,3 +63,104 @@ curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/migra
 curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/migrate/task/test_simple_data_array -d @test_simple_data_array.json
 
 curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/migrate/task/test_simple_data_array_list -d @test_simple_data_array_list.json
+
+
+test import text:
+curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/migratetext/insert -d "{\"taskid\":\"test_file_text\", \"file\": \"./assets/tso.txt\"}"
+curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/migratetext/insert -d "{\"taskid\":\"test_file_csv\", \"file\": \"./assets/tso.csv\"}"
+curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/migratetext/insert -d "{\"taskid\":\"test_file_text_quote\", \"file\": \"./assets/tso_quote.txt\"}"
+curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/migratetext/insert -d "{\"taskid\":\"test_file_text_fix_length\", \"file\": \"./assets/tso_fix.txt\"}"
+curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/migratetext/insert -d "{\"taskid\":\"test_file_text_tab\", \"file\": \"./assets/tso_tab.txt\"}"
+
+test import text upload:  file must encoding utf-8
+1. text file
+curl -X POST http://localhost:8080/upload/migrate/text -F filename=@D:\exim\assets\tso.txt -F taskid=test_file_text
+2. csv file 
+curl -X POST http://localhost:8080/upload/migrate/text -F filename=@D:\exim\assets\tso.csv -F taskid=test_file_csv
+3. text file with double quote
+curl -X POST http://localhost:8080/upload/migrate/text -F filename=@D:\exim\assets\tso_quote.txt -F taskid=test_file_text_quote
+4. text file fix length
+curl -X POST http://localhost:8080/upload/migrate/text -F filename=@D:\exim\assets\tso_fix.txt -F taskid=test_file_text_fix_length
+5. text file delimiter TAB
+curl -X POST http://localhost:8080/upload/migrate/text -F filename=@D:\exim\assets\tso_tab.txt -F taskid=test_file_text_tab
+
+test import json:
+curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/migratejson/insert -d "{\"taskid\":\"test_file_json\", \"file\": \"./assets/tso_json.txt\"}"
+curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/migratejson/insert -d "{\"taskid\":\"test_file_json_array\", \"file\": \"./assets/tso_json_array.txt\"}"
+
+test import json upload:
+1. json file
+curl -X POST http://localhost:8080/upload/migrate/json -F filename=@D:\exim\assets\tso_json.txt -F taskid=test_file_json
+2. json array file 
+curl -X POST http://localhost:8080/upload/migrate/json -F filename=@D:\exim\assets\tso_json_array.txt -F taskid=test_file_json_array
+
+test no import but return json dataset:
+1. define model name = ""
+curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/migratetext/insert -d "{\"taskid\":\"test_file_text_no_save\", \"file\": \"./assets/tso.txt\" }"
+2. define parameter stored = "false"
+curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/migratetext/insert -d "{\"taskid\":\"test_file_text\", \"file\": \"./assets/tso.txt\", \"stored\": \"false\" }"
+
+test import excel:
+1. xlsx (using exceljs)
+curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/migrateexcel/insert -d "{\"taskid\":\"test_file_excel\", \"file\": \"./assets/tso.xlsx\" }"
+2. xls not support
+curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/migrateexcel/insert -d "{\"taskid\":\"test_file_excel\", \"file\": \"./assets/tso.xls\" }"
+3. xlsx (using xlsx)
+curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/migratexlsx/insert -d "{\"taskid\":\"test_file_xlsx\", \"file\": \"./assets/tso.xlsx\" }"
+curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/migratexlsx/insert -d "{\"taskid\":\"test_file_xlsx\", \"file\": \"./assets/tso.xls\" }"
+
+test import excel upload:
+1. exceljs (not support .xls)
+curl -X POST http://localhost:8080/upload/migrate/excel -F filename=@D:\exim\assets\tso.xlsx -F taskid=test_file_excel
+2. xlsx
+curl -X POST http://localhost:8080/upload/migrate/xlsx -F filename=@D:\exim\assets\tso.xlsx -F taskid=test_file_xlsx
+curl -X POST http://localhost:8080/upload/migrate/xlsx -F filename=@D:\exim\assets\tso.xls -F taskid=test_file_xlsx
+
+test import xml:
+1. xml simple
+curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/migratexml/insert -d "{\"taskid\":\"test_file_xml\", \"file\": \"./assets/tso.xml\" }"
+2. xml with cdata
+curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/migratexml/insert -d "{\"taskid\":\"test_file_xml\", \"file\": \"./assets/tso_cdata.xml\" }"
+3. xml complex
+curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/migratexml/insert -d "{\"taskid\":\"test_file_xml_complex\", \"file\": \"./assets/tso_data.xml\" }"
+
+test import xml upload:
+curl -X POST http://localhost:8080/upload/migrate/xml -F filename=@D:\exim\assets\tso.xml -F taskid=test_file_xml
+curl -X POST http://localhost:8080/upload/migrate/xml -F filename=@D:\exim\assets\tso_data.xml -F taskid=test_file_xml_complex
+
+
+test center api:
+1. api/migratefile/file
+curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/migratefile/file -d "{\"taskid\":\"test_file_text\", \"file\": \"./assets/tso.txt\"}"
+curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/migratefile/file -d "{\"taskid\":\"test_file_json\", \"file\": \"./assets/tso_json.txt\", \"type\":\"json\"}"
+curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/migratefile/file -d "{\"taskid\":\"test_file_xlsx\", \"file\": \"./assets/tso.xlsx\" }"
+curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/migratefile/file -d "{\"taskid\":\"test_file_xml\", \"file\": \"./assets/tso.xml\" }"
+
+2. upload/migrate/file
+curl -X POST http://localhost:8080/upload/migrate/file -F filename=@D:\exim\assets\tso.txt -F taskid=test_file_text
+curl -X POST http://localhost:8080/upload/migrate/file -F filename=@D:\exim\assets\tso_json.txt -F taskid=test_file_json -F type=json
+curl -X POST http://localhost:8080/upload/migrate/file -F filename=@D:\exim\assets\tso.xml -F taskid=test_file_xml
+curl -X POST http://localhost:8080/upload/migrate/file -F filename=@D:\exim\assets\tso.xlsx -F taskid=test_file_xlsx
+
+
+test sync/async:
+1. async
+curl -X POST -H "Content-Type: application/json" -H "AuthToken: ?" http://localhost:8080/api/migratetext/insert -d "{\"taskid\":\"test_file_text\", \"file\": \"./assets/tso.txt\", \"async\": \"true\"}"
+2. sync
+curl -X POST -H "Content-Type: application/json" -H "AuthToken: ?" http://localhost:8080/api/migratetext/insert -d "{\"taskid\":\"test_file_text\", \"file\": \"./assets/tso.txt\", \"async\": \"false\"}"
+or
+curl -X POST -H "Content-Type: application/json" -H "AuthToken: ?" http://localhost:8080/api/migratetext/insert -d "{\"taskid\":\"test_file_text\", \"file\": \"./assets/tso.txt\"}"
+3. migrate result/log
++ require processid from async response
+curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/migratelog/get -d "{\"processid\":\"423fef5b-735c-4c95-8f71-6a7979f59d8e\"}"
+curl -X POST http://localhost:8080/api/migratelog/get -d "processid=423fef5b-735c-4c95-8f71-6a7979f59d8e"
+
+
+test error:
+1. test normal error -> stop
+curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/migratetext/insert -d "{\"taskid\":\"test_file_text_error\", \"file\": \"./assets/tso_error.txt\"}"
+2. test verify error false
+curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/migratetext/insert -d "{\"taskid\":\"test_file_text_error_verify\", \"file\": \"./assets/tso_error.txt\"}"
+3. test abandon error false
+curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/migratetext/insert -d "{\"taskid\":\"test_file_text_error_abandon\", \"file\": \"./assets/tso_error.txt\"}"
+

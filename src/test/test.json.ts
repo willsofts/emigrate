@@ -11,3 +11,10 @@ function handler(data) {
 
 console.log(data_fields);
 console.log(JSON.stringify(data_fields));
+
+let verify : any = false;
+console.log("verify=",(verify==false));
+console.log("verify=",(String(verify)=="false"));
+verify = undefined;
+console.log("verify=",(verify==false));
+console.log("verify=",(String(verify)=="false"));

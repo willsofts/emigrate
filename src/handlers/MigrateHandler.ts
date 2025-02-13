@@ -1,63 +1,179 @@
 import { HTTP } from "@willsofts/will-api";
 import { KnModel } from "@willsofts/will-db";
-import { KnDBConnector, KnSQL, KnRecordSet } from "@willsofts/will-sql";
-import { KnContextInfo } from '@willsofts/will-core';
-import { VerifyError } from "@willsofts/will-core";
-import { MigrateBase } from "./MigrateBase";
-import { MigrateConfig, MigrateModel } from "../models/MigrateAlias";
+import { KnDBConnector, KnSQL } from "@willsofts/will-sql";
+import { KnContextInfo, KnValidateInfo, VerifyError } from '@willsofts/will-core';
+import { MigrateOperate } from "./MigrateOperate";
+import { MigrateConfig, MigrateRecordSet, MigrateInfo, MigrateReject } from "../models/MigrateAlias";
 
 const task_models = require("../../config/model.json");
 
-export class MigrateHandler extends MigrateBase {
+export class MigrateHandler extends MigrateOperate {
 
-    protected async doInserting(context: KnContextInfo, model: KnModel): Promise<KnRecordSet> {        
+    protected override async validateRequireFields(context: KnContextInfo, model: KnModel, action?: string) : Promise<KnValidateInfo> {
+        let vi = this.validateParameters(context.params,"taskid");
+        if(!vi.valid) {
+            return Promise.reject(new VerifyError("Parameter not found ("+vi.info+")",HTTP.NOT_ACCEPTABLE,-16061));
+        }
+        return Promise.resolve(vi);
+    }
+
+    public override async doInserting(context: KnContextInfo, model: KnModel = this.model): Promise<MigrateRecordSet> {        
         let taskid = context.params.taskid;
         let dataset = context.params.dataset;
         if(!dataset) dataset = context.params;        
         let body = context.options?.parentCtx?.params?.req?.body;
         if(body && Array.isArray(body)) dataset = body;
-        let taskmodel = await this.getTaskModel(context,model,taskid);
+        let taskmodel = await this.getTaskModel(context,taskid,model);
         if(!taskmodel) {
             return Promise.reject(new VerifyError("Model not found",HTTP.NOT_ACCEPTABLE,-16063));
         }
-        dataset = await this.performTransformation(context, taskmodel, dataset);
-        return this.performInserting(context, taskmodel, dataset);
+        if(!context.params.processid) context.params.processid = this.randomUUID();
+        return this.processInserting(context, taskmodel, dataset, context.params.datapart, context.params.filename);
     }
 
-    public async performTransformation(context: KnContextInfo, model: MigrateModel, datasource: any): Promise<any> {
-        let dataset = datasource;        
-        if(model.xpath && model.xpath.trim().length>0) {
-            //find out data set from xpath
-            dataset = this.scrapeData(model.xpath,datasource,datasource);
+    public async processInserting(context: KnContextInfo, taskmodel: KnModel, dataset: any, datapart?: any, filename?: string, fileinfo?: any): Promise<MigrateRecordSet> {
+        if(!fileinfo) fileinfo = context.params.fileinfo;
+        if(!this.userToken) this.userToken = await this.getUserTokenInfo(context);
+        let authtoken = this.getTokenKey(context);
+        dataset = await this.performTransformation(context, taskmodel, dataset, datapart);
+        let processid = context.params.processid || this.randomUUID();
+        let result : MigrateRecordSet = { taskid: context.params.taskid, processid: processid, totalrecords: 0, errorrecords: 0, skiprecords: 0, ...this.createRecordSet() };
+        if(taskmodel.name.trim().length == 0 || context.params.stored === "NONE" || context.params.stored === "false") {
+            result.rows = dataset;
+            result.records = result.rows?.length || 0;
+            return result;
         }
-        dataset = await this.performDataMapper(context,model,datasource,dataset);
-        if(Array.isArray(dataset)) {
-            dataset = await this.performReformation(context,model,dataset);
-            for(let data of dataset) {
-                await this.performDefaultValues(context,model,data,datasource);
-                await this.performConversion(context,model,data,datasource);
-            }     
+        let params = {authtoken: authtoken, ...result, tablename: taskmodel.name, processfile: fileinfo?.path, sourcefile: fileinfo?.originalname || filename, filesize: fileinfo?.size };
+        this.call("migratelog.insert",params).catch(ex => this.logger.error(ex));
+        if(context.params.async=="true") {
+            this.performInserting(context, taskmodel, dataset).then(value => {
+                let rs = value[0];
+                let info = value[1];
+                let reject = value[2];
+                this.updateLogging(authtoken,rs,info,reject);
+            }).catch(ex => { 
+                this.errorLogging(authtoken,result,ex);
+            });
+            return result;    
         } else {
-            await this.performDefaultValues(context,model,dataset,datasource);
-            await this.performConversion(context,model,dataset,datasource);
+            let rs : MigrateRecordSet | undefined = undefined;
+            let info : MigrateInfo | undefined = undefined;
+            let reject: MigrateReject | undefined = undefined;
+            try {
+                [rs,info,reject] = await this.performInserting(context, taskmodel, dataset);
+                this.updateLogging(authtoken,rs,info,reject);
+            } catch(ex) {
+                this.errorLogging(authtoken,result,ex);
+                return Promise.reject(this.getDBFault(ex,processid));
+            }
+            if(reject?.reject) {
+                return Promise.reject(this.getDBFault(reject?.throwable,processid));
+            }
+            return rs;    
         }
-        this.logger.debug(this.constructor.name+".performTransformation: dataset",dataset);
-        return dataset;
     }
 
-    public async performDataMapper(context: KnContextInfo, model: MigrateModel, datasource: any, dataset: any): Promise<any> {
-        if(!model.fields) return dataset;        
-        if(Array.isArray(dataset)) {
-            for(let data of dataset) {
-                await this.transformDataMapper(model,datasource,data);
-            }     
+    private updateLogging(authtoken: string|undefined, rs: MigrateRecordSet, info: MigrateInfo, reject: MigrateReject) {
+        let processstatus = "DONE";
+        let errormessage = undefined;
+        if(reject.reject) {
+            processstatus = "ERROR";
+            errormessage = this.getDBError(reject.throwable).message;
+        }
+        let params = {authtoken: authtoken, ...rs, ...info, processstatus: processstatus, errormessage: errormessage };
+        this.call("migratelog.update",params).catch(ex => this.logger.error(ex));
+    }
+
+    private errorLogging(authtoken: string|undefined, result: MigrateRecordSet, ex: any) {
+        this.logger.error(ex); 
+        let err = this.getDBError(ex);
+        let params = {authtoken: authtoken, ...result, processstatus: "ERROR", errormessage: err.message };
+        this.call("migratelog.update",params).catch(ex => this.logger.error(ex));
+    }
+
+    public async performInserting(context: KnContextInfo, model: KnModel, dataset: any): Promise<[MigrateRecordSet,MigrateInfo,MigrateReject]> {
+        if(String(model.settings?.autoCommit)=="true") {
+            return await this.performInsertWithAutoCommit(context, model, dataset);
         } else {
-            await this.transformDataMapper(model,datasource,dataset);
+            return await this.performInsertWithTransaction(context, model, dataset);
         }
-        return dataset;
     }
 
-    public async getTaskModel(context: KnContextInfo, model: KnModel, taskid: string): Promise<MigrateModel | undefined> {
+    public async performInsertWithTransaction(context: KnContextInfo, model: KnModel, dataset: any): Promise<[MigrateRecordSet,MigrateInfo,MigrateReject]> {
+        let db = this.getPrivateConnector(model);
+        try {
+            await db.beginWork();
+            let [result,info,reject] = await this.performInsertTransaction(context,model,db,dataset);
+            if(!reject.reject) {
+                await db.commitWork();
+            } else {
+                db.rollbackWork().catch(ex => this.logger.error(ex));                
+            }
+            return [result,info,reject];
+        } catch(ex: any) {
+            this.logger.error(ex);
+            db.rollbackWork().catch(ex => this.logger.error(ex));
+            return Promise.reject(this.getDBError(ex));
+        } finally {
+            if(db) db.close();
+        }
+    }
+
+    public async performInsertWithAutoCommit(context: KnContextInfo, model: KnModel, dataset: any): Promise<[MigrateRecordSet,MigrateInfo,MigrateReject]> {
+        let db = this.getPrivateConnector(model);
+        try {
+            return await this.performInsertTransaction(context,model,db,dataset);
+        } catch(ex: any) {
+            this.logger.error(ex);
+            return Promise.reject(this.getDBError(ex));
+        } finally {
+            if(db) db.close();
+        }
+    }
+
+    public async performInsertTransaction(context: KnContextInfo, model: KnModel, db: KnDBConnector, dataset: any): Promise<[MigrateRecordSet,MigrateInfo,MigrateReject]> {
+        let processid = context.params.processid || this.randomUUID();
+        let result : MigrateRecordSet = { taskid: context.params.taskid, processid: processid, totalrecords: 0, errorrecords: 0, skiprecords: 0, ...this.createRecordSet() };
+        let datalist = dataset;
+        if(!Array.isArray(dataset)) {
+            datalist = [dataset];
+        }
+        let onException = model.settings?.onException;
+        let abandonError = model.settings?.abandonError === undefined || String(model.settings?.abandonError)=="true";
+        let verifyError = model.settings?.verifyError === undefined || String(model.settings?.verifyError)=="true";
+        this.logger.debug(this.constructor.name+": abandonError:",abandonError,", verifyError:",verifyError);
+        result.totalrecords = datalist.length;
+        let info : MigrateInfo = { exception: false, errormessage: "", errorcontents: [] };
+        let reject : MigrateReject = { reject: false, throwable: undefined };
+        let index = 0;
+        while(!info.exception && (index < datalist.length)) {
+            let data = datalist[index];
+            try {
+                context.params = data;
+                await this.performCreating(context, model, db);
+                result.records++;
+            } catch(ex: any) {
+                reject.throwable = ex;
+                this.logger.error(ex);
+                result.errorrecords++;
+                info.errorcontents.push(data);
+                if(verifyError) {
+                    info.errormessage = this.getDBError(ex).message;
+                    info.exception = true;
+                }
+                if(onException) {
+                    onException.call(this,context,model,index,data,ex);
+                }
+            }
+            index++;
+        }
+        if(abandonError && reject.throwable) {
+            reject.reject = true;
+        }
+        return [result,info,reject];
+    }
+
+    public async getTaskModel(context: KnContextInfo, taskid: string, model: KnModel = this.model): Promise<KnModel | undefined> {
         let db = this.getPrivateConnector(model);
         try {
             return await this.getMigrateModel(context,model,db,taskid);
@@ -69,7 +185,7 @@ export class MigrateHandler extends MigrateBase {
         }
     }
 
-    public async getMigrateModel(context: KnContextInfo, model: KnModel, db: KnDBConnector, taskid: string): Promise<MigrateModel | undefined> {
+    public async getMigrateModel(context: KnContextInfo, model: KnModel, db: KnDBConnector, taskid: string): Promise<KnModel | undefined> {
         let knsql = new KnSQL();
         knsql.append("select t.taskid,t.taskname,t.modelid,t.connectid,");
         knsql.append("m.modelname,m.tablename,m.tablefields,m.tablesettings ");
@@ -139,6 +255,5 @@ export class MigrateHandler extends MigrateBase {
         }
         return result;
     }
-
 
 }

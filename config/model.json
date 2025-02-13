@@ -1,4 +1,381 @@
 {
+    "test_file_text": {
+        "name": "tso",
+        "alias": { "privateAlias": "PROMPTDB" },
+        "fields": {
+            "mktid": { "type": "STRING", "options": { "seqno": 1 } },
+            "share": { "type": "STRING", "options": { "seqno": 2 } },
+            "unit": { "type": "DECIMAL", "options": { "seqno": 3 } },
+            "price": { "type": "DECIMAL", "options": { "seqno": 4 } },
+            "yield": { "type": "INTEGER" },
+            "effdate": { "type": "DATE", "options": { "seqno": 5 } },
+            "efftime": { "type": "TIME", "options": { "seqno": 6 } },
+            "edittime": { "type": "DATETIME", "options": { "seqno": 7 } },
+            "sharename": { "type": "STRING", "options": { "seqno": 8 } },
+            "defvalue": { "type": "STRING" },
+            "message": { "type": "STRING" },
+            "remarks": { "type": "STRING", "defaultValue": "test_file_text" }
+        },
+        "settings": { "skip": 1, "delimiter": ",", "quotable": true }
+    },
+    "test_file_csv": {
+        "name": "tso",
+        "alias": { "privateAlias": "PROMPTDB" },
+        "fields": {
+            "mktid": { "type": "STRING", "options": { "seqno": 1 } },
+            "share": { "type": "STRING", "options": { "seqno": 2 } },
+            "unit": { "type": "DECIMAL", "options": { "seqno": 3 } },
+            "price": { "type": "DECIMAL", "options": { "seqno": 4 } },
+            "yield": { "type": "INTEGER" },
+            "effdate": { "type": "DATE", "options": { "seqno": 5 } },
+            "efftime": { "type": "TIME", "options": { "seqno": 6 } },
+            "edittime": { "type": "DATETIME", "options": { "seqno": 7 } },
+            "sharename": { "type": "STRING", "options": { "seqno": 8 } },
+            "defvalue": { "type": "STRING" },
+            "message": { "type": "STRING" },
+            "remarks": { "type": "STRING", "defaultValue": "test_file_csv" }
+        },
+        "settings": { "skip": 1, "delimiter": ",", "quotable": true, "decoding": "utf-8" }
+    },
+    "test_file_text_quote": {
+        "name": "tso",
+        "alias": { "privateAlias": "PROMPTDB" },
+        "fields": {
+            "mktid": { "type": "STRING", "options": { "seqno": 1 } },
+            "share": { "type": "STRING", "options": { "seqno": 2 } },
+            "unit": { "type": "DECIMAL", "options": { "seqno": 3 } },
+            "price": { "type": "DECIMAL", "options": { "seqno": 4 } },
+            "yield": { "type": "INTEGER" },
+            "effdate": { "type": "DATE", "options": { "seqno": 5 } },
+            "efftime": { "type": "TIME", "options": { "seqno": 6 } },
+            "edittime": { "type": "DATETIME", "options": { "seqno": 7 } },
+            "sharename": { "type": "STRING", "options": { "seqno": 8 } },
+            "defvalue": { "type": "STRING" },
+            "message": { "type": "STRING" },
+            "remarks": { "type": "STRING", "defaultValue": "test_file_text_quote" }
+        },
+        "settings": { "skip": 1, "delimiter": ",", "quotable": true }
+    },
+    "test_file_text_fix_length": {
+        "name": "tso",
+        "alias": { "privateAlias": "PROMPTDB" },
+        "fields": {
+            "mktid": { "type": "STRING", "options": { "seqno": 1, "startIndex": 0, "endIndex": 9 } },
+            "share": { "type": "STRING", "options": { "seqno": 2, "startIndex": 10, "endIndex": 19 } },
+            "unit": { "type": "DECIMAL", "options": { "seqno": 3, "startIndex": 20, "endIndex": 29 } },
+            "price": { "type": "DECIMAL", "options": { "seqno": 4, "startIndex": 30, "endIndex": 37 } },
+            "yield": { "type": "INTEGER" },
+            "effdate": { "type": "DATE", "options": { "seqno": 5, "startIndex": 38, "endIndex": 48 } },
+            "efftime": { "type": "TIME", "options": { "seqno": 6, "startIndex": 49, "endIndex": 57 } },
+            "edittime": { "type": "DATETIME", "options": { "seqno": 7, "startIndex": 58, "endIndex": 77 } },
+            "sharename": { "type": "STRING", "options": { "seqno": 8, "startIndex": 78 } },
+            "defvalue": { "type": "STRING" },
+            "message": { "type": "STRING" },
+            "remarks": { "type": "STRING", "defaultValue": "test_file_text_fix_length" }
+        },
+        "settings": { "skip": 1, "delimiter": ",", "quotable": true }
+    },
+    "test_file_text_tab": {
+        "name": "tso",
+        "alias": { "privateAlias": "PROMPTDB" },
+        "fields": {
+            "mktid": { "type": "STRING", "options": { "seqno": 1 } },
+            "share": { "type": "STRING", "options": { "seqno": 2 } },
+            "unit": { "type": "DECIMAL", "options": { "seqno": 3 } },
+            "price": { "type": "DECIMAL", "options": { "seqno": 4 } },
+            "yield": { "type": "INTEGER" },
+            "effdate": { "type": "DATE", "options": { "seqno": 5 } },
+            "efftime": { "type": "TIME", "options": { "seqno": 6 } },
+            "edittime": { "type": "DATETIME", "options": { "seqno": 7 } },
+            "sharename": { "type": "STRING", "options": { "seqno": 8 } },
+            "defvalue": { "type": "STRING" },
+            "message": { "type": "STRING" },
+            "remarks": { "type": "STRING", "defaultValue": "test_file_text_tab" }
+        },
+        "settings": { "skip": 1, "delimiter": "TAB", "quotable": true }
+    },
+    "test_file_text_header": {
+        "name": "tso",
+        "alias": { "privateAlias": "PROMPTDB" },
+        "fields": {
+            "mktid": { "type": "STRING", "options": { "seqno": 1 } },
+            "share": { "type": "STRING", "options": { "seqno": 2 } },
+            "unit": { "type": "DECIMAL", "options": { "seqno": 3 } },
+            "price": { "type": "DECIMAL", "options": { "seqno": 4 } },
+            "yield": { "type": "INTEGER" },
+            "effdate": { "type": "DATE", "options": { "seqno": 5 } },
+            "efftime": { "type": "TIME", "options": { "seqno": 6 } },
+            "edittime": { "type": "DATETIME", "options": { "seqno": 7 } },
+            "sharename": { "type": "STRING", "options": { "seqno": 8 } },
+            "defvalue": { "type": "STRING", "options": { "header": "defvalue" } },
+            "message": { "type": "STRING", "options": { "header": { "seqno": 2, "line": 1 } } },
+            "remarks": { "type": "STRING", "defaultValue": "test_file_text_header" }
+        },
+        "settings": { "skip": 2, "delimiter": ",", "quotable": true,
+            "header": {
+                "defvalue": { "type": "STRING", "options": { "seqno": 1, "line": 1 } } ,
+                "message": { "type": "STRING", "options": { "seqno": 2, "line": 1 } } 
+            }
+        }
+    },
+    "test_file_json": {
+        "name": "tso",
+        "alias": { "privateAlias": "PROMPTDB" },
+        "fields": {
+            "mktid": { "type": "STRING" },
+            "share": { "type": "STRING" },
+            "unit": { "type": "DECIMAL" },
+            "price": { "type": "DECIMAL" },
+            "yield": { "type": "INTEGER" },
+            "effdate": { "type": "DATE" },
+            "efftime": { "type": "TIME" },
+            "edittime": { "type": "DATETIME" },
+            "sharename": { "type": "STRING" },
+            "defvalue": { "type": "STRING", "options": { "mapper": "@body.defvalue" } },
+            "message": { "type": "STRING", "options": { "mapper": "message.remark" }  },
+            "remarks": { "type": "STRING", "defaultValue": "test_file_json" }
+        },
+        "settings": { "xpath": "rows" }
+    },
+    "test_file_json_array": {
+        "name": "tso",
+        "alias": { "privateAlias": "PROMPTDB" },
+        "fields": {
+            "mktid": { "type": "STRING" },
+            "share": { "type": "STRING" },
+            "unit": { "type": "DECIMAL" },
+            "price": { "type": "DECIMAL" },
+            "yield": { "type": "INTEGER" },
+            "effdate": { "type": "DATE" },
+            "efftime": { "type": "TIME" },
+            "edittime": { "type": "DATETIME" },
+            "sharename": { "type": "STRING" },
+            "defvalue": { "type": "STRING" },
+            "message": { "type": "STRING" },
+            "remarks": { "type": "STRING", "defaultValue": "test_file_json_array" }
+        }
+    },
+    "test_file_text_no_save": {
+        "name": "",
+        "alias": { "privateAlias": "PROMPTDB" },
+        "fields": {
+            "mktid": { "type": "STRING", "options": { "seqno": 1 } },
+            "share": { "type": "STRING", "options": { "seqno": 2 } },
+            "unit": { "type": "DECIMAL", "options": { "seqno": 3 } },
+            "price": { "type": "DECIMAL", "options": { "seqno": 4 } },
+            "yield": { "type": "INTEGER" },
+            "effdate": { "type": "DATE", "options": { "seqno": 5 } },
+            "efftime": { "type": "TIME", "options": { "seqno": 6 } },
+            "edittime": { "type": "DATETIME", "options": { "seqno": 7 } },
+            "sharename": { "type": "STRING", "options": { "seqno": 8 } },
+            "defvalue": { "type": "STRING" },
+            "message": { "type": "STRING" },
+            "remarks": { "type": "STRING", "defaultValue": "test_file_text_no_save" }
+        },
+        "settings": { "skip": 1, "delimiter": ",", "quotable": true }
+    },
+    "test_file_excel": {
+        "name": "tso",
+        "alias": { "privateAlias": "PROMPTDB" },
+        "fields": {
+            "mktid": { "type": "STRING", "options": { "seqno": 1 } },
+            "share": { "type": "STRING", "options": { "seqno": 2 } },
+            "unit": { "type": "DECIMAL", "options": { "seqno": 3 } },
+            "price": { "type": "DECIMAL", "options": { "seqno": 4 } },
+            "yield": { "type": "INTEGER" },
+            "effdate": { "type": "DATE", "options": { "seqno": 5 } },
+            "efftime": { "type": "TIME", "options": { "seqno": 6 } },
+            "edittime": { "type": "DATETIME", "options": { "seqno": 7 } },
+            "sharename": { "type": "STRING", "options": { "seqno": 8 } },
+            "defvalue": { "type": "STRING" },
+            "message": { "type": "STRING" },
+            "remarks": { "type": "STRING", "defaultValue": "test_file_excel" }
+        },
+        "settings": { "skip": 1, "quotable": true, "sheetname": "tso" }
+    },
+    "test_file_excel_header": {
+        "name": "tso",
+        "alias": { "privateAlias": "PROMPTDB" },
+        "fields": {
+            "mktid": { "type": "STRING", "options": { "seqno": 1 } },
+            "share": { "type": "STRING", "options": { "seqno": 2 } },
+            "unit": { "type": "DECIMAL", "options": { "seqno": 3 } },
+            "price": { "type": "DECIMAL", "options": { "seqno": 4 } },
+            "yield": { "type": "INTEGER" },
+            "effdate": { "type": "DATE", "options": { "seqno": 5 } },
+            "efftime": { "type": "TIME", "options": { "seqno": 6 } },
+            "edittime": { "type": "DATETIME", "options": { "seqno": 7 } },
+            "sharename": { "type": "STRING", "options": { "seqno": 8 } },
+            "defvalue": { "type": "STRING", "options": { "header": "defvalue" } },
+            "message": { "type": "STRING", "options": { "header": { "seqno": 4, "line": 1 } } },
+            "remarks": { "type": "STRING", "defaultValue": "test_file_excel_header" }
+        },
+        "settings": { "skip": 2, "quotable": true, "sheetname": "tso",
+            "header": {
+                "defvalue": { "type": "STRING", "options": { "seqno": 2, "line": 1 } } ,
+                "message": { "type": "STRING", "options": { "seqno": 4, "line": 1 } } 
+            }
+        }
+    },
+    "test_file_xlsx": {
+        "name": "tso",
+        "alias": { "privateAlias": "PROMPTDB" },
+        "fields": {
+            "mktid": { "type": "STRING", "options": { "seqno": 1 } },
+            "share": { "type": "STRING", "options": { "seqno": 2 } },
+            "unit": { "type": "DECIMAL", "options": { "seqno": 3 } },
+            "price": { "type": "DECIMAL", "options": { "seqno": 4 } },
+            "yield": { "type": "INTEGER" },
+            "effdate": { "type": "DATE", "options": { "seqno": 5 } },
+            "efftime": { "type": "TIME", "options": { "seqno": 6 } },
+            "edittime": { "type": "DATETIME", "options": { "seqno": 7 } },
+            "sharename": { "type": "STRING", "options": { "seqno": 8 } },
+            "defvalue": { "type": "STRING" },
+            "message": { "type": "STRING" },
+            "remarks": { "type": "STRING", "defaultValue": "test_file_xlsx" }
+        },
+        "settings": { "skip": 1, "quotable": true, "sheetname": "tso" }
+    },
+    "test_file_xlsx_header": {
+        "name": "tso",
+        "alias": { "privateAlias": "PROMPTDB" },
+        "fields": {
+            "mktid": { "type": "STRING", "options": { "seqno": 1 } },
+            "share": { "type": "STRING", "options": { "seqno": 2 } },
+            "unit": { "type": "DECIMAL", "options": { "seqno": 3 } },
+            "price": { "type": "DECIMAL", "options": { "seqno": 4 } },
+            "yield": { "type": "INTEGER" },
+            "effdate": { "type": "DATE", "options": { "seqno": 5 } },
+            "efftime": { "type": "TIME", "options": { "seqno": 6 } },
+            "edittime": { "type": "DATETIME", "options": { "seqno": 7 } },
+            "sharename": { "type": "STRING", "options": { "seqno": 8 } },
+            "defvalue": { "type": "STRING", "options": { "header": "defvalue" } },
+            "message": { "type": "STRING", "options": { "header": { "seqno": 4, "line": 1 } }  },
+            "remarks": { "type": "STRING", "defaultValue": "test_file_xlsx_header" }
+        },
+        "settings": { "skip": 2, "quotable": true, "sheetname": "tso",
+            "header": {
+                "defvalue": { "type": "STRING", "options": { "seqno": 2, "line": 1 } } ,
+                "message": { "type": "STRING", "options": { "seqno": 4, "line": 1 } } 
+            }
+        }
+    },
+    "test_file_xml": {
+        "name": "tso",
+        "alias": { "privateAlias": "PROMPTDB" },
+        "fields": {
+            "mktid": { "type": "STRING" },
+            "share": { "type": "STRING" },
+            "unit": { "type": "DECIMAL" },
+            "price": { "type": "DECIMAL" },
+            "yield": { "type": "INTEGER" },
+            "effdate": { "type": "DATE" },
+            "efftime": { "type": "TIME" },
+            "edittime": { "type": "DATETIME" },
+            "sharename": { "type": "STRING" },
+            "defvalue": { "type": "STRING" },
+            "message": { "type": "STRING" },
+            "remarks": { "type": "STRING", "defaultValue": "test_file_xml" }
+        },
+        "settings": { "xpath": "root.row" }
+    },
+    "test_file_xml_complex": {
+        "name": "tso",
+        "alias": { "privateAlias": "PROMPTDB" },
+        "fields": {
+            "mktid": { "type": "STRING" },
+            "share": { "type": "STRING" },
+            "unit": { "type": "DECIMAL" },
+            "price": { "type": "DECIMAL" },
+            "yield": { "type": "INTEGER" },
+            "effdate": { "type": "DATE" },
+            "efftime": { "type": "TIME" },
+            "edittime": { "type": "DATETIME" },
+            "sharename": { "type": "STRING" },
+            "defvalue": { "type": "STRING", "options": { "mapper": "item.defvalue"} },
+            "message": { "type": "STRING", "options": { "mapper": "@root.message"} },
+            "remarks": { "type": "STRING", "defaultValue": "test_file_xml_complex" }
+        },
+        "settings": { "xpath": "root.items.row" }
+    },
+    "test_file_text_error": {
+        "name": "tso",
+        "alias": { "privateAlias": "PROMPTDB" },
+        "fields": {
+            "mktid": { "type": "STRING", "options": { "seqno": 1 } },
+            "share": { "type": "STRING", "options": { "seqno": 2 } },
+            "unit": { "type": "DECIMAL", "options": { "seqno": 3 } },
+            "price": { "type": "DECIMAL", "options": { "seqno": 4 } },
+            "yield": { "type": "INTEGER" },
+            "effdate": { "type": "DATE", "options": { "seqno": 5 } },
+            "efftime": { "type": "TIME", "options": { "seqno": 6 } },
+            "edittime": { "type": "DATETIME", "options": { "seqno": 7 } },
+            "sharename": { "type": "STRING", "options": { "seqno": 8 } },
+            "defvalue": { "type": "STRING" },
+            "message": { "type": "STRING" },
+            "remarks": { "type": "STRING", "defaultValue": "test_file_text_error" }
+        },
+        "settings": { "skip": 1, "delimiter": ",", "quotable": true, "remarks": "default throw if error (verifyError=true,abandonError=true)" }
+    },
+    "test_file_text_error_verify": {
+        "name": "tso",
+        "alias": { "privateAlias": "PROMPTDB" },
+        "fields": {
+            "mktid": { "type": "STRING", "options": { "seqno": 1 } },
+            "share": { "type": "STRING", "options": { "seqno": 2 } },
+            "unit": { "type": "DECIMAL", "options": { "seqno": 3 } },
+            "price": { "type": "DECIMAL", "options": { "seqno": 4 } },
+            "yield": { "type": "INTEGER" },
+            "effdate": { "type": "DATE", "options": { "seqno": 5 } },
+            "efftime": { "type": "TIME", "options": { "seqno": 6 } },
+            "edittime": { "type": "DATETIME", "options": { "seqno": 7 } },
+            "sharename": { "type": "STRING", "options": { "seqno": 8 } },
+            "defvalue": { "type": "STRING" },
+            "message": { "type": "STRING" },
+            "remarks": { "type": "STRING", "defaultValue": "test_file_text_error_verify" }
+        },
+        "settings": { "skip": 1, "delimiter": ",", "quotable": true, "verifyError": false, "remarks": "This throw if error but try to all data list" }
+    },
+    "test_file_text_error_abandon": {
+        "name": "tso",
+        "alias": { "privateAlias": "PROMPTDB" },
+        "fields": {
+            "mktid": { "type": "STRING", "options": { "seqno": 1 } },
+            "share": { "type": "STRING", "options": { "seqno": 2 } },
+            "unit": { "type": "DECIMAL", "options": { "seqno": 3 } },
+            "price": { "type": "DECIMAL", "options": { "seqno": 4 } },
+            "yield": { "type": "INTEGER" },
+            "effdate": { "type": "DATE", "options": { "seqno": 5 } },
+            "efftime": { "type": "TIME", "options": { "seqno": 6 } },
+            "edittime": { "type": "DATETIME", "options": { "seqno": 7 } },
+            "sharename": { "type": "STRING", "options": { "seqno": 8 } },
+            "defvalue": { "type": "STRING" },
+            "message": { "type": "STRING" },
+            "remarks": { "type": "STRING", "defaultValue": "test_file_text_error_verify" }
+        },
+        "settings": { "skip": 1, "delimiter": ",", "quotable": true, "abandonError": false, "verifyError": false, "remarks": "This do not throw if error and try to all data" }
+    },
+    "test_file_text_autocommit": {
+        "name": "tso",
+        "alias": { "privateAlias": "PROMPTDB" },
+        "fields": {
+            "mktid": { "type": "STRING", "options": { "seqno": 1 } },
+            "share": { "type": "STRING", "options": { "seqno": 2 } },
+            "unit": { "type": "DECIMAL", "options": { "seqno": 3 } },
+            "price": { "type": "DECIMAL", "options": { "seqno": 4 } },
+            "yield": { "type": "INTEGER" },
+            "effdate": { "type": "DATE", "options": { "seqno": 5 } },
+            "efftime": { "type": "TIME", "options": { "seqno": 6 } },
+            "edittime": { "type": "DATETIME", "options": { "seqno": 7 } },
+            "sharename": { "type": "STRING", "options": { "seqno": 8 } },
+            "defvalue": { "type": "STRING" },
+            "message": { "type": "STRING" },
+            "remarks": { "type": "STRING", "defaultValue": "test_file_text_error" }
+        },
+        "settings": { "skip": 1, "delimiter": ",", "quotable": true, "autoCommit": true, "remarks": "This always save if error" }
+    },
+
+
     "test_simple": {
         "name": "tmigratetest",
         "alias": { "privateAlias": "PROMPTDB" },
@@ -130,7 +507,7 @@
             "curtime": { "type": "DATETIME", "defaultValue": "#current_timestamp" },
             "remark": { "type": "STRING", "defaultValue": "test_xpath" }
         },
-        "xpath": "datarow.rows"
+        "settings": { "xpath": "datarow.rows" }
     },
     "test_xpath_complex": {
         "name": "tmigratetest",
@@ -159,7 +536,7 @@
             "curtime": { "type": "DATETIME", "defaultValue": "#current_timestamp" },
             "remark": { "type": "STRING", "defaultValue": "test_xpath_complex" }
         },
-        "xpath": "datarow.rows"
+        "settings": { "xpath": "datarow.rows" }
     },
     "test_xpath_complex_mapper_struct": {
         "name": "tmigratetest",
@@ -195,7 +572,7 @@
             "curtime": { "type": "DATETIME", "defaultValue": "#current_timestamp" },
             "remark": { "type": "STRING", "defaultValue": "test_xpath_complex_mapper_struct" }
         },
-        "xpath": "datarow.rows"
+        "settings": { "xpath": "datarow.rows" }
     },
     "test_simple_call_api": {
         "name": "tmigratetest",

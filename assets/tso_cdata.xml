@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+<row><mktid>TSO</mktid><share>BBL</share><unit>650</unit><price>3.25</price><effdate>01/05/2005</effdate><efftime>10:10:10</efftime><edittime>01/05/2005 11:00:00</edittime><sharename>ธนาคารกรุงเทพ</sharename><message>Testing</message></row>
+<row><mktid>TSO</mktid><share>SCB</share><unit>240</unit><price>4.50</price><effdate>01/05/2005</effdate><efftime>10:10:10</efftime><edittime>01/05/2005 11:00:00</edittime><sharename>ธนาคารไทยพาณิชน์</sharename><message><![CDATA[S&P]]></message></row>
+<row><mktid>TSO</mktid><share>TMB</share><unit>750</unit><price>6.25</price><effdate>01/05/2005</effdate><efftime>10:10:10</efftime><edittime>01/05/2005 11:00:00</edittime><sharename>ธนาคารทหารไทย</sharename><message><![CDATA[What's up?]]></message></row>
+<row><mktid>TSO</mktid><share>CIMB</share><unit>350</unit><price>7.25</price><effdate>01/05/2005</effdate><efftime>10:10:10</efftime><edittime>01/05/2005 11:00:00</edittime><sharename>ธนาคารซีไอเอ็มบี</sharename><message><![CDATA[A&W]]></message></row>
+<row><mktid>TSO</mktid><share>KTB</share><unit>350</unit><price>7.25</price><effdate>01/05/2005</effdate><efftime>10:10:10</efftime><edittime>01/05/2005 11:00:00</edittime><sharename>ธนาคารกรุงไทย</sharename><message><![CDATA[How do you do?]]></message></row>
+</root>

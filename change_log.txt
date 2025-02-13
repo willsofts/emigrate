@@ -1,0 +1,33 @@
+2025-02-06
++ text file
+    - csv file
+    - fix length file
+    - file with TAB delimiter
+    - support quote
++ json file
++ upload files
++ suppoprt unsave into persistence but return json dataset
+    - define model.name = ""
+    - define parameter stored = "false"
+
+2025-02-11
++ excel (lib: exceljs), xslsx,xls (lib: xlsx)
++ xml (fast-xml-parser)
++ support sync/async (async=true)
++ support center api
+    - api/migratefile/file
+    - upload/migrate/file
+
+2025-02-13
++ support error handling
+    - verifyError : 
+        - true : stop looping data save
+        - false : continue looping data save
+    - abandonError : 
+        - true : throw if error found (this roll back work)
+        - false : do not throw when error (this commit work)
++ support auto commit
++ support logging (table: tmigratelog)
++ support result/logging api
+    - api/migratelog/get
+

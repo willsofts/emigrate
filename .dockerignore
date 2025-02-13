@@ -5,3 +5,10 @@ logs
 node_modules
 pdf
 npm-debug.log
+assets
+test
+change_log.txt
+docker_push.txt
+docker-compose.yml
+Dockerfile
+testme.txt

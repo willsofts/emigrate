@@ -1,5 +1,4 @@
-import { KnDBConfig } from "@willsofts/will-sql";
-import { KnModel } from "@willsofts/will-db";
+import { KnDBConfig, KnRecordSet } from "@willsofts/will-sql";
 
 export interface MigrateSetting {
     type?: string;
@@ -17,9 +16,23 @@ export interface MigrateConfig extends KnDBConfig, MigrateSetting {
 
 }
 
-export interface MigrateModel extends KnModel {
-    xpath?: string;
-    settings?: any;
+export interface MigrateRecordSet extends KnRecordSet {
+    taskid: string;
+    processid: string;
+    totalrecords: number;
+    errorrecords: number;
+    skiprecords: number;
+}
+
+export interface MigrateInfo {
+    exception: boolean;
+    errormessage: string;
+    errorcontents: any[];
+}
+
+export interface MigrateReject {
+    reject: boolean;
+    throwable: any;
 }
 
 export interface RefConfig {

@@ -1,0 +1,7 @@
+[
+{"mktid":"TSO", "share":"BBL", "unit":650, "price":3.25,"effdate":"01/05/2005","efftime":"10:10:10","edittime":"01/05/2005 11:00:00","sharename":"ธนาคารกรุงเทพ"},
+{"mktid":"TSO", "share":"SCB", "unit":240, "price":4.50,"effdate":"01/05/2005","efftime":"10:10:10","edittime":"01/05/2005 11:00:00","sharename":"ธนาคารไทยพาณิชน์"},
+{"mktid":"TSO", "share":"TMB", "unit":750, "price":6.25,"effdate":"01/05/2005","efftime":"10:10:10","edittime":"01/05/2005 11:00:00","sharename":"ธนาคารทหารไทย"},
+{"mktid":"TSO", "share":"CIMB", "unit":350, "price":7.25,"effdate":"01/05/2005","efftime":"10:10:10","edittime":"01/05/2005 11:00:00","sharename":"ธนาคารซีไอเอ็มบี"},
+{"mktid":"TSO", "share":"KTB", "unit":650, "price":3.25,"effdate":"01/05/2005","efftime":"10:10:10","edittime":"01/05/2005 11:00:00","sharename":"ธนาคารกรุงไทย"}
+]
