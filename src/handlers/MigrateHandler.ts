@@ -28,6 +28,7 @@ export class MigrateHandler extends MigrateOperate {
             return Promise.reject(new VerifyError("Model not found",HTTP.NOT_ACCEPTABLE,-16063));
         }
         if(!context.params.processid) context.params.processid = this.randomUUID();
+        if(context.params.dataset) delete context.params.dataset;
         return this.processInserting(context, taskmodel, dataset, context.params.datapart, context.params.filename);
     }
 
@@ -103,8 +104,10 @@ export class MigrateHandler extends MigrateOperate {
         let db = this.getPrivateConnector(model);
         try {
             await db.beginWork();
+            await this.performPreTransaction(context,model,db,dataset);
             let [result,info,reject] = await this.performInsertTransaction(context,model,db,dataset);
             if(!reject.reject) {
+                await this.performPostTransaction(context,model,db,dataset);
                 await db.commitWork();
             } else {
                 db.rollbackWork().catch(ex => this.logger.error(ex));                
@@ -122,7 +125,12 @@ export class MigrateHandler extends MigrateOperate {
     public async performInsertWithAutoCommit(context: KnContextInfo, model: KnModel, dataset: any): Promise<[MigrateRecordSet,MigrateInfo,MigrateReject]> {
         let db = this.getPrivateConnector(model);
         try {
-            return await this.performInsertTransaction(context,model,db,dataset);
+            await this.performPreTransaction(context,model,db,dataset);
+            let [result,info,reject] =  await this.performInsertTransaction(context,model,db,dataset);
+            if(!reject.reject) {
+                await this.performPostTransaction(context,model,db,dataset);
+            }
+            return [result,info,reject];
         } catch(ex: any) {
             this.logger.error(ex);
             return Promise.reject(this.getDBError(ex));
@@ -149,8 +157,8 @@ export class MigrateHandler extends MigrateOperate {
         while(!info.exception && (index < datalist.length)) {
             let data = datalist[index];
             try {
-                context.params = data;
-                await this.performCreating(context, model, db);
+                let ctx : KnContextInfo = { params: data, meta: context.meta };
+                await this.performCreating(ctx, model, db);
                 result.records++;
             } catch(ex: any) {
                 reject.throwable = ex;
@@ -171,6 +179,24 @@ export class MigrateHandler extends MigrateOperate {
             reject.reject = true;
         }
         return [result,info,reject];
+    }
+
+    public async performPreTransaction(context: KnContextInfo, model: KnModel, db: KnDBConnector, dataset: any): Promise<any> {
+        if(model.settings?.statement?.prestatement) {
+            let knsql = this.composeQuery(context,db,model.settings?.statement?.prestatement);
+            if(knsql) {
+                await knsql.executeUpdate(db,context);
+            }
+        }
+    }
+
+    public async performPostTransaction(context: KnContextInfo, model: KnModel, db: KnDBConnector, dataset: any): Promise<any> {
+        if(model.settings?.statement?.poststatement) {
+            let knsql = this.composeQuery(context,db,model.settings?.statement?.poststatement);
+            if(knsql) {
+                await knsql.executeUpdate(db,context);
+            }            
+        }
     }
 
     public async getTaskModel(context: KnContextInfo, taskid: string, model: KnModel = this.model): Promise<KnModel | undefined> {

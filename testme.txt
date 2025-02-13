@@ -164,3 +164,8 @@ curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/migra
 3. test abandon error false
 curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/migratetext/insert -d "{\"taskid\":\"test_file_text_error_abandon\", \"file\": \"./assets/tso_error.txt\"}"
 
+test statement:
+1. post statement
+curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/migratetext/insert -d "{\"taskid\":\"test_file_post_statement\", \"file\": \"./assets/tso.txt\"}"
+2. post statement with parameters
+curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/migratetext/insert -d "{\"taskid\":\"test_file_post_statement_params\", \"file\": \"./assets/tso.txt\", \"message\": \"Testing\"}"

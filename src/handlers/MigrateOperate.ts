@@ -186,7 +186,6 @@ export class MigrateOperate extends MigrateBase {
                     //ensure handler return value if function or procedure?
                     let alwaysAccept = field?.options?.handlerType == "function";
                     let result = func(data,dataset,model,context);
-                    //console.log("function return:",result);
                     if(alwaysAccept) {
                         data[attrname] = result;
                     } else {

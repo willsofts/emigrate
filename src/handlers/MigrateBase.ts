@@ -1,6 +1,7 @@
 import { v4 as uuid } from 'uuid';
 import { KnModel } from "@willsofts/will-db";
-import { KnDBFault } from "@willsofts/will-sql";
+import { KnContextInfo } from "@willsofts/will-core";
+import { KnDBConnector, KnDBFault, KnSQL } from "@willsofts/will-sql";
 import { TknOperateHandler } from "@willsofts/will-serv";
 import { PRIVATE_SECTION } from "../utils/EnvironmentVariable";
 const crypto = require('crypto');
@@ -49,7 +50,6 @@ export class MigrateBase extends TknOperateHandler {
             if(funbody && funbody.length>0) {
                 let text = funbody[1];
                 text = text.replace(/\n/g, ' ');
-                //console.log("function text",text);
                 func = new Function(...args,text);
             }
         }
@@ -74,4 +74,35 @@ export class MigrateBase extends TknOperateHandler {
         return texts;
     }
     
+
+    public createSQL(statement: any) : KnSQL | undefined {
+        if(statement?.sql) {
+            let knsql = new KnSQL(statement.sql);
+            return knsql;
+        }
+        return undefined;
+    }
+
+    public composeQuery(context: KnContextInfo, db: KnDBConnector, statement: any) : KnSQL | undefined {
+        let knsql = this.createSQL(statement);
+        if(knsql) {
+            let [sql,paramnames] = knsql.getExactlySql(db.alias);
+            if(paramnames) {
+                for(let name of paramnames) {
+                    knsql.set(name,context.params[name]);
+                }
+            }
+            if(statement?.parameters) {
+                for(let pr of statement.parameters) {
+                    let [value,found] = this.parseDefaultValue(pr.defaultValue);
+                    if(found) {
+                        knsql.set(pr.name,value);
+                    }
+                }
+            }
+            return knsql;
+        }
+        return undefined;
+    }
+
 }

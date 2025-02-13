@@ -57,7 +57,8 @@ export class MigrateTextHandler extends MigrateHandler {
                 return result;
             }
             if(calling) {
-                let params = { authtoken: authtoken, taskid: taskid, processid: processid, stored: context.params.stored, async: context.params.async, filename: filename, fileinfo: fileinfo, datapart: header, dataset: datalist };
+                let params = { ...context.params, authtoken: authtoken, taskid: taskid, processid: processid, stored: context.params.stored, async: context.params.async, filename: filename, fileinfo: fileinfo, datapart: header, dataset: datalist };
+                this.logger.debug(this.constructor.name+".processInserting: calling params",params);
                 return this.call("migrate.insert",params);
             } else {
                 let handler = new MigrateHandler();
