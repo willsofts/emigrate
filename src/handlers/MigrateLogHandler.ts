@@ -11,7 +11,9 @@ export class MigrateLogHandler extends TknOperateHandler {
         name: "tmigratelog", 
         alias: { privateAlias: this.section },
         fields: {
-            processid: { type: "STRING", key: true, created: true },
+            migrateid: { type: "STRING", key: true, created: true },
+            taskid: { type: "STRING", created: true },
+            processid: { type: "STRING", created: true },
             processdate: { type: "DATE", created: true },
             processtime: { type: "TIME", created: true },
             processmillis: { type: "BIGINT", created: true },
@@ -27,7 +29,6 @@ export class MigrateLogHandler extends TknOperateHandler {
             logname: { type: "STRING" },
             errorname: { type: "STRING" },
             notename: { type: "STRING" },
-            taskid: { type: "STRING" },
             tablename: { type: "STRING" },
             totalrecords: { type: "BIGINT" },
             records: { type: "BIGINT" },
@@ -87,7 +88,7 @@ export class MigrateLogHandler extends TknOperateHandler {
                 let errorcontents = row.errorcontents;
                 if(errorcontents && errorcontents.trim().length > 0) {
                     try { row.errorcontents = JSON.parse(errorcontents); } catch(ex) { }
-                }
+                }                
                 return this.createDataTable(KnOperation.RETRIEVE, row);
             }
             return this.recordNotFound();
@@ -100,6 +101,40 @@ export class MigrateLogHandler extends TknOperateHandler {
     }
 
     protected async performRetrieving(context: KnContextInfo, model: KnModel, db: KnDBConnector): Promise<KnRecordSet> {
+        if(!context.params.migrateid || context.params.migrateid.trim().length==0) return this.createRecordSet();
+        let selstr = this.buildSelectField(context, model);
+        let knsql = new KnSQL("select ");
+        knsql.append(selstr);
+        knsql.append(" from tmigratelog where migrateid = ?migrateid ");
+        knsql.set("migrateid",context.params.migrateid);
+        let rs = await knsql.executeQuery(db);
+        return this.createRecordSet(rs);
+    }
+
+    protected async doGet(context: KnContextInfo, model: KnModel) : Promise<KnDataTable> {
+        let db = this.getPrivateConnector(model);
+        try {
+            let rs = await this.performGetting(context, model, db);
+            if(rs.rows.length>0) {
+                for(let row of rs.rows) {
+                    let errorcontents = row.errorcontents;
+                    if(errorcontents && errorcontents.trim().length > 0) {
+                        try { row.errorcontents = JSON.parse(errorcontents); } catch(ex) { }
+                    }
+                }
+                return this.createDataTable(KnOperation.RETRIEVE, {}, rs.rows);
+            }
+            return this.recordNotFound();
+        } catch(ex: any) {
+            this.logger.error(this.constructor.name,ex);
+            return Promise.reject(this.getDBError(ex));
+		} finally {
+			if(db) db.close();
+        }
+    }
+
+    protected async performGetting(context: KnContextInfo, model: KnModel, db: KnDBConnector): Promise<KnRecordSet> {
+        if(!context.params.processid || context.params.processid.trim().length==0) return this.createRecordSet();
         let selstr = this.buildSelectField(context, model);
         let knsql = new KnSQL("select ");
         knsql.append(selstr);

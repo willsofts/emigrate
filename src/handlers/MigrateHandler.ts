@@ -27,7 +27,9 @@ export class MigrateHandler extends MigrateOperate {
         if(!taskmodel) {
             return Promise.reject(new VerifyError("Model not found",HTTP.NOT_ACCEPTABLE,-16063));
         }
-        if(!context.params.processid) context.params.processid = this.randomUUID();
+        let uuid = this.randomUUID();
+        if(!context.params.migrateid) context.params.migrateid = uuid;
+        if(!context.params.processid) context.params.processid = uuid;
         if(context.params.dataset) delete context.params.dataset;
         return this.processInserting(context, taskmodel, dataset, context.params.datapart, context.params.filename);
     }
@@ -37,8 +39,10 @@ export class MigrateHandler extends MigrateOperate {
         if(!this.userToken) this.userToken = await this.getUserTokenInfo(context);
         let authtoken = this.getTokenKey(context);
         dataset = await this.performTransformation(context, taskmodel, dataset, datapart);
-        let processid = context.params.processid || this.randomUUID();
-        let result : MigrateRecordSet = { taskid: context.params.taskid, processid: processid, totalrecords: 0, errorrecords: 0, skiprecords: 0, ...this.createRecordSet() };
+        let uuid = this.randomUUID();
+        let migrateid = context.params.migrateid || uuid;
+        let processid = context.params.processid || uuid;
+        let result : MigrateRecordSet = { migrateid: migrateid, taskid: context.params.taskid, processid: processid, totalrecords: 0, errorrecords: 0, skiprecords: 0, ...this.createRecordSet() };
         if(taskmodel.name.trim().length == 0 || context.params.stored === "NONE" || context.params.stored === "false") {
             result.rows = dataset;
             result.records = result.rows?.length || 0;
@@ -140,8 +144,10 @@ export class MigrateHandler extends MigrateOperate {
     }
 
     public async performInsertTransaction(context: KnContextInfo, model: KnModel, db: KnDBConnector, dataset: any): Promise<[MigrateRecordSet,MigrateInfo,MigrateReject]> {
-        let processid = context.params.processid || this.randomUUID();
-        let result : MigrateRecordSet = { taskid: context.params.taskid, processid: processid, totalrecords: 0, errorrecords: 0, skiprecords: 0, ...this.createRecordSet() };
+        let uuid = this.randomUUID();
+        let migrateid = context.params.migrateid || uuid;
+        let processid = context.params.processid || uuid;
+        let result : MigrateRecordSet = { migrateid: migrateid, taskid: context.params.taskid, processid: processid, totalrecords: 0, errorrecords: 0, skiprecords: 0, ...this.createRecordSet() };
         let datalist = dataset;
         if(!Array.isArray(dataset)) {
             datalist = [dataset];
@@ -213,11 +219,12 @@ export class MigrateHandler extends MigrateOperate {
 
     public async getMigrateModel(context: KnContextInfo, model: KnModel, db: KnDBConnector, taskid: string): Promise<KnModel | undefined> {
         let knsql = new KnSQL();
-        knsql.append("select t.taskid,t.taskname,t.modelid,t.connectid,");
-        knsql.append("m.modelname,m.tablename,m.tablefields,m.tablesettings ");
-        knsql.append("from tmigratetask t,tmigratemodel m ");
+        knsql.append("select t.taskid,t.taskname,t.connectid,");
+        knsql.append("m.modelid,m.modelname,m.tablename,m.tablefields,m.tablesettings ");
+        knsql.append("from tmigratetask t, tmigratetaskmodel tm, tmigratemodel m ");
         knsql.append("where t.taskid = ?taskid ");
-        knsql.append("and t.modelid = m.modelid ");
+        knsql.append("and t.taskid = tm.taskid ");
+        knsql.append("and tm.modelid = m.modelid ");
         knsql.set("taskid",taskid);
         let rs = await knsql.executeQuery(db,context);
         if(rs && rs.rows?.length>0) {

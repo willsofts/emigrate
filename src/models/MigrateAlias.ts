@@ -17,6 +17,7 @@ export interface MigrateConfig extends KnDBConfig, MigrateSetting {
 }
 
 export interface MigrateRecordSet extends KnRecordSet {
+    migrateid: string;
     taskid: string;
     processid: string;
     totalrecords: number;

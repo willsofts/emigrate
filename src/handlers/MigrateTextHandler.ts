@@ -37,7 +37,9 @@ export class MigrateTextHandler extends MigrateHandler {
         if(!taskmodel) {
             return Promise.reject(new VerifyError("Model not found",HTTP.NOT_ACCEPTABLE,-16063));
         }
-        if(!context.params.processid) context.params.processid = this.randomUUID();
+        let uuid = this.randomUUID();
+        if(!context.params.migrateid) context.params.migrateid = uuid;
+        if(!context.params.processid) context.params.processid = uuid;
         return this.processInserting(context,taskmodel,filename,calling,file);
     }
 
@@ -45,9 +47,11 @@ export class MigrateTextHandler extends MigrateHandler {
         if(!this.userToken) this.userToken = await this.getUserTokenInfo(context);
         let authtoken = this.getTokenKey(context);
         let taskid = context.params.taskid;
-        let processid = context.params.processid || this.randomUUID();
+        let uuid = this.randomUUID();
+        let migrateid = context.params.migrateid || uuid;
+        let processid = context.params.processid || uuid;
         this.logger.debug(this.constructor.name+".processInserting: model",taskmodel,"filename",filename);
-        let result = { taskid: context.params.taskid, processid: processid, totalrecords: 0, errorrecords: 0, skiprecords: 0, ...this.createRecordSet() };
+        let result = { migrateid: migrateid, taskid: context.params.taskid, processid: processid, totalrecords: 0, errorrecords: 0, skiprecords: 0, ...this.createRecordSet() };
         let [datalist,header] = await this.performReading(context, taskmodel, filename);
         if(datalist) {
             //check empty array of empty object
@@ -57,8 +61,8 @@ export class MigrateTextHandler extends MigrateHandler {
                 return result;
             }
             if(calling) {
-                let params = { ...context.params, authtoken: authtoken, taskid: taskid, processid: processid, stored: context.params.stored, async: context.params.async, filename: filename, fileinfo: fileinfo, datapart: header, dataset: datalist };
-                this.logger.debug(this.constructor.name+".processInserting: calling params",params);
+                let params = { ...context.params, authtoken: authtoken, migrateid: migrateid, taskid: taskid, processid: processid, filename: filename, fileinfo: fileinfo, datapart: header, dataset: datalist };
+                //this.logger.debug(this.constructor.name+".processInserting: calling params",params);
                 return this.call("migrate.insert",params);
             } else {
                 let handler = new MigrateHandler();
