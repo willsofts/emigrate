@@ -1,9 +1,12 @@
+import { HTTP } from "@willsofts/will-api";
 import { KnModel, KnOperation } from "@willsofts/will-db";
 import { TknOperateHandler } from "@willsofts/will-serv";
 import { KnContextInfo, KnDataTable } from '@willsofts/will-core';
 import { Utilities } from "@willsofts/will-util";
-import { KnDBConnector, KnSQLInterface, KnRecordSet, KnSQL } from "@willsofts/will-sql";
+import { KnDBConnector, KnSQLInterface, KnRecordSet, KnSQL, KnResultSet } from "@willsofts/will-sql";
 import { PRIVATE_SECTION } from "../utils/EnvironmentVariable";
+import { Request, Response } from 'express';
+import path from 'path';
 
 export class MigrateLogHandler extends TknOperateHandler {
     public section = PRIVATE_SECTION;
@@ -142,6 +145,75 @@ export class MigrateLogHandler extends TknOperateHandler {
         knsql.set("processid",context.params.processid);
         let rs = await knsql.executeQuery(db);
         return this.createRecordSet(rs);
+    }
+
+    public override async report(context: KnContextInfo, req: Request, res: Response) : Promise<void> {
+        this.logger.debug(this.constructor.name+".report: params",context.params);
+        let rs = await this.doGetLog(context);
+        if(rs && rs.rows?.length > 0) {
+            let row = rs.rows[0];
+            let filename = row.tablename;
+            if(row.sourcefile && row.sourcefile.trim().length > 0) path.parse(row.sourcefile).name;
+            let jsoncontents = [];
+            if(row.errorcontents) { 
+                try { jsoncontents = JSON.parse(row.errorcontents); } catch(ex) { }
+            }
+            if("json"==context.params.type) {
+                res.attachment(filename+".json");
+                res.json(jsoncontents);
+            } else {
+                res.attachment(filename+".txt");
+                //res.send(row.errorcontents);
+                if(jsoncontents.length > 0) {
+                    let keys = Object.keys(jsoncontents[0]).join(",");
+                    res.write(keys+"\n");
+                    for(let data of jsoncontents) {
+                        let values = Object.values(data).join(",");
+                        res.write(values+"\n");
+                    }
+                    res.end();    
+                } else {
+                    res.send("");
+                }
+            }
+            return;
+        }
+        res.status(HTTP.NOT_FOUND).send("Not found");
+    }
+
+    protected async doGetLog(context: KnContextInfo, model: KnModel = this.model) : Promise<KnResultSet> {
+        let processid = context.params.processid;
+        let migrateid = context.params.migrateid;
+        if((!processid || processid.trim().length == 0) && (!migrateid || migrateid.trim().length == 0)) return this.createRecordSet();
+        let db = this.getPrivateConnector(model);
+        try {
+            let filter = " where ";
+            let knsql = new KnSQL();
+            knsql.append("select taskid,tablename,sourcefile,errormessage,errorcontents ");
+            knsql.append("from tmigratelog ");
+            if(migrateid && migrateid.trim().length > 0) {
+                knsql.append(filter).append("migrateid = ?migrateid ");
+                knsql.set("migrateid",migrateid);
+                filter = " and ";
+            }
+            if(processid && processid.trim().length > 0) {
+                knsql.append(filter).append("processid = ?processid ");
+                knsql.set("processid",processid);
+                filter = " and ";
+            }
+            if(context.params.processstatus && context.params.processstatus.trim().length > 0) {
+                knsql.append(filter).append("processstatus = ?processstatus ");
+                knsql.set("processstatus",context.params.processstatus);
+                filter = " and ";
+            }
+            let rs = await knsql.executeQuery(db);
+            return this.createRecordSet(rs);
+        } catch(ex: any) {
+            this.logger.error(this.constructor.name,ex);
+            return Promise.reject(this.getDBError(ex));
+		} finally {
+			if(db) db.close();
+        }
     }
 
 }

@@ -31,5 +31,18 @@
 + support auto commit
 + support logging (table: tmigratelog)
 + support result/logging api
-    - api/migratelog/get
+    - api/migratelog/get (with processid)
++ support pre/post statement
 
+2025-02-14
++ support result/logging api
+    - api/migratelog/retrieve (with migrateid)
+    - api/migratelog/get (with processid)
++ support logging by command line running
++ support multi models
+
+2025-02-15
++ support report logging error api
+    - report/migrate/log
+    - report/migrate/log/txt
+    - report/migrate/log/json

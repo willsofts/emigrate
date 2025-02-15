@@ -3,7 +3,8 @@ import { KnModel } from "@willsofts/will-db";
 import { KnDBConnector, KnSQL } from "@willsofts/will-sql";
 import { KnContextInfo, KnValidateInfo, VerifyError } from '@willsofts/will-core';
 import { MigrateOperate } from "./MigrateOperate";
-import { MigrateConfig, MigrateRecordSet, MigrateInfo, MigrateReject } from "../models/MigrateAlias";
+import { MigrateConfig, MigrateRecordSet, MigrateResultSet, MigrateInfo, MigrateReject, MigrateModel, MigrateParams } from "../models/MigrateAlias";
+import { MigrateLogHandler } from "./MigrateLogHandler";
 
 const task_models = require("../../config/model.json");
 
@@ -17,47 +18,58 @@ export class MigrateHandler extends MigrateOperate {
         return Promise.resolve(vi);
     }
 
-    public override async doInserting(context: KnContextInfo, model: KnModel = this.model): Promise<MigrateRecordSet> {        
+    public override async doInserting(context: KnContextInfo, model: KnModel = this.model): Promise<MigrateResultSet> {        
         let taskid = context.params.taskid;
         let dataset = context.params.dataset;
         if(!dataset) dataset = context.params;        
         let body = context.options?.parentCtx?.params?.req?.body;
         if(body && Array.isArray(body)) dataset = body;
         let taskmodel = await this.getTaskModel(context,taskid,model);
-        if(!taskmodel) {
+        if(!taskmodel || taskmodel.models?.length==0) {
             return Promise.reject(new VerifyError("Model not found",HTTP.NOT_ACCEPTABLE,-16063));
         }
         let uuid = this.randomUUID();
         if(!context.params.migrateid) context.params.migrateid = uuid;
         if(!context.params.processid) context.params.processid = uuid;
         if(context.params.dataset) delete context.params.dataset;
-        return this.processInserting(context, taskmodel, dataset, context.params.datapart, context.params.filename);
+        let param : MigrateParams = { authtoken: this.getTokenKey(context), filename: context.params.filename, fileinfo: context.params.fileinfo, calling: true };
+        return this.processInserting(context, taskmodel, param, dataset, context.params.datapart);
     }
 
-    public async processInserting(context: KnContextInfo, taskmodel: KnModel, dataset: any, datapart?: any, filename?: string, fileinfo?: any): Promise<MigrateRecordSet> {
-        if(!fileinfo) fileinfo = context.params.fileinfo;
+    public async processInserting(context: KnContextInfo, migratemodel: MigrateModel, param: MigrateParams, dataset: any, datapart?: any): Promise<MigrateResultSet> {
+        if(!context.params.processid) context.params.processid = this.randomUUID();
+        let result : MigrateResultSet = { taskid: context.params.taskid, processid: context.params.processid, resultset: [] };
+        for(let taskmodel of migratemodel.models) {
+            context.params.migrateid = this.randomUUID();
+            let rs = await this.processInsertingModel(context, taskmodel, param, dataset, datapart);
+            result.resultset.push(rs);
+        }
+        return result;
+    }
+
+    public async processInsertingModel(context: KnContextInfo, taskmodel: KnModel, param: MigrateParams, dataset: any, datapart?: any): Promise<MigrateRecordSet> {
+        if(!param.fileinfo) param.fileinfo = context.params.fileinfo;
+        if(!param.authtoken) param.authtoken = this.getTokenKey(context);
         if(!this.userToken) this.userToken = await this.getUserTokenInfo(context);
-        let authtoken = this.getTokenKey(context);
         dataset = await this.performTransformation(context, taskmodel, dataset, datapart);
         let uuid = this.randomUUID();
         let migrateid = context.params.migrateid || uuid;
         let processid = context.params.processid || uuid;
-        let result : MigrateRecordSet = { migrateid: migrateid, taskid: context.params.taskid, processid: processid, totalrecords: 0, errorrecords: 0, skiprecords: 0, ...this.createRecordSet() };
+        let result : MigrateRecordSet = { migrateid: migrateid, processid: processid, taskid: context.params.taskid, modelname: taskmodel.name, totalrecords: 0, errorrecords: 0, skiprecords: 0, ...this.createRecordSet() };
         if(taskmodel.name.trim().length == 0 || context.params.stored === "NONE" || context.params.stored === "false") {
             result.rows = dataset;
             result.records = result.rows?.length || 0;
             return result;
         }
-        let params = {authtoken: authtoken, ...result, tablename: taskmodel.name, processfile: fileinfo?.path, sourcefile: fileinfo?.originalname || filename, filesize: fileinfo?.size };
-        this.call("migratelog.insert",params).catch(ex => this.logger.error(ex));
+        this.insertLogging(context, taskmodel, param, result);
         if(context.params.async=="true") {
             this.performInserting(context, taskmodel, dataset).then(value => {
                 let rs = value[0];
                 let info = value[1];
                 let reject = value[2];
-                this.updateLogging(authtoken,rs,info,reject);
+                this.updateLogging(context,param,rs,info,reject);
             }).catch(ex => { 
-                this.errorLogging(authtoken,result,ex);
+                this.errorLogging(context,param,result,ex);
             });
             return result;    
         } else {
@@ -66,9 +78,9 @@ export class MigrateHandler extends MigrateOperate {
             let reject: MigrateReject | undefined = undefined;
             try {
                 [rs,info,reject] = await this.performInserting(context, taskmodel, dataset);
-                this.updateLogging(authtoken,rs,info,reject);
+                this.updateLogging(context,param,rs,info,reject);
             } catch(ex) {
-                this.errorLogging(authtoken,result,ex);
+                this.errorLogging(context,param,result,ex);
                 return Promise.reject(this.getDBFault(ex,processid));
             }
             if(reject?.reject) {
@@ -78,22 +90,48 @@ export class MigrateHandler extends MigrateOperate {
         }
     }
 
-    private updateLogging(authtoken: string|undefined, rs: MigrateRecordSet, info: MigrateInfo, reject: MigrateReject) {
+    private insertLogging(context: KnContextInfo, taskmodel: KnModel, param: MigrateParams, rs: MigrateRecordSet) {
+        let params = {authtoken: param.authtoken, ...rs, tablename: taskmodel.name, processfile: param.fileinfo?.path, sourcefile: param.fileinfo?.originalname || param.filename, filesize: param.fileinfo?.size };
+        if(param.calling) {
+            this.call("migratelog.insert",params).catch(ex => this.logger.error(ex));
+        } else {
+            let handler = new MigrateLogHandler();
+            handler.obtain(this.broker,this.logger);
+            handler.userToken = this.userToken;
+            handler.insert({params: params, meta: context.meta}).catch(ex => this.logger.error(ex));
+        }
+    }
+
+    private updateLogging(context: KnContextInfo, param: MigrateParams, rs: MigrateRecordSet, info: MigrateInfo, reject: MigrateReject) {
         let processstatus = "DONE";
         let errormessage = undefined;
         if(reject.reject) {
             processstatus = "ERROR";
             errormessage = this.getDBError(reject.throwable).message;
         }
-        let params = {authtoken: authtoken, ...rs, ...info, processstatus: processstatus, errormessage: errormessage };
-        this.call("migratelog.update",params).catch(ex => this.logger.error(ex));
+        let params = {authtoken: param.authtoken, ...rs, ...info, processstatus: processstatus, errormessage: errormessage };
+        if(param.calling) {
+            this.call("migratelog.update",params).catch(ex => this.logger.error(ex));
+        } else {
+            let handler = new MigrateLogHandler();
+            handler.obtain(this.broker,this.logger);
+            handler.userToken = this.userToken;
+            handler.update({params: params, meta: context.meta}).catch(ex => this.logger.error(ex));
+        }
     }
 
-    private errorLogging(authtoken: string|undefined, result: MigrateRecordSet, ex: any) {
+    private errorLogging(context: KnContextInfo, param: MigrateParams, result: MigrateRecordSet, ex: any) {
         this.logger.error(ex); 
         let err = this.getDBError(ex);
-        let params = {authtoken: authtoken, ...result, processstatus: "ERROR", errormessage: err.message };
-        this.call("migratelog.update",params).catch(ex => this.logger.error(ex));
+        let params = {authtoken: param.authtoken, ...result, processstatus: "ERROR", errormessage: err.message };
+        if(param.calling) {
+            this.call("migratelog.update",params).catch(ex => this.logger.error(ex));
+        } else {
+            let handler = new MigrateLogHandler();
+            handler.obtain(this.broker,this.logger);
+            handler.userToken = this.userToken;
+            handler.update({params: params, meta: context.meta}).catch(ex => this.logger.error(ex));
+        }
     }
 
     public async performInserting(context: KnContextInfo, model: KnModel, dataset: any): Promise<[MigrateRecordSet,MigrateInfo,MigrateReject]> {
@@ -147,7 +185,7 @@ export class MigrateHandler extends MigrateOperate {
         let uuid = this.randomUUID();
         let migrateid = context.params.migrateid || uuid;
         let processid = context.params.processid || uuid;
-        let result : MigrateRecordSet = { migrateid: migrateid, taskid: context.params.taskid, processid: processid, totalrecords: 0, errorrecords: 0, skiprecords: 0, ...this.createRecordSet() };
+        let result : MigrateRecordSet = { migrateid: migrateid, processid: processid, taskid: context.params.taskid, modelname: model.name, totalrecords: 0, errorrecords: 0, skiprecords: 0, ...this.createRecordSet() };
         let datalist = dataset;
         if(!Array.isArray(dataset)) {
             datalist = [dataset];
@@ -205,7 +243,7 @@ export class MigrateHandler extends MigrateOperate {
         }
     }
 
-    public async getTaskModel(context: KnContextInfo, taskid: string, model: KnModel = this.model): Promise<KnModel | undefined> {
+    public async getTaskModel(context: KnContextInfo, taskid: string, model: KnModel = this.model): Promise<MigrateModel | undefined> {
         let db = this.getPrivateConnector(model);
         try {
             return await this.getMigrateModel(context,model,db,taskid);
@@ -217,33 +255,38 @@ export class MigrateHandler extends MigrateOperate {
         }
     }
 
-    public async getMigrateModel(context: KnContextInfo, model: KnModel, db: KnDBConnector, taskid: string): Promise<KnModel | undefined> {
+    public async getMigrateModel(context: KnContextInfo, model: KnModel, db: KnDBConnector, taskid: string): Promise<MigrateModel | undefined> {
+        let results : MigrateModel = { models: [], configs: {} };
         let knsql = new KnSQL();
-        knsql.append("select t.taskid,t.taskname,t.connectid,");
-        knsql.append("m.modelid,m.modelname,m.tablename,m.tablefields,m.tablesettings ");
+        knsql.append("select t.taskid,t.taskname,t.connectid,t.taskconfigs,");
+        knsql.append("m.modelid,m.modelname,m.tablename,m.tablefields,m.tablesettings,tm.seqno ");
         knsql.append("from tmigratetask t, tmigratetaskmodel tm, tmigratemodel m ");
         knsql.append("where t.taskid = ?taskid ");
         knsql.append("and t.taskid = tm.taskid ");
         knsql.append("and tm.modelid = m.modelid ");
+        knsql.append("order by seqno ");
         knsql.set("taskid",taskid);
         let rs = await knsql.executeQuery(db,context);
-        if(rs && rs.rows?.length>0) {
-            let row = rs.rows[0];
-            let privateAlias : string | MigrateConfig = model.alias.privateAlias;
-            let config = await this.getMigrateConfig(context,db,row.connectid);
-            if(config) {
-                privateAlias = config;        
+        if(rs && rs.rows?.length > 0) {
+            results.configs = this.tryParseJSON(rs.rows[0].taskconfigs);
+            for(let row of rs.rows) {
+                let privateAlias : string | MigrateConfig = model.alias.privateAlias;
+                let config = await this.getMigrateConfig(context,db,row.connectid);
+                if(config) {
+                    privateAlias = config;        
+                }
+                let tablefields = this.tryParseJSON(row.tablefields);
+                let tablesettings = this.tryParseJSON(row.tablesettings);
+                let taskmodel = {
+                    name: row.tablename,
+                    alias: { privateAlias: privateAlias },
+                    fields: tablefields,
+                    settings: tablesettings,
+                }
+                results.models.push(taskmodel);
             }
-            let tablefields = this.tryParseJSON(row.tablefields);
-            let tablesettings = this.tryParseJSON(row.tablesettings);
-            let taskmodel = {
-                name: row.tablename,
-                alias: { privateAlias: privateAlias },
-                fields: tablefields,
-                settings: tablesettings,
-            }
-            return taskmodel;
         }
+        if(results.models.length > 0) return results;
         return task_models[taskid];
     }
 

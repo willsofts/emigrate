@@ -3,7 +3,7 @@ Testing
 
 curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/migrate/insert -d "{\"taskid\":\"tmigrate\", \"dataset\":[{\"field1\": \"1111-1\", \"field2\": 2500.55, \"field3\": 100, \"field4\": \"2024-12-17\", \"field5\": \"10:10:10\", \"field6\": \"2024-12-17 10:10:10\", \"field7\": \"A\"}]}"
 
-curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/migrate/insert -d "{\"taskid\":\"tmigratesimple\", \"dataset\":[{\"field1\": \"1111-1\", \"field2\": 2500.55, \"field3\": 100, \"field4\": \"2024-12-17\", \"field5\": \"10:10:10\", \"field6\": \"2024-12-17 10:10:10\", \"field7\": \"A\"}]}"
+curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/migrate/insert -d "{\"taskid\":\"tmigrate\", \"dataset\":[{\"field1\": \"1111-1\", \"field2\": 2500.55, \"field3\": 100, \"field4\": \"2024-12-17\", \"field5\": \"10:10:10\", \"field6\": \"2024-12-17 10:10:10\", \"field7\": \"A\"}]}"
 
 curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/migrate/insert -d @test_simple.json
 
@@ -154,6 +154,8 @@ curl -X POST -H "Content-Type: application/json" -H "AuthToken: ?" http://localh
 + require processid from async response
 curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/migratelog/get -d "{\"processid\":\"423fef5b-735c-4c95-8f71-6a7979f59d8e\"}"
 curl -X POST http://localhost:8080/api/migratelog/get -d "processid=423fef5b-735c-4c95-8f71-6a7979f59d8e"
++ require migrateid from async response
+curl -X POST http://localhost:8080/api/migratelog/retrieve -d "migrateid=423fef5b-735c-4c95-8f71-6a7979f59d8e"
 
 
 test error:
@@ -169,3 +171,11 @@ test statement:
 curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/migratetext/insert -d "{\"taskid\":\"test_file_post_statement\", \"file\": \"./assets/tso.txt\"}"
 2. post statement with parameters
 curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/migratetext/insert -d "{\"taskid\":\"test_file_post_statement_params\", \"file\": \"./assets/tso.txt\", \"message\": \"Testing\"}"
+
+test download/report log:
+1. using migrate id
+curl -X POST http://localhost:8080/report/migrate/log -d "migrateid=f716bc6e-8ce4-4033-9ecb-113852c810c9" -o d:\log1.txt
+curl -X POST http://localhost:8080/report/migrate/log/json -d "migrateid=f716bc6e-8ce4-4033-9ecb-113852c810c9" -o d:\log1.txt
+2. using process id
+curl -X POST http://localhost:8080/report/migrate/log -d "processid=f716bc6e-8ce4-4033-9ecb-113852c810c9" -o d:\log2.txt
+curl -X POST http://localhost:8080/report/migrate/log/json -d "processid=f716bc6e-8ce4-4033-9ecb-113852c810c9" -o d:\log2.txt

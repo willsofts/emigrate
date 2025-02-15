@@ -4,7 +4,7 @@ import { KnContextInfo, KnValidateInfo, KnDataSet } from '@willsofts/will-core';
 import { VerifyError } from "@willsofts/will-core";
 import { MigrateHandler } from "./MigrateHandler";
 import { MigrateUtility } from "../utils/MigrateUtility";
-import { MigrateRecordSet } from "../models/MigrateAlias";
+import { MigrateRecordSet, MigrateResultSet, MigrateParams} from "../models/MigrateAlias";
 import LineByLine from "n-readlines";
 import fs from 'fs';
 
@@ -18,7 +18,7 @@ export class MigrateTextHandler extends MigrateHandler {
         return Promise.resolve(vi);
     }
 
-    public override async doInserting(context: KnContextInfo, model: KnModel = this.model, calling: boolean = true): Promise<MigrateRecordSet> {        
+    public override async doInserting(context: KnContextInfo, model: KnModel = this.model, calling: boolean = true): Promise<MigrateResultSet> {
         let file = context.params.file;
         this.logger.debug(this.constructor.name+".doInserting: file",file);
         let filename = file;
@@ -34,25 +34,26 @@ export class MigrateTextHandler extends MigrateHandler {
         }        
         let taskid = context.params.taskid;
         let taskmodel = await this.getTaskModel(context,taskid);
-        if(!taskmodel) {
+        if(!taskmodel || taskmodel.models?.length==0) {
             return Promise.reject(new VerifyError("Model not found",HTTP.NOT_ACCEPTABLE,-16063));
         }
         let uuid = this.randomUUID();
         if(!context.params.migrateid) context.params.migrateid = uuid;
         if(!context.params.processid) context.params.processid = uuid;
-        return this.processInserting(context,taskmodel,filename,calling,file);
+        let param : MigrateParams = { authtoken: this.getTokenKey(context), filename: filename, fileinfo: file, calling: calling };
+        return this.processInserting(context,taskmodel,param,context.params.dataset);
     }
 
-    public override async processInserting(context: KnContextInfo, taskmodel: KnModel, filename: string, calling: boolean = true, fileinfo?: any): Promise<MigrateRecordSet> {
+    public override async processInsertingModel(context: KnContextInfo, taskmodel: KnModel, param: MigrateParams): Promise<MigrateRecordSet> {
         if(!this.userToken) this.userToken = await this.getUserTokenInfo(context);
-        let authtoken = this.getTokenKey(context);
+        if(!param.authtoken) param.authtoken = this.getTokenKey(context);
         let taskid = context.params.taskid;
         let uuid = this.randomUUID();
         let migrateid = context.params.migrateid || uuid;
         let processid = context.params.processid || uuid;
-        this.logger.debug(this.constructor.name+".processInserting: model",taskmodel,"filename",filename);
-        let result = { migrateid: migrateid, taskid: context.params.taskid, processid: processid, totalrecords: 0, errorrecords: 0, skiprecords: 0, ...this.createRecordSet() };
-        let [datalist,header] = await this.performReading(context, taskmodel, filename);
+        this.logger.debug(this.constructor.name+".processInserting: model",taskmodel,"filename",param.filename);
+        let result = { migrateid: migrateid, processid: processid, taskid: context.params.taskid, modelname: taskmodel.name, totalrecords: 0, errorrecords: 0, skiprecords: 0, ...this.createRecordSet() };
+        let [datalist,header] = await this.performReading(context, taskmodel, param.filename);
         if(datalist) {
             //check empty array of empty object
             if(Array.isArray(datalist) && datalist.length == 0) {
@@ -60,15 +61,15 @@ export class MigrateTextHandler extends MigrateHandler {
             } if(typeof datalist === "object" && Object.keys(datalist).length == 0) {
                 return result;
             }
-            if(calling) {
-                let params = { ...context.params, authtoken: authtoken, migrateid: migrateid, taskid: taskid, processid: processid, filename: filename, fileinfo: fileinfo, datapart: header, dataset: datalist };
+            if(param.calling) {
+                let params = { ...context.params, authtoken: param.authtoken, migrateid: migrateid, taskid: taskid, processid: processid, filename: param.filename, fileinfo: param.fileinfo, datapart: header, dataset: datalist };
                 //this.logger.debug(this.constructor.name+".processInserting: calling params",params);
                 return this.call("migrate.insert",params);
             } else {
                 let handler = new MigrateHandler();
                 handler.obtain(this.broker,this.logger);
                 handler.userToken = this.userToken;
-                return handler.processInserting(context,taskmodel,datalist,header,filename,fileinfo);
+                return handler.processInsertingModel(context,taskmodel,param,datalist,header);
             }
         }
         return result;
@@ -173,7 +174,7 @@ export class MigrateTextHandler extends MigrateHandler {
                 }
             }
             if(Object.keys(dataset).length > 0) {
-                dataset["lineIndex"] = index;
+                dataset["rowIndex"] = index;
                 return dataset;
             }
         }
@@ -201,7 +202,7 @@ export class MigrateTextHandler extends MigrateHandler {
                         if(value) dataset[fname] = settings?.quotable? MigrateUtility.removeDoubleQuote(value.trim()) : value.trim();
                     }
                 }
-                dataset["lineIndex"] = index;
+                dataset["rowIndex"] = index;
                 return dataset;
             }
         }

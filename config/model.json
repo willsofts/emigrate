@@ -1,811 +1,941 @@
 {
-    "test_file_text": {
-        "name": "tso",
-        "alias": { "privateAlias": "PROMPTDB" },
-        "fields": {
-            "mktid": { "type": "STRING", "options": { "seqno": 1 } },
-            "share": { "type": "STRING", "options": { "seqno": 2 } },
-            "unit": { "type": "DECIMAL", "options": { "seqno": 3 } },
-            "price": { "type": "DECIMAL", "options": { "seqno": 4 } },
-            "yield": { "type": "INTEGER" },
-            "effdate": { "type": "DATE", "options": { "seqno": 5 } },
-            "efftime": { "type": "TIME", "options": { "seqno": 6 } },
-            "edittime": { "type": "DATETIME", "options": { "seqno": 7 } },
-            "sharename": { "type": "STRING", "options": { "seqno": 8 } },
-            "defvalue": { "type": "STRING" },
-            "message": { "type": "STRING" },
-            "remarks": { "type": "STRING", "defaultValue": "test_file_text" }
-        },
-        "settings": { "skip": 1, "delimiter": ",", "quotable": true }
+    "test_file_text": { 
+        "models": [ {
+            "name": "tso",
+            "alias": { "privateAlias": "PROMPTDB" },
+            "fields": {
+                "mktid": { "type": "STRING", "options": { "seqno": 1 } },
+                "share": { "type": "STRING", "options": { "seqno": 2 } },
+                "unit": { "type": "DECIMAL", "options": { "seqno": 3 } },
+                "price": { "type": "DECIMAL", "options": { "seqno": 4 } },
+                "yield": { "type": "INTEGER" },
+                "effdate": { "type": "DATE", "options": { "seqno": 5 } },
+                "efftime": { "type": "TIME", "options": { "seqno": 6 } },
+                "edittime": { "type": "DATETIME", "options": { "seqno": 7 } },
+                "sharename": { "type": "STRING", "options": { "seqno": 8 } },
+                "defvalue": { "type": "STRING" },
+                "message": { "type": "STRING" },
+                "remarks": { "type": "STRING", "defaultValue": "test_file_text" }
+            },
+            "settings": { "skip": 1, "delimiter": ",", "quotable": true }
+        } ] 
     },
     "test_file_csv": {
-        "name": "tso",
-        "alias": { "privateAlias": "PROMPTDB" },
-        "fields": {
-            "mktid": { "type": "STRING", "options": { "seqno": 1 } },
-            "share": { "type": "STRING", "options": { "seqno": 2 } },
-            "unit": { "type": "DECIMAL", "options": { "seqno": 3 } },
-            "price": { "type": "DECIMAL", "options": { "seqno": 4 } },
-            "yield": { "type": "INTEGER" },
-            "effdate": { "type": "DATE", "options": { "seqno": 5 } },
-            "efftime": { "type": "TIME", "options": { "seqno": 6 } },
-            "edittime": { "type": "DATETIME", "options": { "seqno": 7 } },
-            "sharename": { "type": "STRING", "options": { "seqno": 8 } },
-            "defvalue": { "type": "STRING" },
-            "message": { "type": "STRING" },
-            "remarks": { "type": "STRING", "defaultValue": "test_file_csv" }
-        },
-        "settings": { "skip": 1, "delimiter": ",", "quotable": true, "decoding": "utf-8" }
+        "models": [ {
+            "name": "tso",
+            "alias": { "privateAlias": "PROMPTDB" },
+            "fields": {
+                "mktid": { "type": "STRING", "options": { "seqno": 1 } },
+                "share": { "type": "STRING", "options": { "seqno": 2 } },
+                "unit": { "type": "DECIMAL", "options": { "seqno": 3 } },
+                "price": { "type": "DECIMAL", "options": { "seqno": 4 } },
+                "yield": { "type": "INTEGER" },
+                "effdate": { "type": "DATE", "options": { "seqno": 5 } },
+                "efftime": { "type": "TIME", "options": { "seqno": 6 } },
+                "edittime": { "type": "DATETIME", "options": { "seqno": 7 } },
+                "sharename": { "type": "STRING", "options": { "seqno": 8 } },
+                "defvalue": { "type": "STRING" },
+                "message": { "type": "STRING" },
+                "remarks": { "type": "STRING", "defaultValue": "test_file_csv" }
+            },
+            "settings": { "skip": 1, "delimiter": ",", "quotable": true, "decoding": "utf-8" }
+        } ]
     },
     "test_file_text_quote": {
-        "name": "tso",
-        "alias": { "privateAlias": "PROMPTDB" },
-        "fields": {
-            "mktid": { "type": "STRING", "options": { "seqno": 1 } },
-            "share": { "type": "STRING", "options": { "seqno": 2 } },
-            "unit": { "type": "DECIMAL", "options": { "seqno": 3 } },
-            "price": { "type": "DECIMAL", "options": { "seqno": 4 } },
-            "yield": { "type": "INTEGER" },
-            "effdate": { "type": "DATE", "options": { "seqno": 5 } },
-            "efftime": { "type": "TIME", "options": { "seqno": 6 } },
-            "edittime": { "type": "DATETIME", "options": { "seqno": 7 } },
-            "sharename": { "type": "STRING", "options": { "seqno": 8 } },
-            "defvalue": { "type": "STRING" },
-            "message": { "type": "STRING" },
-            "remarks": { "type": "STRING", "defaultValue": "test_file_text_quote" }
-        },
-        "settings": { "skip": 1, "delimiter": ",", "quotable": true }
+        "models": [ {
+            "name": "tso",
+            "alias": { "privateAlias": "PROMPTDB" },
+            "fields": {
+                "mktid": { "type": "STRING", "options": { "seqno": 1 } },
+                "share": { "type": "STRING", "options": { "seqno": 2 } },
+                "unit": { "type": "DECIMAL", "options": { "seqno": 3 } },
+                "price": { "type": "DECIMAL", "options": { "seqno": 4 } },
+                "yield": { "type": "INTEGER" },
+                "effdate": { "type": "DATE", "options": { "seqno": 5 } },
+                "efftime": { "type": "TIME", "options": { "seqno": 6 } },
+                "edittime": { "type": "DATETIME", "options": { "seqno": 7 } },
+                "sharename": { "type": "STRING", "options": { "seqno": 8 } },
+                "defvalue": { "type": "STRING" },
+                "message": { "type": "STRING" },
+                "remarks": { "type": "STRING", "defaultValue": "test_file_text_quote" }
+            },
+            "settings": { "skip": 1, "delimiter": ",", "quotable": true }
+        } ]
     },
     "test_file_text_fix_length": {
-        "name": "tso",
-        "alias": { "privateAlias": "PROMPTDB" },
-        "fields": {
-            "mktid": { "type": "STRING", "options": { "seqno": 1, "startIndex": 0, "endIndex": 9 } },
-            "share": { "type": "STRING", "options": { "seqno": 2, "startIndex": 10, "endIndex": 19 } },
-            "unit": { "type": "DECIMAL", "options": { "seqno": 3, "startIndex": 20, "endIndex": 29 } },
-            "price": { "type": "DECIMAL", "options": { "seqno": 4, "startIndex": 30, "endIndex": 37 } },
-            "yield": { "type": "INTEGER" },
-            "effdate": { "type": "DATE", "options": { "seqno": 5, "startIndex": 38, "endIndex": 48 } },
-            "efftime": { "type": "TIME", "options": { "seqno": 6, "startIndex": 49, "endIndex": 57 } },
-            "edittime": { "type": "DATETIME", "options": { "seqno": 7, "startIndex": 58, "endIndex": 77 } },
-            "sharename": { "type": "STRING", "options": { "seqno": 8, "startIndex": 78 } },
-            "defvalue": { "type": "STRING" },
-            "message": { "type": "STRING" },
-            "remarks": { "type": "STRING", "defaultValue": "test_file_text_fix_length" }
-        },
-        "settings": { "skip": 1, "delimiter": ",", "quotable": true }
+        "models": [ {
+            "name": "tso",
+            "alias": { "privateAlias": "PROMPTDB" },
+            "fields": {
+                "mktid": { "type": "STRING", "options": { "seqno": 1, "startIndex": 0, "endIndex": 9 } },
+                "share": { "type": "STRING", "options": { "seqno": 2, "startIndex": 10, "endIndex": 19 } },
+                "unit": { "type": "DECIMAL", "options": { "seqno": 3, "startIndex": 20, "endIndex": 29 } },
+                "price": { "type": "DECIMAL", "options": { "seqno": 4, "startIndex": 30, "endIndex": 37 } },
+                "yield": { "type": "INTEGER" },
+                "effdate": { "type": "DATE", "options": { "seqno": 5, "startIndex": 38, "endIndex": 48 } },
+                "efftime": { "type": "TIME", "options": { "seqno": 6, "startIndex": 49, "endIndex": 57 } },
+                "edittime": { "type": "DATETIME", "options": { "seqno": 7, "startIndex": 58, "endIndex": 77 } },
+                "sharename": { "type": "STRING", "options": { "seqno": 8, "startIndex": 78 } },
+                "defvalue": { "type": "STRING" },
+                "message": { "type": "STRING" },
+                "remarks": { "type": "STRING", "defaultValue": "test_file_text_fix_length" }
+            },
+            "settings": { "skip": 1, "delimiter": ",", "quotable": true }
+        } ]
     },
     "test_file_text_tab": {
-        "name": "tso",
-        "alias": { "privateAlias": "PROMPTDB" },
-        "fields": {
-            "mktid": { "type": "STRING", "options": { "seqno": 1 } },
-            "share": { "type": "STRING", "options": { "seqno": 2 } },
-            "unit": { "type": "DECIMAL", "options": { "seqno": 3 } },
-            "price": { "type": "DECIMAL", "options": { "seqno": 4 } },
-            "yield": { "type": "INTEGER" },
-            "effdate": { "type": "DATE", "options": { "seqno": 5 } },
-            "efftime": { "type": "TIME", "options": { "seqno": 6 } },
-            "edittime": { "type": "DATETIME", "options": { "seqno": 7 } },
-            "sharename": { "type": "STRING", "options": { "seqno": 8 } },
-            "defvalue": { "type": "STRING" },
-            "message": { "type": "STRING" },
-            "remarks": { "type": "STRING", "defaultValue": "test_file_text_tab" }
-        },
-        "settings": { "skip": 1, "delimiter": "TAB", "quotable": true }
+        "models": [ {
+            "name": "tso",
+            "alias": { "privateAlias": "PROMPTDB" },
+            "fields": {
+                "mktid": { "type": "STRING", "options": { "seqno": 1 } },
+                "share": { "type": "STRING", "options": { "seqno": 2 } },
+                "unit": { "type": "DECIMAL", "options": { "seqno": 3 } },
+                "price": { "type": "DECIMAL", "options": { "seqno": 4 } },
+                "yield": { "type": "INTEGER" },
+                "effdate": { "type": "DATE", "options": { "seqno": 5 } },
+                "efftime": { "type": "TIME", "options": { "seqno": 6 } },
+                "edittime": { "type": "DATETIME", "options": { "seqno": 7 } },
+                "sharename": { "type": "STRING", "options": { "seqno": 8 } },
+                "defvalue": { "type": "STRING" },
+                "message": { "type": "STRING" },
+                "remarks": { "type": "STRING", "defaultValue": "test_file_text_tab" }
+            },
+            "settings": { "skip": 1, "delimiter": "TAB", "quotable": true }
+        } ]
     },
     "test_file_text_header": {
-        "name": "tso",
-        "alias": { "privateAlias": "PROMPTDB" },
-        "fields": {
-            "mktid": { "type": "STRING", "options": { "seqno": 1 } },
-            "share": { "type": "STRING", "options": { "seqno": 2 } },
-            "unit": { "type": "DECIMAL", "options": { "seqno": 3 } },
-            "price": { "type": "DECIMAL", "options": { "seqno": 4 } },
-            "yield": { "type": "INTEGER" },
-            "effdate": { "type": "DATE", "options": { "seqno": 5 } },
-            "efftime": { "type": "TIME", "options": { "seqno": 6 } },
-            "edittime": { "type": "DATETIME", "options": { "seqno": 7 } },
-            "sharename": { "type": "STRING", "options": { "seqno": 8 } },
-            "defvalue": { "type": "STRING", "options": { "header": "defvalue" } },
-            "message": { "type": "STRING", "options": { "header": { "seqno": 2, "line": 1 } } },
-            "remarks": { "type": "STRING", "defaultValue": "test_file_text_header" }
-        },
-        "settings": { "skip": 2, "delimiter": ",", "quotable": true,
-            "header": {
-                "defvalue": { "type": "STRING", "options": { "seqno": 1, "line": 1 } } ,
-                "message": { "type": "STRING", "options": { "seqno": 2, "line": 1 } } 
+        "models": [ {
+            "name": "tso",
+            "alias": { "privateAlias": "PROMPTDB" },
+            "fields": {
+                "mktid": { "type": "STRING", "options": { "seqno": 1 } },
+                "share": { "type": "STRING", "options": { "seqno": 2 } },
+                "unit": { "type": "DECIMAL", "options": { "seqno": 3 } },
+                "price": { "type": "DECIMAL", "options": { "seqno": 4 } },
+                "yield": { "type": "INTEGER" },
+                "effdate": { "type": "DATE", "options": { "seqno": 5 } },
+                "efftime": { "type": "TIME", "options": { "seqno": 6 } },
+                "edittime": { "type": "DATETIME", "options": { "seqno": 7 } },
+                "sharename": { "type": "STRING", "options": { "seqno": 8 } },
+                "defvalue": { "type": "STRING", "options": { "header": "defvalue" } },
+                "message": { "type": "STRING", "options": { "header": { "seqno": 2, "line": 1 } } },
+                "remarks": { "type": "STRING", "defaultValue": "test_file_text_header" }
+            },
+            "settings": { "skip": 2, "delimiter": ",", "quotable": true,
+                "header": {
+                    "defvalue": { "type": "STRING", "options": { "seqno": 1, "line": 1 } } ,
+                    "message": { "type": "STRING", "options": { "seqno": 2, "line": 1 } } 
+                }
             }
-        }
+        } ]
     },
     "test_file_json": {
-        "name": "tso",
-        "alias": { "privateAlias": "PROMPTDB" },
-        "fields": {
-            "mktid": { "type": "STRING" },
-            "share": { "type": "STRING" },
-            "unit": { "type": "DECIMAL" },
-            "price": { "type": "DECIMAL" },
-            "yield": { "type": "INTEGER" },
-            "effdate": { "type": "DATE" },
-            "efftime": { "type": "TIME" },
-            "edittime": { "type": "DATETIME" },
-            "sharename": { "type": "STRING" },
-            "defvalue": { "type": "STRING", "options": { "mapper": "@body.defvalue" } },
-            "message": { "type": "STRING", "options": { "mapper": "message.remark" }  },
-            "remarks": { "type": "STRING", "defaultValue": "test_file_json" }
-        },
-        "settings": { "xpath": "rows" }
+        "models": [ {
+            "name": "tso",
+            "alias": { "privateAlias": "PROMPTDB" },
+            "fields": {
+                "mktid": { "type": "STRING" },
+                "share": { "type": "STRING" },
+                "unit": { "type": "DECIMAL" },
+                "price": { "type": "DECIMAL" },
+                "yield": { "type": "INTEGER" },
+                "effdate": { "type": "DATE" },
+                "efftime": { "type": "TIME" },
+                "edittime": { "type": "DATETIME" },
+                "sharename": { "type": "STRING" },
+                "defvalue": { "type": "STRING", "options": { "mapper": "@body.defvalue" } },
+                "message": { "type": "STRING", "options": { "mapper": "message.remark" }  },
+                "remarks": { "type": "STRING", "defaultValue": "test_file_json" }
+            },
+            "settings": { "xpath": "rows" }
+        } ]
     },
     "test_file_json_array": {
-        "name": "tso",
-        "alias": { "privateAlias": "PROMPTDB" },
-        "fields": {
-            "mktid": { "type": "STRING" },
-            "share": { "type": "STRING" },
-            "unit": { "type": "DECIMAL" },
-            "price": { "type": "DECIMAL" },
-            "yield": { "type": "INTEGER" },
-            "effdate": { "type": "DATE" },
-            "efftime": { "type": "TIME" },
-            "edittime": { "type": "DATETIME" },
-            "sharename": { "type": "STRING" },
-            "defvalue": { "type": "STRING" },
-            "message": { "type": "STRING" },
-            "remarks": { "type": "STRING", "defaultValue": "test_file_json_array" }
-        }
+        "models": [ {
+            "name": "tso",
+            "alias": { "privateAlias": "PROMPTDB" },
+            "fields": {
+                "mktid": { "type": "STRING" },
+                "share": { "type": "STRING" },
+                "unit": { "type": "DECIMAL" },
+                "price": { "type": "DECIMAL" },
+                "yield": { "type": "INTEGER" },
+                "effdate": { "type": "DATE" },
+                "efftime": { "type": "TIME" },
+                "edittime": { "type": "DATETIME" },
+                "sharename": { "type": "STRING" },
+                "defvalue": { "type": "STRING" },
+                "message": { "type": "STRING" },
+                "remarks": { "type": "STRING", "defaultValue": "test_file_json_array" }
+            }
+        } ]
     },
     "test_file_text_no_save": {
-        "name": "",
-        "alias": { "privateAlias": "PROMPTDB" },
-        "fields": {
-            "mktid": { "type": "STRING", "options": { "seqno": 1 } },
-            "share": { "type": "STRING", "options": { "seqno": 2 } },
-            "unit": { "type": "DECIMAL", "options": { "seqno": 3 } },
-            "price": { "type": "DECIMAL", "options": { "seqno": 4 } },
-            "yield": { "type": "INTEGER" },
-            "effdate": { "type": "DATE", "options": { "seqno": 5 } },
-            "efftime": { "type": "TIME", "options": { "seqno": 6 } },
-            "edittime": { "type": "DATETIME", "options": { "seqno": 7 } },
-            "sharename": { "type": "STRING", "options": { "seqno": 8 } },
-            "defvalue": { "type": "STRING" },
-            "message": { "type": "STRING" },
-            "remarks": { "type": "STRING", "defaultValue": "test_file_text_no_save" }
-        },
-        "settings": { "skip": 1, "delimiter": ",", "quotable": true }
+        "models": [ {
+            "name": "",
+            "alias": { "privateAlias": "PROMPTDB" },
+            "fields": {
+                "mktid": { "type": "STRING", "options": { "seqno": 1 } },
+                "share": { "type": "STRING", "options": { "seqno": 2 } },
+                "unit": { "type": "DECIMAL", "options": { "seqno": 3 } },
+                "price": { "type": "DECIMAL", "options": { "seqno": 4 } },
+                "yield": { "type": "INTEGER" },
+                "effdate": { "type": "DATE", "options": { "seqno": 5 } },
+                "efftime": { "type": "TIME", "options": { "seqno": 6 } },
+                "edittime": { "type": "DATETIME", "options": { "seqno": 7 } },
+                "sharename": { "type": "STRING", "options": { "seqno": 8 } },
+                "defvalue": { "type": "STRING" },
+                "message": { "type": "STRING" },
+                "remarks": { "type": "STRING", "defaultValue": "test_file_text_no_save" }
+            },
+            "settings": { "skip": 1, "delimiter": ",", "quotable": true }
+        } ]
     },
     "test_file_excel": {
-        "name": "tso",
-        "alias": { "privateAlias": "PROMPTDB" },
-        "fields": {
-            "mktid": { "type": "STRING", "options": { "seqno": 1 } },
-            "share": { "type": "STRING", "options": { "seqno": 2 } },
-            "unit": { "type": "DECIMAL", "options": { "seqno": 3 } },
-            "price": { "type": "DECIMAL", "options": { "seqno": 4 } },
-            "yield": { "type": "INTEGER" },
-            "effdate": { "type": "DATE", "options": { "seqno": 5 } },
-            "efftime": { "type": "TIME", "options": { "seqno": 6 } },
-            "edittime": { "type": "DATETIME", "options": { "seqno": 7 } },
-            "sharename": { "type": "STRING", "options": { "seqno": 8 } },
-            "defvalue": { "type": "STRING" },
-            "message": { "type": "STRING" },
-            "remarks": { "type": "STRING", "defaultValue": "test_file_excel" }
-        },
-        "settings": { "skip": 1, "quotable": true, "sheetname": "tso" }
+        "models": [ {
+            "name": "tso",
+            "alias": { "privateAlias": "PROMPTDB" },
+            "fields": {
+                "mktid": { "type": "STRING", "options": { "seqno": 1 } },
+                "share": { "type": "STRING", "options": { "seqno": 2 } },
+                "unit": { "type": "DECIMAL", "options": { "seqno": 3 } },
+                "price": { "type": "DECIMAL", "options": { "seqno": 4 } },
+                "yield": { "type": "INTEGER" },
+                "effdate": { "type": "DATE", "options": { "seqno": 5 } },
+                "efftime": { "type": "TIME", "options": { "seqno": 6 } },
+                "edittime": { "type": "DATETIME", "options": { "seqno": 7 } },
+                "sharename": { "type": "STRING", "options": { "seqno": 8 } },
+                "defvalue": { "type": "STRING" },
+                "message": { "type": "STRING" },
+                "remarks": { "type": "STRING", "defaultValue": "test_file_excel" }
+            },
+            "settings": { "skip": 1, "quotable": true, "sheetname": "tso" }
+        } ]
     },
     "test_file_excel_header": {
-        "name": "tso",
-        "alias": { "privateAlias": "PROMPTDB" },
-        "fields": {
-            "mktid": { "type": "STRING", "options": { "seqno": 1 } },
-            "share": { "type": "STRING", "options": { "seqno": 2 } },
-            "unit": { "type": "DECIMAL", "options": { "seqno": 3 } },
-            "price": { "type": "DECIMAL", "options": { "seqno": 4 } },
-            "yield": { "type": "INTEGER" },
-            "effdate": { "type": "DATE", "options": { "seqno": 5 } },
-            "efftime": { "type": "TIME", "options": { "seqno": 6 } },
-            "edittime": { "type": "DATETIME", "options": { "seqno": 7 } },
-            "sharename": { "type": "STRING", "options": { "seqno": 8 } },
-            "defvalue": { "type": "STRING", "options": { "header": "defvalue" } },
-            "message": { "type": "STRING", "options": { "header": { "seqno": 4, "line": 1 } } },
-            "remarks": { "type": "STRING", "defaultValue": "test_file_excel_header" }
-        },
-        "settings": { "skip": 2, "quotable": true, "sheetname": "tso",
-            "header": {
-                "defvalue": { "type": "STRING", "options": { "seqno": 2, "line": 1 } } ,
-                "message": { "type": "STRING", "options": { "seqno": 4, "line": 1 } } 
+        "models": [ {
+            "name": "tso",
+            "alias": { "privateAlias": "PROMPTDB" },
+            "fields": {
+                "mktid": { "type": "STRING", "options": { "seqno": 1 } },
+                "share": { "type": "STRING", "options": { "seqno": 2 } },
+                "unit": { "type": "DECIMAL", "options": { "seqno": 3 } },
+                "price": { "type": "DECIMAL", "options": { "seqno": 4 } },
+                "yield": { "type": "INTEGER" },
+                "effdate": { "type": "DATE", "options": { "seqno": 5 } },
+                "efftime": { "type": "TIME", "options": { "seqno": 6 } },
+                "edittime": { "type": "DATETIME", "options": { "seqno": 7 } },
+                "sharename": { "type": "STRING", "options": { "seqno": 8 } },
+                "defvalue": { "type": "STRING", "options": { "header": "defvalue" } },
+                "message": { "type": "STRING", "options": { "header": { "seqno": 4, "line": 1 } } },
+                "remarks": { "type": "STRING", "defaultValue": "test_file_excel_header" }
+            },
+            "settings": { "skip": 2, "quotable": true, "sheetname": "tso",
+                "header": {
+                    "defvalue": { "type": "STRING", "options": { "seqno": 2, "line": 1 } } ,
+                    "message": { "type": "STRING", "options": { "seqno": 4, "line": 1 } } 
+                }
             }
-        }
+        }]
     },
     "test_file_xlsx": {
-        "name": "tso",
-        "alias": { "privateAlias": "PROMPTDB" },
-        "fields": {
-            "mktid": { "type": "STRING", "options": { "seqno": 1 } },
-            "share": { "type": "STRING", "options": { "seqno": 2 } },
-            "unit": { "type": "DECIMAL", "options": { "seqno": 3 } },
-            "price": { "type": "DECIMAL", "options": { "seqno": 4 } },
-            "yield": { "type": "INTEGER" },
-            "effdate": { "type": "DATE", "options": { "seqno": 5 } },
-            "efftime": { "type": "TIME", "options": { "seqno": 6 } },
-            "edittime": { "type": "DATETIME", "options": { "seqno": 7 } },
-            "sharename": { "type": "STRING", "options": { "seqno": 8 } },
-            "defvalue": { "type": "STRING" },
-            "message": { "type": "STRING" },
-            "remarks": { "type": "STRING", "defaultValue": "test_file_xlsx" }
-        },
-        "settings": { "skip": 1, "quotable": true, "sheetname": "tso" }
+        "models": [ {
+            "name": "tso",
+            "alias": { "privateAlias": "PROMPTDB" },
+            "fields": {
+                "mktid": { "type": "STRING", "options": { "seqno": 1 } },
+                "share": { "type": "STRING", "options": { "seqno": 2 } },
+                "unit": { "type": "DECIMAL", "options": { "seqno": 3 } },
+                "price": { "type": "DECIMAL", "options": { "seqno": 4 } },
+                "yield": { "type": "INTEGER" },
+                "effdate": { "type": "DATE", "options": { "seqno": 5 } },
+                "efftime": { "type": "TIME", "options": { "seqno": 6 } },
+                "edittime": { "type": "DATETIME", "options": { "seqno": 7 } },
+                "sharename": { "type": "STRING", "options": { "seqno": 8 } },
+                "defvalue": { "type": "STRING" },
+                "message": { "type": "STRING" },
+                "remarks": { "type": "STRING", "defaultValue": "test_file_xlsx" }
+            },
+            "settings": { "skip": 1, "quotable": true, "sheetname": "tso" }
+        } ]
     },
     "test_file_xlsx_header": {
-        "name": "tso",
-        "alias": { "privateAlias": "PROMPTDB" },
-        "fields": {
-            "mktid": { "type": "STRING", "options": { "seqno": 1 } },
-            "share": { "type": "STRING", "options": { "seqno": 2 } },
-            "unit": { "type": "DECIMAL", "options": { "seqno": 3 } },
-            "price": { "type": "DECIMAL", "options": { "seqno": 4 } },
-            "yield": { "type": "INTEGER" },
-            "effdate": { "type": "DATE", "options": { "seqno": 5 } },
-            "efftime": { "type": "TIME", "options": { "seqno": 6 } },
-            "edittime": { "type": "DATETIME", "options": { "seqno": 7 } },
-            "sharename": { "type": "STRING", "options": { "seqno": 8 } },
-            "defvalue": { "type": "STRING", "options": { "header": "defvalue" } },
-            "message": { "type": "STRING", "options": { "header": { "seqno": 4, "line": 1 } }  },
-            "remarks": { "type": "STRING", "defaultValue": "test_file_xlsx_header" }
-        },
-        "settings": { "skip": 2, "quotable": true, "sheetname": "tso",
-            "header": {
-                "defvalue": { "type": "STRING", "options": { "seqno": 2, "line": 1 } } ,
-                "message": { "type": "STRING", "options": { "seqno": 4, "line": 1 } } 
+        "models": [ {
+            "name": "tso",
+            "alias": { "privateAlias": "PROMPTDB" },
+            "fields": {
+                "mktid": { "type": "STRING", "options": { "seqno": 1 } },
+                "share": { "type": "STRING", "options": { "seqno": 2 } },
+                "unit": { "type": "DECIMAL", "options": { "seqno": 3 } },
+                "price": { "type": "DECIMAL", "options": { "seqno": 4 } },
+                "yield": { "type": "INTEGER" },
+                "effdate": { "type": "DATE", "options": { "seqno": 5 } },
+                "efftime": { "type": "TIME", "options": { "seqno": 6 } },
+                "edittime": { "type": "DATETIME", "options": { "seqno": 7 } },
+                "sharename": { "type": "STRING", "options": { "seqno": 8 } },
+                "defvalue": { "type": "STRING", "options": { "header": "defvalue" } },
+                "message": { "type": "STRING", "options": { "header": { "seqno": 4, "line": 1 } }  },
+                "remarks": { "type": "STRING", "defaultValue": "test_file_xlsx_header" }
+            },
+            "settings": { "skip": 2, "quotable": true, "sheetname": "tso",
+                "header": {
+                    "defvalue": { "type": "STRING", "options": { "seqno": 2, "line": 1 } } ,
+                    "message": { "type": "STRING", "options": { "seqno": 4, "line": 1 } } 
+                }
             }
-        }
+        }]
     },
     "test_file_xml": {
-        "name": "tso",
-        "alias": { "privateAlias": "PROMPTDB" },
-        "fields": {
-            "mktid": { "type": "STRING" },
-            "share": { "type": "STRING" },
-            "unit": { "type": "DECIMAL" },
-            "price": { "type": "DECIMAL" },
-            "yield": { "type": "INTEGER" },
-            "effdate": { "type": "DATE" },
-            "efftime": { "type": "TIME" },
-            "edittime": { "type": "DATETIME" },
-            "sharename": { "type": "STRING" },
-            "defvalue": { "type": "STRING" },
-            "message": { "type": "STRING" },
-            "remarks": { "type": "STRING", "defaultValue": "test_file_xml" }
-        },
-        "settings": { "xpath": "root.row" }
+        "models": [ {
+            "name": "tso",
+            "alias": { "privateAlias": "PROMPTDB" },
+            "fields": {
+                "mktid": { "type": "STRING" },
+                "share": { "type": "STRING" },
+                "unit": { "type": "DECIMAL" },
+                "price": { "type": "DECIMAL" },
+                "yield": { "type": "INTEGER" },
+                "effdate": { "type": "DATE" },
+                "efftime": { "type": "TIME" },
+                "edittime": { "type": "DATETIME" },
+                "sharename": { "type": "STRING" },
+                "defvalue": { "type": "STRING" },
+                "message": { "type": "STRING" },
+                "remarks": { "type": "STRING", "defaultValue": "test_file_xml" }
+            },
+            "settings": { "xpath": "root.row" }
+        } ]
     },
     "test_file_xml_complex": {
-        "name": "tso",
-        "alias": { "privateAlias": "PROMPTDB" },
-        "fields": {
-            "mktid": { "type": "STRING" },
-            "share": { "type": "STRING" },
-            "unit": { "type": "DECIMAL" },
-            "price": { "type": "DECIMAL" },
-            "yield": { "type": "INTEGER" },
-            "effdate": { "type": "DATE" },
-            "efftime": { "type": "TIME" },
-            "edittime": { "type": "DATETIME" },
-            "sharename": { "type": "STRING" },
-            "defvalue": { "type": "STRING", "options": { "mapper": "item.defvalue"} },
-            "message": { "type": "STRING", "options": { "mapper": "@root.message"} },
-            "remarks": { "type": "STRING", "defaultValue": "test_file_xml_complex" }
-        },
-        "settings": { "xpath": "root.items.row" }
+        "models": [ {
+            "name": "tso",
+            "alias": { "privateAlias": "PROMPTDB" },
+            "fields": {
+                "mktid": { "type": "STRING" },
+                "share": { "type": "STRING" },
+                "unit": { "type": "DECIMAL" },
+                "price": { "type": "DECIMAL" },
+                "yield": { "type": "INTEGER" },
+                "effdate": { "type": "DATE" },
+                "efftime": { "type": "TIME" },
+                "edittime": { "type": "DATETIME" },
+                "sharename": { "type": "STRING" },
+                "defvalue": { "type": "STRING", "options": { "mapper": "item.defvalue"} },
+                "message": { "type": "STRING", "options": { "mapper": "@root.message"} },
+                "remarks": { "type": "STRING", "defaultValue": "test_file_xml_complex" }
+            },
+            "settings": { "xpath": "root.items.row" }
+        } ]
     },
     "test_file_text_error": {
-        "name": "tso",
-        "alias": { "privateAlias": "PROMPTDB" },
-        "fields": {
-            "mktid": { "type": "STRING", "options": { "seqno": 1 } },
-            "share": { "type": "STRING", "options": { "seqno": 2 } },
-            "unit": { "type": "DECIMAL", "options": { "seqno": 3 } },
-            "price": { "type": "DECIMAL", "options": { "seqno": 4 } },
-            "yield": { "type": "INTEGER" },
-            "effdate": { "type": "DATE", "options": { "seqno": 5 } },
-            "efftime": { "type": "TIME", "options": { "seqno": 6 } },
-            "edittime": { "type": "DATETIME", "options": { "seqno": 7 } },
-            "sharename": { "type": "STRING", "options": { "seqno": 8 } },
-            "defvalue": { "type": "STRING" },
-            "message": { "type": "STRING" },
-            "remarks": { "type": "STRING", "defaultValue": "test_file_text_error" }
-        },
-        "settings": { "skip": 1, "delimiter": ",", "quotable": true, "remarks": "default throw if error (verifyError=true,abandonError=true)" }
+        "models": [ {
+            "name": "tso",
+            "alias": { "privateAlias": "PROMPTDB" },
+            "fields": {
+                "mktid": { "type": "STRING", "options": { "seqno": 1 } },
+                "share": { "type": "STRING", "options": { "seqno": 2 } },
+                "unit": { "type": "DECIMAL", "options": { "seqno": 3 } },
+                "price": { "type": "DECIMAL", "options": { "seqno": 4 } },
+                "yield": { "type": "INTEGER" },
+                "effdate": { "type": "DATE", "options": { "seqno": 5 } },
+                "efftime": { "type": "TIME", "options": { "seqno": 6 } },
+                "edittime": { "type": "DATETIME", "options": { "seqno": 7 } },
+                "sharename": { "type": "STRING", "options": { "seqno": 8 } },
+                "defvalue": { "type": "STRING" },
+                "message": { "type": "STRING" },
+                "remarks": { "type": "STRING", "defaultValue": "test_file_text_error" }
+            },
+            "settings": { "skip": 1, "delimiter": ",", "quotable": true, "remarks": "default throw if error (verifyError=true,abandonError=true)" }
+        } ]
     },
     "test_file_text_error_verify": {
-        "name": "tso",
-        "alias": { "privateAlias": "PROMPTDB" },
-        "fields": {
-            "mktid": { "type": "STRING", "options": { "seqno": 1 } },
-            "share": { "type": "STRING", "options": { "seqno": 2 } },
-            "unit": { "type": "DECIMAL", "options": { "seqno": 3 } },
-            "price": { "type": "DECIMAL", "options": { "seqno": 4 } },
-            "yield": { "type": "INTEGER" },
-            "effdate": { "type": "DATE", "options": { "seqno": 5 } },
-            "efftime": { "type": "TIME", "options": { "seqno": 6 } },
-            "edittime": { "type": "DATETIME", "options": { "seqno": 7 } },
-            "sharename": { "type": "STRING", "options": { "seqno": 8 } },
-            "defvalue": { "type": "STRING" },
-            "message": { "type": "STRING" },
-            "remarks": { "type": "STRING", "defaultValue": "test_file_text_error_verify" }
-        },
-        "settings": { "skip": 1, "delimiter": ",", "quotable": true, "verifyError": false, "remarks": "This throw if error but try to all data list" }
+        "models": [ {
+            "name": "tso",
+            "alias": { "privateAlias": "PROMPTDB" },
+            "fields": {
+                "mktid": { "type": "STRING", "options": { "seqno": 1 } },
+                "share": { "type": "STRING", "options": { "seqno": 2 } },
+                "unit": { "type": "DECIMAL", "options": { "seqno": 3 } },
+                "price": { "type": "DECIMAL", "options": { "seqno": 4 } },
+                "yield": { "type": "INTEGER" },
+                "effdate": { "type": "DATE", "options": { "seqno": 5 } },
+                "efftime": { "type": "TIME", "options": { "seqno": 6 } },
+                "edittime": { "type": "DATETIME", "options": { "seqno": 7 } },
+                "sharename": { "type": "STRING", "options": { "seqno": 8 } },
+                "defvalue": { "type": "STRING" },
+                "message": { "type": "STRING" },
+                "remarks": { "type": "STRING", "defaultValue": "test_file_text_error_verify" }
+            },
+            "settings": { "skip": 1, "delimiter": ",", "quotable": true, "verifyError": false, "remarks": "This throw if error but try to all data list" }
+        } ]
     },
     "test_file_text_error_abandon": {
-        "name": "tso",
-        "alias": { "privateAlias": "PROMPTDB" },
-        "fields": {
-            "mktid": { "type": "STRING", "options": { "seqno": 1 } },
-            "share": { "type": "STRING", "options": { "seqno": 2 } },
-            "unit": { "type": "DECIMAL", "options": { "seqno": 3 } },
-            "price": { "type": "DECIMAL", "options": { "seqno": 4 } },
-            "yield": { "type": "INTEGER" },
-            "effdate": { "type": "DATE", "options": { "seqno": 5 } },
-            "efftime": { "type": "TIME", "options": { "seqno": 6 } },
-            "edittime": { "type": "DATETIME", "options": { "seqno": 7 } },
-            "sharename": { "type": "STRING", "options": { "seqno": 8 } },
-            "defvalue": { "type": "STRING" },
-            "message": { "type": "STRING" },
-            "remarks": { "type": "STRING", "defaultValue": "test_file_text_error_verify" }
-        },
-        "settings": { "skip": 1, "delimiter": ",", "quotable": true, "abandonError": false, "verifyError": false, "remarks": "This do not throw if error and try to all data" }
+        "models": [ {
+            "name": "tso",
+            "alias": { "privateAlias": "PROMPTDB" },
+            "fields": {
+                "mktid": { "type": "STRING", "options": { "seqno": 1 } },
+                "share": { "type": "STRING", "options": { "seqno": 2 } },
+                "unit": { "type": "DECIMAL", "options": { "seqno": 3 } },
+                "price": { "type": "DECIMAL", "options": { "seqno": 4 } },
+                "yield": { "type": "INTEGER" },
+                "effdate": { "type": "DATE", "options": { "seqno": 5 } },
+                "efftime": { "type": "TIME", "options": { "seqno": 6 } },
+                "edittime": { "type": "DATETIME", "options": { "seqno": 7 } },
+                "sharename": { "type": "STRING", "options": { "seqno": 8 } },
+                "defvalue": { "type": "STRING" },
+                "message": { "type": "STRING" },
+                "remarks": { "type": "STRING", "defaultValue": "test_file_text_error_verify" }
+            },
+            "settings": { "skip": 1, "delimiter": ",", "quotable": true, "abandonError": false, "verifyError": false, "remarks": "This do not throw if error and try to all data" }
+        } ]
     },
     "test_file_text_autocommit": {
-        "name": "tso",
-        "alias": { "privateAlias": "PROMPTDB" },
-        "fields": {
-            "mktid": { "type": "STRING", "options": { "seqno": 1 } },
-            "share": { "type": "STRING", "options": { "seqno": 2 } },
-            "unit": { "type": "DECIMAL", "options": { "seqno": 3 } },
-            "price": { "type": "DECIMAL", "options": { "seqno": 4 } },
-            "yield": { "type": "INTEGER" },
-            "effdate": { "type": "DATE", "options": { "seqno": 5 } },
-            "efftime": { "type": "TIME", "options": { "seqno": 6 } },
-            "edittime": { "type": "DATETIME", "options": { "seqno": 7 } },
-            "sharename": { "type": "STRING", "options": { "seqno": 8 } },
-            "defvalue": { "type": "STRING" },
-            "message": { "type": "STRING" },
-            "remarks": { "type": "STRING", "defaultValue": "test_file_text_error" }
-        },
-        "settings": { "skip": 1, "delimiter": ",", "quotable": true, "autoCommit": true, "remarks": "This always save if error" }
+        "models": [ {
+            "name": "tso",
+            "alias": { "privateAlias": "PROMPTDB" },
+            "fields": {
+                "mktid": { "type": "STRING", "options": { "seqno": 1 } },
+                "share": { "type": "STRING", "options": { "seqno": 2 } },
+                "unit": { "type": "DECIMAL", "options": { "seqno": 3 } },
+                "price": { "type": "DECIMAL", "options": { "seqno": 4 } },
+                "yield": { "type": "INTEGER" },
+                "effdate": { "type": "DATE", "options": { "seqno": 5 } },
+                "efftime": { "type": "TIME", "options": { "seqno": 6 } },
+                "edittime": { "type": "DATETIME", "options": { "seqno": 7 } },
+                "sharename": { "type": "STRING", "options": { "seqno": 8 } },
+                "defvalue": { "type": "STRING" },
+                "message": { "type": "STRING" },
+                "remarks": { "type": "STRING", "defaultValue": "test_file_text_error" }
+            },
+            "settings": { "skip": 1, "delimiter": ",", "quotable": true, "autoCommit": true, "remarks": "This always save if error" }
+        } ]
     },
-
+    "test_file_post_statement": {
+        "models": [ {
+            "name": "tso",
+            "alias": { "privateAlias": "PROMPTDB" },
+            "fields": {
+                "mktid": { "type": "STRING", "options": { "seqno": 1 } },
+                "share": { "type": "STRING", "options": { "seqno": 2 } },
+                "unit": { "type": "DECIMAL", "options": { "seqno": 3 } },
+                "price": { "type": "DECIMAL", "options": { "seqno": 4 } },
+                "yield": { "type": "INTEGER" },
+                "effdate": { "type": "DATE", "options": { "seqno": 5 } },
+                "efftime": { "type": "TIME", "options": { "seqno": 6 } },
+                "edittime": { "type": "DATETIME", "options": { "seqno": 7 } },
+                "sharename": { "type": "STRING", "options": { "seqno": 8 } },
+                "defvalue": { "type": "STRING" },
+                "message": { "type": "STRING" },
+                "remarks": { "type": "STRING", "defaultValue": "test_file_post_statement" }
+            },
+            "settings": { "skip": 1, "delimiter": ",", "quotable": true,
+                "statement": {
+                    "prestatement": {
+                        "sql": "update tso set defvalue=null where mktid='TSO' "
+                    },
+                    "poststatement": {
+                        "sql": "update tso set defvalue='POSTING' where mktid='TSO' and share='BBL' "
+                    }
+                }
+            }
+        } ]
+    },
+    "test_file_post_statement_params": {
+        "models": [ {
+            "name": "tso",
+            "alias": { "privateAlias": "PROMPTDB" },
+            "fields": {
+                "mktid": { "type": "STRING", "options": { "seqno": 1 } },
+                "share": { "type": "STRING", "options": { "seqno": 2 } },
+                "unit": { "type": "DECIMAL", "options": { "seqno": 3 } },
+                "price": { "type": "DECIMAL", "options": { "seqno": 4 } },
+                "yield": { "type": "INTEGER" },
+                "effdate": { "type": "DATE", "options": { "seqno": 5 } },
+                "efftime": { "type": "TIME", "options": { "seqno": 6 } },
+                "edittime": { "type": "DATETIME", "options": { "seqno": 7 } },
+                "sharename": { "type": "STRING", "options": { "seqno": 8 } },
+                "defvalue": { "type": "STRING" },
+                "message": { "type": "STRING" },
+                "remarks": { "type": "STRING", "defaultValue": "test_file_post_statement" }
+            },
+            "settings": { "skip": 1, "delimiter": ",", "quotable": true,
+                "statement": {
+                    "poststatement": {
+                        "sql": "update tso set defvalue='POSTING', defdatetime=?defdatetime, message=?message where mktid='TSO' ",
+                        "parameters": [
+                            { "name": "defdatetime", "caption": "Date/Time", "defaultValue": "#current_timestamp" },
+                            { "name": "message", "caption": "Message" }
+                        ]
+                    }
+                }
+            }
+        } ]
+    },
 
     "test_simple": {
-        "name": "tmigratetest",
-        "alias": { "privateAlias": "PROMPTDB" },
-        "fields": {
-            "field1": { "type": "STRING", "key": true },
-            "field2": { "type": "DECIMAL" },
-            "field3": { "type": "INTEGER" },
-            "field4": { "type": "DATE" },
-            "field5": { "type": "TIME" },
-            "field6": { "type": "DATETIME" },
-            "field7": { "type": "STRING" },
-            "field8": { "type": "STRING" },
-            "field9": { "type": "STRING" },
-            "field10": { "type": "STRING" },
-            "field11": { "type": "STRING" },
-            "field12": { "type": "STRING" },
-            "curtime": { "type": "DATETIME", "defaultValue": "#current_timestamp" },
-            "remark": { "type": "STRING", "defaultValue": "test_simple" }
-        }
+        "models": [ {
+            "name": "tmigratetest",
+            "alias": { "privateAlias": "PROMPTDB" },
+            "fields": {
+                "field1": { "type": "STRING", "key": true },
+                "field2": { "type": "DECIMAL" },
+                "field3": { "type": "INTEGER" },
+                "field4": { "type": "DATE" },
+                "field5": { "type": "TIME" },
+                "field6": { "type": "DATETIME" },
+                "field7": { "type": "STRING" },
+                "field8": { "type": "STRING" },
+                "field9": { "type": "STRING" },
+                "field10": { "type": "STRING" },
+                "field11": { "type": "STRING" },
+                "field12": { "type": "STRING" },
+                "curtime": { "type": "DATETIME", "defaultValue": "#current_timestamp" },
+                "remark": { "type": "STRING", "defaultValue": "test_simple" }
+            }
+        } ]
     },
     "test_handler": {
-        "name": "tmigratetest",
-        "alias": { "privateAlias": "PROMPTDB" },
-        "fields": {
-            "field1": { "type": "STRING", "key": true },
-            "field2": { "type": "DECIMAL" },
-            "field3": { "type": "INTEGER" },
-            "field4": { "type": "DATE" },
-            "field5": { "type": "TIME" },
-            "field6": { "type": "DATETIME" },
-            "field7": { "type": "STRING" , "options": {
-                    "handlerType": "procedure",
-                    "handler": "function handler(data,dataset,model,context) { console.log('model',model,'data',data,'dataset',dataset); switch(data.field7) { case 'A': data.field8 = 'Anonymous'; break; case 'B': data.field8 = 'Bad Request'; break; case 'C': data.field8 = 'Counter Attack'; break; } }"
-                }
-            },
-            "field8": { "type": "STRING" },
-            "field9": { "type": "STRING" , "options": { 
-                    "handlerType": "function",
-                    "handler": "function handler(data) { if(data.field7=='A') return null; return data.field1 + '-' + data.field3; }"
-                }
-            },
-            "field10": { "type": "STRING" },
-            "field11": { "type": "STRING" },
-            "field12": { "type": "STRING" },
-            "curtime": { "type": "DATETIME", "defaultValue": "#current_timestamp" },
-            "remark": { "type": "STRING", "defaultValue": "test_handler" }
-        }
+        "models": [ {
+            "name": "tmigratetest",
+            "alias": { "privateAlias": "PROMPTDB" },
+            "fields": {
+                "field1": { "type": "STRING", "key": true },
+                "field2": { "type": "DECIMAL" },
+                "field3": { "type": "INTEGER" },
+                "field4": { "type": "DATE" },
+                "field5": { "type": "TIME" },
+                "field6": { "type": "DATETIME" },
+                "field7": { "type": "STRING" , "options": {
+                        "handlerType": "procedure",
+                        "handler": "function handler(data,dataset,model,context) { console.log('model',model,'data',data,'dataset',dataset); switch(data.field7) { case 'A': data.field8 = 'Anonymous'; break; case 'B': data.field8 = 'Bad Request'; break; case 'C': data.field8 = 'Counter Attack'; break; } }"
+                    }
+                },
+                "field8": { "type": "STRING" },
+                "field9": { "type": "STRING" , "options": { 
+                        "handlerType": "function",
+                        "handler": "function handler(data) { if(data.field7=='A') return null; return data.field1 + '-' + data.field3; }"
+                    }
+                },
+                "field10": { "type": "STRING" },
+                "field11": { "type": "STRING" },
+                "field12": { "type": "STRING" },
+                "curtime": { "type": "DATETIME", "defaultValue": "#current_timestamp" },
+                "remark": { "type": "STRING", "defaultValue": "test_handler" }
+            }
+        } ]
     },
     "test_mapper_simple": {
-        "name": "tmigratetest",
-        "alias": { "privateAlias": "PROMPTDB" },
-        "fields": {
-            "field1": { "type": "STRING", "key": true },
-            "field2": { "type": "DECIMAL" },
-            "field3": { "type": "INTEGER" },
-            "field4": { "type": "DATE" },
-            "field5": { "type": "TIME" },
-            "field6": { "type": "DATETIME" },
-            "field7": { "type": "STRING" , "options": {
-                    "handlerType": "procedure",
-                    "handler": "function handler(data,dataset,model,context) { console.log('model',model,'data',data,'dataset',dataset); switch(data.field7) { case 'A': data.field8 = 'Anonymous'; break; case 'B': data.field8 = 'Bad Request'; break; case 'C': data.field8 = 'Counter Attack'; break; } }"
-                }
-            },
-            "field8": { "type": "STRING" },
-            "field9": { "type": "STRING" , "options": { 
-                    "handlerType": "function", 
-                    "handler": "function handler(data) { if(data.field7=='A') return null; return data.field1 + '-' + data.field3; }"
-                }
-            },
-            "field10": { "type": "STRING", "options": { "mapper": ["field1","-","field3"] } },
-            "field11": { "type": "STRING" },
-            "field12": { "type": "STRING" },
-            "curtime": { "type": "DATETIME", "defaultValue": "#current_timestamp" },
-            "remark": { "type": "STRING", "defaultValue": "test_mapper_simple" }
-        }
+        "models": [ {
+            "name": "tmigratetest",
+            "alias": { "privateAlias": "PROMPTDB" },
+            "fields": {
+                "field1": { "type": "STRING", "key": true },
+                "field2": { "type": "DECIMAL" },
+                "field3": { "type": "INTEGER" },
+                "field4": { "type": "DATE" },
+                "field5": { "type": "TIME" },
+                "field6": { "type": "DATETIME" },
+                "field7": { "type": "STRING" , "options": {
+                        "handlerType": "procedure",
+                        "handler": "function handler(data,dataset,model,context) { console.log('model',model,'data',data,'dataset',dataset); switch(data.field7) { case 'A': data.field8 = 'Anonymous'; break; case 'B': data.field8 = 'Bad Request'; break; case 'C': data.field8 = 'Counter Attack'; break; } }"
+                    }
+                },
+                "field8": { "type": "STRING" },
+                "field9": { "type": "STRING" , "options": { 
+                        "handlerType": "function", 
+                        "handler": "function handler(data) { if(data.field7=='A') return null; return data.field1 + '-' + data.field3; }"
+                    }
+                },
+                "field10": { "type": "STRING", "options": { "mapper": ["field1","-","field3"] } },
+                "field11": { "type": "STRING" },
+                "field12": { "type": "STRING" },
+                "curtime": { "type": "DATETIME", "defaultValue": "#current_timestamp" },
+                "remark": { "type": "STRING", "defaultValue": "test_mapper_simple" }
+            }
+        } ]
     },
     "test_mapper_complex": {
-        "name": "tmigratetest",
-        "alias": { "privateAlias": "PROMPTDB" },
-        "fields": {
-            "field1": { "type": "STRING", "key": true, "defaultValue": "#current_uuid" },
-            "field2": { "type": "DECIMAL", "options": { "mapper": "amount" } },
-            "field3": { "type": "INTEGER", "options": { "mapper": "counter" } },
-            "field4": { "type": "DATE", "options": { "mapper": "entity.asdate" } },
-            "field5": { "type": "TIME", "options": { "mapper": "entity.astime" } },
-            "field6": { "type": "DATETIME", "options": { "mapper": ["entity.asdate"," ","entity.astime"] } },
-            "field7": { "type": "STRING" , "options": {
-                    "handlerType": "procedure",
-                    "handler": "function handler(data,dataset,model,context) { console.log('model',model,'data',data,'dataset',dataset); switch(data.field7) { case 'A': data.field8 = 'Anonymous'; break; case 'B': data.field8 = 'Bad Request'; break; case 'C': data.field8 = 'Counter Attack'; break; } }"
-                }
-            },
-            "field8": { "type": "STRING" },
-            "field9": { "type": "STRING" , "options": { 
-                    "handlerType": "function",
-                    "handler": "function handler(data) { if(data.field7=='A') return null; return data.field1 + '-' + data.field3; }"
-                }
-            },
-            "field10": { "type": "STRING", "options": { "mapper": ["entity.reporter","-","counter","-","#current_uuid"] } },
-            "field11": { "type": "STRING" },
-            "field12": { "type": "STRING" },
-            "curtime": { "type": "DATETIME", "defaultValue": "#current_timestamp" },
-            "remark": { "type": "STRING", "defaultValue": "test_mapper_complex" }
-        }
+        "models": [ {
+            "name": "tmigratetest",
+            "alias": { "privateAlias": "PROMPTDB" },
+            "fields": {
+                "field1": { "type": "STRING", "key": true, "defaultValue": "#current_uuid" },
+                "field2": { "type": "DECIMAL", "options": { "mapper": "amount" } },
+                "field3": { "type": "INTEGER", "options": { "mapper": "counter" } },
+                "field4": { "type": "DATE", "options": { "mapper": "entity.asdate" } },
+                "field5": { "type": "TIME", "options": { "mapper": "entity.astime" } },
+                "field6": { "type": "DATETIME", "options": { "mapper": ["entity.asdate"," ","entity.astime"] } },
+                "field7": { "type": "STRING" , "options": {
+                        "handlerType": "procedure",
+                        "handler": "function handler(data,dataset,model,context) { console.log('model',model,'data',data,'dataset',dataset); switch(data.field7) { case 'A': data.field8 = 'Anonymous'; break; case 'B': data.field8 = 'Bad Request'; break; case 'C': data.field8 = 'Counter Attack'; break; } }"
+                    }
+                },
+                "field8": { "type": "STRING" },
+                "field9": { "type": "STRING" , "options": { 
+                        "handlerType": "function",
+                        "handler": "function handler(data) { if(data.field7=='A') return null; return data.field1 + '-' + data.field3; }"
+                    }
+                },
+                "field10": { "type": "STRING", "options": { "mapper": ["entity.reporter","-","counter","-","#current_uuid"] } },
+                "field11": { "type": "STRING" },
+                "field12": { "type": "STRING" },
+                "curtime": { "type": "DATETIME", "defaultValue": "#current_timestamp" },
+                "remark": { "type": "STRING", "defaultValue": "test_mapper_complex" }
+            }
+        } ]
     },
     "test_xpath": {
-        "name": "tmigratetest",
-        "alias": { "privateAlias": "PROMPTDB" },
-        "fields": {
-            "field1": { "type": "STRING", "key": true },
-            "field2": { "type": "DECIMAL" },
-            "field3": { "type": "INTEGER" },
-            "field4": { "type": "DATE" },
-            "field5": { "type": "TIME" },
-            "field6": { "type": "DATETIME" },
-            "field7": { "type": "STRING" , "options": {
-                    "handlerType": "procedure",
-                    "handler": "function handler(data,dataset,model,context) { console.log('model',model,'data',data,'dataset',dataset); switch(data.field7) { case 'A': data.field8 = 'Anonymous'; break; case 'B': data.field8 = 'Bad Request'; break; case 'C': data.field8 = 'Counter Attack'; break; } }"
-                }
+        "models": [ {
+            "name": "tmigratetest",
+            "alias": { "privateAlias": "PROMPTDB" },
+            "fields": {
+                "field1": { "type": "STRING", "key": true },
+                "field2": { "type": "DECIMAL" },
+                "field3": { "type": "INTEGER" },
+                "field4": { "type": "DATE" },
+                "field5": { "type": "TIME" },
+                "field6": { "type": "DATETIME" },
+                "field7": { "type": "STRING" , "options": {
+                        "handlerType": "procedure",
+                        "handler": "function handler(data,dataset,model,context) { console.log('model',model,'data',data,'dataset',dataset); switch(data.field7) { case 'A': data.field8 = 'Anonymous'; break; case 'B': data.field8 = 'Bad Request'; break; case 'C': data.field8 = 'Counter Attack'; break; } }"
+                    }
+                },
+                "field8": { "type": "STRING" },
+                "field9": { "type": "STRING" , "options": { 
+                        "handlerType": "function",
+                        "handler": "function handler(data) { if(data.field7=='A') return null; return data.field1 + '-' + data.field3; }"
+                    }
+                },
+                "field10": { "type": "STRING", "options": { "mapper": ["field1","-","field3"] } },
+                "field11": { "type": "STRING" },
+                "field12": { "type": "STRING" },
+                "curtime": { "type": "DATETIME", "defaultValue": "#current_timestamp" },
+                "remark": { "type": "STRING", "defaultValue": "test_xpath" }
             },
-            "field8": { "type": "STRING" },
-            "field9": { "type": "STRING" , "options": { 
-                    "handlerType": "function",
-                    "handler": "function handler(data) { if(data.field7=='A') return null; return data.field1 + '-' + data.field3; }"
-                }
-            },
-            "field10": { "type": "STRING", "options": { "mapper": ["field1","-","field3"] } },
-            "field11": { "type": "STRING" },
-            "field12": { "type": "STRING" },
-            "curtime": { "type": "DATETIME", "defaultValue": "#current_timestamp" },
-            "remark": { "type": "STRING", "defaultValue": "test_xpath" }
-        },
-        "settings": { "xpath": "datarow.rows" }
+            "settings": { "xpath": "datarow.rows" }
+        } ]
     },
     "test_xpath_complex": {
-        "name": "tmigratetest",
-        "alias": { "privateAlias": "PROMPTDB" },
-        "fields": {
-            "field1": { "type": "STRING", "key": true, "defaultValue": "#current_uuid" },
-            "field2": { "type": "DECIMAL", "options": { "mapper": "@amount" } },
-            "field3": { "type": "INTEGER", "options": { "mapper": "@counter" } },
-            "field4": { "type": "DATE", "options": { "mapper": "@entity.asdate" } },
-            "field5": { "type": "TIME", "options": { "mapper": "@entity.astime" } },
-            "field6": { "type": "DATETIME", "options": { "mapper": ["@entity.asdate"," ","@entity.astime"] } },
-            "field7": { "type": "STRING" , "options": {
-                    "handlerType": "procedure",
-                    "handler": "function handler(data,dataset,model,context) { console.log('model',model,data,dataset); switch(data.field7) { case 'A': data.field8 = 'Anonymous'; break; case 'B': data.field8 = 'Bad Request'; break; case 'C': data.field8 = 'Counter Attack'; break; } }"
-                }
+        "models": [ {
+            "name": "tmigratetest",
+            "alias": { "privateAlias": "PROMPTDB" },
+            "fields": {
+                "field1": { "type": "STRING", "key": true, "defaultValue": "#current_uuid" },
+                "field2": { "type": "DECIMAL", "options": { "mapper": "@amount" } },
+                "field3": { "type": "INTEGER", "options": { "mapper": "@counter" } },
+                "field4": { "type": "DATE", "options": { "mapper": "@entity.asdate" } },
+                "field5": { "type": "TIME", "options": { "mapper": "@entity.astime" } },
+                "field6": { "type": "DATETIME", "options": { "mapper": ["@entity.asdate"," ","@entity.astime"] } },
+                "field7": { "type": "STRING" , "options": {
+                        "handlerType": "procedure",
+                        "handler": "function handler(data,dataset,model,context) { console.log('model',model,data,dataset); switch(data.field7) { case 'A': data.field8 = 'Anonymous'; break; case 'B': data.field8 = 'Bad Request'; break; case 'C': data.field8 = 'Counter Attack'; break; } }"
+                    }
+                },
+                "field8": { "type": "STRING" },
+                "field9": { "type": "STRING" , "options": { 
+                        "handlerType": "function", 
+                        "handler": "function handler(data) { if(data.field7=='A') return null; return data.field1 + '-' + data.field3; }"
+                    }
+                },
+                "field10": { "type": "STRING", "options": { "mapper": ["@entity.reporter","-","@counter"] } },
+                "field11": { "type": "STRING" },
+                "field12": { "type": "STRING" },
+                "curtime": { "type": "DATETIME", "defaultValue": "#current_timestamp" },
+                "remark": { "type": "STRING", "defaultValue": "test_xpath_complex" }
             },
-            "field8": { "type": "STRING" },
-            "field9": { "type": "STRING" , "options": { 
-                    "handlerType": "function", 
-                    "handler": "function handler(data) { if(data.field7=='A') return null; return data.field1 + '-' + data.field3; }"
-                }
-            },
-            "field10": { "type": "STRING", "options": { "mapper": ["@entity.reporter","-","@counter"] } },
-            "field11": { "type": "STRING" },
-            "field12": { "type": "STRING" },
-            "curtime": { "type": "DATETIME", "defaultValue": "#current_timestamp" },
-            "remark": { "type": "STRING", "defaultValue": "test_xpath_complex" }
-        },
-        "settings": { "xpath": "datarow.rows" }
+            "settings": { "xpath": "datarow.rows" }
+        } ]
     },
     "test_xpath_complex_mapper_struct": {
-        "name": "tmigratetest",
-        "alias": { "privateAlias": "PROMPTDB" },
-        "fields": {
-            "field1": { "type": "STRING", "key": true, "defaultValue": "#current_uuid" },
-            "field2": { "type": "DECIMAL", "options": { "mapper": { "ref": "@", "name": "amount" } } },
-            "field3": { "type": "INTEGER", "options": { "mapper": { "ref": "@", "name": "counter" } } },
-            "field4": { "type": "DATE", "options": { "mapper": { "ref": "@", "name": "entity.asdate" } } },
-            "field5": { "type": "TIME", "options": { "mapper": { "ref": "@", "name": "entity.astime" } } },
-            "field6": { "type": "DATETIME", "options": { "mapper": [
-                { "ref": "@", "name": "entity.asdate" }, " ",
-                { "ref": "@", "name": "entity.astime" } ] } },
-            "field7": { "type": "STRING" , "options": {
-                    "handlerType": "procedure", 
-                    "handler": "function handler(data,dataset,model,context) { console.log('model',model,data,dataset); switch(data.field7) { case 'A': data.field8 = 'Anonymous'; break; case 'B': data.field8 = 'Bad Request'; break; case 'C': data.field8 = 'Counter Attack'; break; } }"
-                }
+        "models": [ {
+            "name": "tmigratetest",
+            "alias": { "privateAlias": "PROMPTDB" },
+            "fields": {
+                "field1": { "type": "STRING", "key": true, "defaultValue": "#current_uuid" },
+                "field2": { "type": "DECIMAL", "options": { "mapper": { "ref": "@", "name": "amount" } } },
+                "field3": { "type": "INTEGER", "options": { "mapper": { "ref": "@", "name": "counter" } } },
+                "field4": { "type": "DATE", "options": { "mapper": { "ref": "@", "name": "entity.asdate" } } },
+                "field5": { "type": "TIME", "options": { "mapper": { "ref": "@", "name": "entity.astime" } } },
+                "field6": { "type": "DATETIME", "options": { "mapper": [
+                    { "ref": "@", "name": "entity.asdate" }, " ",
+                    { "ref": "@", "name": "entity.astime" } ] } },
+                "field7": { "type": "STRING" , "options": {
+                        "handlerType": "procedure", 
+                        "handler": "function handler(data,dataset,model,context) { console.log('model',model,data,dataset); switch(data.field7) { case 'A': data.field8 = 'Anonymous'; break; case 'B': data.field8 = 'Bad Request'; break; case 'C': data.field8 = 'Counter Attack'; break; } }"
+                    }
+                },
+                "field8": { "type": "STRING" },
+                "field9": { "type": "STRING" , "options": { 
+                        "handlerType": "function", 
+                        "handler": "function handler(data) { if(data.field7=='A') return null; return data.field1 + '-' + data.field3; }"
+                    }
+                },
+                "field10": { "type": "STRING", "options": { "mapper": [
+                    { "ref": "@", "name": "entity.reporter", "desc": "@ sign point to root data reference" }, 
+                    { "ref": "#", "name": "-", "desc": "# sign mean constance value or reserved value" },
+                    { "ref": "$", "name": "field7", "desc": "$ sign refer to current object" },
+                    { "ref": "#", "name": "-" },
+                    { "ref": "%", "name": "DB_SECTION", "desc": "% sign obtain from config or environment setting" } ] } },
+                "field11": { "type": "STRING" },
+                "field12": { "type": "STRING" },
+                "curtime": { "type": "DATETIME", "defaultValue": "#current_timestamp" },
+                "remark": { "type": "STRING", "defaultValue": "test_xpath_complex_mapper_struct" }
             },
-            "field8": { "type": "STRING" },
-            "field9": { "type": "STRING" , "options": { 
-                    "handlerType": "function", 
-                    "handler": "function handler(data) { if(data.field7=='A') return null; return data.field1 + '-' + data.field3; }"
-                }
-            },
-            "field10": { "type": "STRING", "options": { "mapper": [
-                { "ref": "@", "name": "entity.reporter", "desc": "@ sign point to root data reference" }, 
-                { "ref": "#", "name": "-", "desc": "# sign mean constance value or reserved value" },
-                { "ref": "$", "name": "field7", "desc": "$ sign refer to current object" },
-                { "ref": "#", "name": "-" },
-                { "ref": "%", "name": "DB_SECTION", "desc": "% sign obtain from config or environment setting" } ] } },
-            "field11": { "type": "STRING" },
-            "field12": { "type": "STRING" },
-            "curtime": { "type": "DATETIME", "defaultValue": "#current_timestamp" },
-            "remark": { "type": "STRING", "defaultValue": "test_xpath_complex_mapper_struct" }
-        },
-        "settings": { "xpath": "datarow.rows" }
+            "settings": { "xpath": "datarow.rows" }
+        } ]
     },
     "test_simple_call_api": {
-        "name": "tmigratetest",
-        "alias": { "privateAlias": "PROMPTDB" },
-        "fields": {
-            "field1": { "type": "STRING", "key": true },
-            "field2": { "type": "DECIMAL" },
-            "field3": { "type": "INTEGER" },
-            "field4": { "type": "DATE" },
-            "field5": { "type": "TIME" },
-            "field6": { "type": "DATETIME" },
-            "field7": { "type": "STRING" },
-            "field8": { "type": "STRING" },
-            "field9": { "type": "STRING" },
-            "field10": { "type": "STRING" },
-            "field11": { "type": "STRING" },
-            "field12": { "type": "STRING", "options": {
-                    "mapper": "field11",
-                    "connection": {
-                        "type": "API",
-                        "api": "http://localhost:8080/api/category/groups?names=tkappstype", 
-                        "setting": {},
-                        "body": {},
-                        "mapper": "@body.tkappstype"
+        "models": [ {
+            "name": "tmigratetest",
+            "alias": { "privateAlias": "PROMPTDB" },
+            "fields": {
+                "field1": { "type": "STRING", "key": true },
+                "field2": { "type": "DECIMAL" },
+                "field3": { "type": "INTEGER" },
+                "field4": { "type": "DATE" },
+                "field5": { "type": "TIME" },
+                "field6": { "type": "DATETIME" },
+                "field7": { "type": "STRING" },
+                "field8": { "type": "STRING" },
+                "field9": { "type": "STRING" },
+                "field10": { "type": "STRING" },
+                "field11": { "type": "STRING" },
+                "field12": { "type": "STRING", "options": {
+                        "mapper": "field11",
+                        "connection": {
+                            "type": "API",
+                            "api": "http://localhost:8080/api/category/groups?names=tkappstype", 
+                            "setting": {},
+                            "body": {},
+                            "mapper": "@body.tkappstype"
+                        }
                     }
-                }
-            },
-            "curtime": { "type": "DATETIME", "defaultValue": "#current_timestamp" },
-            "remark": { "type": "STRING", "defaultValue": "test_simple_call_api" }
-        }
+                },
+                "curtime": { "type": "DATETIME", "defaultValue": "#current_timestamp" },
+                "remark": { "type": "STRING", "defaultValue": "test_simple_call_api" }
+            }
+        } ]
     },
     "test_simple_call_api_list": {
-        "name": "tmigratetest",
-        "alias": { "privateAlias": "PROMPTDB" },
-        "fields": {
-            "field1": { "type": "STRING", "key": true },
-            "field2": { "type": "DECIMAL" },
-            "field3": { "type": "INTEGER" },
-            "field4": { "type": "DATE" },
-            "field5": { "type": "TIME" },
-            "field6": { "type": "DATETIME" },
-            "field7": { "type": "STRING" },
-            "field8": { "type": "STRING" },
-            "field9": { "type": "STRING" },
-            "field10": { "type": "STRING" },
-            "field11": { "type": "STRING" },
-            "field12": { "type": "STRING", "options": {
-                    "mapper": "field11",
-                    "connection": {
-                        "type": "API",
-                        "api": "http://localhost:8080/api/category/lists", 
-                        "setting": {},
-                        "body": { "names" : "tkappstype" },
-                        "mapper": "@body[0].resultset.rows",
-                        "fieldname": "typeid",
-                        "fieldvalue": "nameen"
+        "models": [ {
+            "name": "tmigratetest",
+            "alias": { "privateAlias": "PROMPTDB" },
+            "fields": {
+                "field1": { "type": "STRING", "key": true },
+                "field2": { "type": "DECIMAL" },
+                "field3": { "type": "INTEGER" },
+                "field4": { "type": "DATE" },
+                "field5": { "type": "TIME" },
+                "field6": { "type": "DATETIME" },
+                "field7": { "type": "STRING" },
+                "field8": { "type": "STRING" },
+                "field9": { "type": "STRING" },
+                "field10": { "type": "STRING" },
+                "field11": { "type": "STRING" },
+                "field12": { "type": "STRING", "options": {
+                        "mapper": "field11",
+                        "connection": {
+                            "type": "API",
+                            "api": "http://localhost:8080/api/category/lists", 
+                            "setting": {},
+                            "body": { "names" : "tkappstype" },
+                            "mapper": "@body[0].resultset.rows",
+                            "fieldname": "typeid",
+                            "fieldvalue": "nameen"
+                        }
                     }
-                }
-            },
-            "curtime": { "type": "DATETIME", "defaultValue": "#current_timestamp" },
-            "remark": { "type": "STRING", "defaultValue": "test_simple_call_api_list" }
-        }
+                },
+                "curtime": { "type": "DATETIME", "defaultValue": "#current_timestamp" },
+                "remark": { "type": "STRING", "defaultValue": "test_simple_call_api_list" }
+            }
+        } ]
     },
     "test_simple_call_api_list_handler": {
-        "name": "tmigratetest",
-        "alias": { "privateAlias": "PROMPTDB" },
-        "fields": {
-            "field1": { "type": "STRING", "key": true },
-            "field2": { "type": "DECIMAL" },
-            "field3": { "type": "INTEGER" },
-            "field4": { "type": "DATE" },
-            "field5": { "type": "TIME" },
-            "field6": { "type": "DATETIME" },
-            "field7": { "type": "STRING" },
-            "field8": { "type": "STRING" },
-            "field9": { "type": "STRING" },
-            "field10": { "type": "STRING" },
-            "field11": { "type": "STRING" },
-            "field12": { "type": "STRING", "options": {
-                    "mapper": "field11",
-                    "connection": {
-                        "type": "API",
-                        "api": "http://localhost:8080/api/category/lists", 
-                        "setting": {},
-                        "body": { "names" : "tkappstype" },
-                        "handler": "function apihandler(response,data,dataset) { console.log('res',response,'data',data); let rec = response.body[0].resultset.rows.find((row) => row.typeid == data.field11); console.log('record',rec); if(rec) { return rec.nameen; } return data.field12; }"
+        "models": [ {
+            "name": "tmigratetest",
+            "alias": { "privateAlias": "PROMPTDB" },
+            "fields": {
+                "field1": { "type": "STRING", "key": true },
+                "field2": { "type": "DECIMAL" },
+                "field3": { "type": "INTEGER" },
+                "field4": { "type": "DATE" },
+                "field5": { "type": "TIME" },
+                "field6": { "type": "DATETIME" },
+                "field7": { "type": "STRING" },
+                "field8": { "type": "STRING" },
+                "field9": { "type": "STRING" },
+                "field10": { "type": "STRING" },
+                "field11": { "type": "STRING" },
+                "field12": { "type": "STRING", "options": {
+                        "mapper": "field11",
+                        "connection": {
+                            "type": "API",
+                            "api": "http://localhost:8080/api/category/lists", 
+                            "setting": {},
+                            "body": { "names" : "tkappstype" },
+                            "handler": "function apihandler(response,data,dataset) { console.log('res',response,'data',data); let rec = response.body[0].resultset.rows.find((row) => row.typeid == data.field11); console.log('record',rec); if(rec) { return rec.nameen; } return data.field12; }"
+                        }
                     }
-                }
-            },
-            "curtime": { "type": "DATETIME", "defaultValue": "#current_timestamp" },
-            "remark": { "type": "STRING", "defaultValue": "test_simple_call_api_list_handler" }
-        }
+                },
+                "curtime": { "type": "DATETIME", "defaultValue": "#current_timestamp" },
+                "remark": { "type": "STRING", "defaultValue": "test_simple_call_api_list_handler" }
+            }
+        } ]
     },
     "test_simple_call_db": {
-        "name": "tmigratetest",
-        "alias": { "privateAlias": "PROMPTDB" },
-        "fields": {
-            "field1": { "type": "STRING", "key": true },
-            "field2": { "type": "DECIMAL" },
-            "field3": { "type": "INTEGER" },
-            "field4": { "type": "DATE" },
-            "field5": { "type": "TIME" },
-            "field6": { "type": "DATETIME" },
-            "field7": { "type": "STRING" },
-            "field8": { "type": "STRING" },
-            "field9": { "type": "STRING" },
-            "field10": { "type": "STRING" },
-            "field11": { "type": "STRING" },
-            "field12": { "type": "STRING", "options": {
-                    "mapper": "field11",
-                    "connection": {
-                        "type": "DB",
-                        "query": "select * from tconstant where typename='tappstype'",
-                        "mapper": "rows",
-                        "fieldname": "typeid",
-                        "fieldvalue": "nameen",
-                        "schema": "test_simple_query_db",
-                        "alias": "mysql2", "dialect": "mysql", "url":"", "user": "root", "password": "root", "host": "localhost", "port": 3306, "database": "migrateauth", "options": { "charset": "utf8", "connectionLimit": 1000 }
+        "models": [ {
+            "name": "tmigratetest",
+            "alias": { "privateAlias": "PROMPTDB" },
+            "fields": {
+                "field1": { "type": "STRING", "key": true },
+                "field2": { "type": "DECIMAL" },
+                "field3": { "type": "INTEGER" },
+                "field4": { "type": "DATE" },
+                "field5": { "type": "TIME" },
+                "field6": { "type": "DATETIME" },
+                "field7": { "type": "STRING" },
+                "field8": { "type": "STRING" },
+                "field9": { "type": "STRING" },
+                "field10": { "type": "STRING" },
+                "field11": { "type": "STRING" },
+                "field12": { "type": "STRING", "options": {
+                        "mapper": "field11",
+                        "connection": {
+                            "type": "DB",
+                            "query": "select * from tconstant where typename='tappstype'",
+                            "mapper": "rows",
+                            "fieldname": "typeid",
+                            "fieldvalue": "nameen",
+                            "schema": "test_simple_query_db",
+                            "alias": "mysql2", "dialect": "mysql", "url":"", "user": "root", "password": "root", "host": "localhost", "port": 3306, "database": "migrateauth", "options": { "charset": "utf8", "connectionLimit": 1000 }
+                        }
                     }
-                }
-            },
-            "curtime": { "type": "DATETIME", "defaultValue": "#current_timestamp" },
-            "remark": { "type": "STRING", "defaultValue": "test_simple_call_db" }
-        }
+                },
+                "curtime": { "type": "DATETIME", "defaultValue": "#current_timestamp" },
+                "remark": { "type": "STRING", "defaultValue": "test_simple_call_db" }
+            }
+        } ]
     },
     "test_simple_call_db_handler": {
-        "name": "tmigratetest",
-        "alias": { "privateAlias": "PROMPTDB" },
-        "fields": {
-            "field1": { "type": "STRING", "key": true },
-            "field2": { "type": "DECIMAL" },
-            "field3": { "type": "INTEGER" },
-            "field4": { "type": "DATE" },
-            "field5": { "type": "TIME" },
-            "field6": { "type": "DATETIME" },
-            "field7": { "type": "STRING" },
-            "field8": { "type": "STRING" },
-            "field9": { "type": "STRING" },
-            "field10": { "type": "STRING" },
-            "field11": { "type": "STRING" },
-            "field12": { "type": "STRING", "options": {
-                    "mapper": "field11",
-                    "connection": {
-                        "type": "DB",
-                        "query": "select * from tconstant where typename='tappstype'",
-                        "handler": "function dbhandler(response,data,dataset) { console.log('res',response,'data',data); let rec = response.rows.find((row) => row.typeid == data.field11); console.log('record',rec); if(rec) { return rec.nameen; } return data.field12; }",
-                        "schema": "test_simple_query_db_handler",
-                        "alias": "mysql2", "dialect": "mysql", "url":"", "user": "root", "password": "root", "host": "localhost", "port": 3306, "database": "migrateauth", "options": { "charset": "utf8", "connectionLimit": 1000 }
+        "models": [ {
+            "name": "tmigratetest",
+            "alias": { "privateAlias": "PROMPTDB" },
+            "fields": {
+                "field1": { "type": "STRING", "key": true },
+                "field2": { "type": "DECIMAL" },
+                "field3": { "type": "INTEGER" },
+                "field4": { "type": "DATE" },
+                "field5": { "type": "TIME" },
+                "field6": { "type": "DATETIME" },
+                "field7": { "type": "STRING" },
+                "field8": { "type": "STRING" },
+                "field9": { "type": "STRING" },
+                "field10": { "type": "STRING" },
+                "field11": { "type": "STRING" },
+                "field12": { "type": "STRING", "options": {
+                        "mapper": "field11",
+                        "connection": {
+                            "type": "DB",
+                            "query": "select * from tconstant where typename='tappstype'",
+                            "handler": "function dbhandler(response,data,dataset) { console.log('res',response,'data',data); let rec = response.rows.find((row) => row.typeid == data.field11); console.log('record',rec); if(rec) { return rec.nameen; } return data.field12; }",
+                            "schema": "test_simple_query_db_handler",
+                            "alias": "mysql2", "dialect": "mysql", "url":"", "user": "root", "password": "root", "host": "localhost", "port": 3306, "database": "migrateauth", "options": { "charset": "utf8", "connectionLimit": 1000 }
+                        }
                     }
-                }
-            },
-            "curtime": { "type": "DATETIME", "defaultValue": "#current_timestamp" },
-            "remark": { "type": "STRING", "defaultValue": "test_simple_call_db_handler" }
-        }
+                },
+                "curtime": { "type": "DATETIME", "defaultValue": "#current_timestamp" },
+                "remark": { "type": "STRING", "defaultValue": "test_simple_call_db_handler" }
+            }
+        } ]
     },
     "test_simple_dataset": {
-        "name": "tmigratetest",
-        "alias": { "privateAlias": "PROMPTDB" },
-        "fields": {
-            "field1": { "type": "STRING", "key": true },
-            "field2": { "type": "DECIMAL" },
-            "field3": { "type": "INTEGER" },
-            "field4": { "type": "DATE" },
-            "field5": { "type": "TIME" },
-            "field6": { "type": "DATETIME" },
-            "field7": { "type": "STRING" },
-            "field8": { "type": "STRING" },
-            "field9": { "type": "STRING" },
-            "field10": { "type": "STRING" },
-            "field11": { "type": "STRING" },
-            "field12": { "type": "STRING" },
-            "curtime": { "type": "DATETIME", "defaultValue": "#current_timestamp" },
-            "remark": { "type": "STRING", "defaultValue": "test_simple_dataset" }
-        }
+        "models": [ {
+            "name": "tmigratetest",
+            "alias": { "privateAlias": "PROMPTDB" },
+            "fields": {
+                "field1": { "type": "STRING", "key": true },
+                "field2": { "type": "DECIMAL" },
+                "field3": { "type": "INTEGER" },
+                "field4": { "type": "DATE" },
+                "field5": { "type": "TIME" },
+                "field6": { "type": "DATETIME" },
+                "field7": { "type": "STRING" },
+                "field8": { "type": "STRING" },
+                "field9": { "type": "STRING" },
+                "field10": { "type": "STRING" },
+                "field11": { "type": "STRING" },
+                "field12": { "type": "STRING" },
+                "curtime": { "type": "DATETIME", "defaultValue": "#current_timestamp" },
+                "remark": { "type": "STRING", "defaultValue": "test_simple_dataset" }
+            }
+        } ]
     },
     "test_simple_dataset_array": {
-        "name": "tmigratetest",
-        "alias": { "privateAlias": "PROMPTDB" },
-        "fields": {
-            "field1": { "type": "STRING", "key": true },
-            "field2": { "type": "DECIMAL" },
-            "field3": { "type": "INTEGER" },
-            "field4": { "type": "DATE" },
-            "field5": { "type": "TIME" },
-            "field6": { "type": "DATETIME" },
-            "field7": { "type": "STRING" },
-            "field8": { "type": "STRING" },
-            "field9": { "type": "STRING" },
-            "field10": { "type": "STRING" },
-            "field11": { "type": "STRING" },
-            "field12": { "type": "STRING" },
-            "curtime": { "type": "DATETIME", "defaultValue": "#current_timestamp" },
-            "remark": { "type": "STRING", "defaultValue": "test_simple_dataset_array" }
-        }
+        "models": [ {
+            "name": "tmigratetest",
+            "alias": { "privateAlias": "PROMPTDB" },
+            "fields": {
+                "field1": { "type": "STRING", "key": true },
+                "field2": { "type": "DECIMAL" },
+                "field3": { "type": "INTEGER" },
+                "field4": { "type": "DATE" },
+                "field5": { "type": "TIME" },
+                "field6": { "type": "DATETIME" },
+                "field7": { "type": "STRING" },
+                "field8": { "type": "STRING" },
+                "field9": { "type": "STRING" },
+                "field10": { "type": "STRING" },
+                "field11": { "type": "STRING" },
+                "field12": { "type": "STRING" },
+                "curtime": { "type": "DATETIME", "defaultValue": "#current_timestamp" },
+                "remark": { "type": "STRING", "defaultValue": "test_simple_dataset_array" }
+            }
+        } ]
     },
     "test_simple_data_array": {
-        "name": "tmigratetest",
-        "alias": { "privateAlias": "PROMPTDB" },
-        "fields": {
-            "field1": { "type": "STRING", "key": true },
-            "field2": { "type": "DECIMAL" },
-            "field3": { "type": "INTEGER" },
-            "field4": { "type": "DATE" },
-            "field5": { "type": "TIME" },
-            "field6": { "type": "DATETIME" },
-            "field7": { "type": "STRING" },
-            "field8": { "type": "STRING" },
-            "field9": { "type": "STRING" },
-            "field10": { "type": "STRING" },
-            "field11": { "type": "STRING" },
-            "field12": { "type": "STRING" },
-            "curtime": { "type": "DATETIME", "defaultValue": "#current_timestamp" },
-            "remark": { "type": "STRING", "defaultValue": "test_simple_data_array" }
-        }
+        "models": [ {
+            "name": "tmigratetest",
+            "alias": { "privateAlias": "PROMPTDB" },
+            "fields": {
+                "field1": { "type": "STRING", "key": true },
+                "field2": { "type": "DECIMAL" },
+                "field3": { "type": "INTEGER" },
+                "field4": { "type": "DATE" },
+                "field5": { "type": "TIME" },
+                "field6": { "type": "DATETIME" },
+                "field7": { "type": "STRING" },
+                "field8": { "type": "STRING" },
+                "field9": { "type": "STRING" },
+                "field10": { "type": "STRING" },
+                "field11": { "type": "STRING" },
+                "field12": { "type": "STRING" },
+                "curtime": { "type": "DATETIME", "defaultValue": "#current_timestamp" },
+                "remark": { "type": "STRING", "defaultValue": "test_simple_data_array" }
+            }
+        } ]
     },
     "test_simple_data_array_list": {
-        "name": "tmigratetest",
-        "alias": { "privateAlias": "PROMPTDB" },
-        "fields": {
-            "field1": { "type": "STRING", "key": true, "options": { "arrayIndex": 0 } },
-            "field2": { "type": "DECIMAL", "options": { "arrayIndex": 1 } },
-            "field3": { "type": "INTEGER", "options": { "arrayIndex": 2 } },
-            "field4": { "type": "DATE", "options": { "arrayIndex": 3 } },
-            "field5": { "type": "TIME", "options": { "arrayIndex": 4 } },
-            "field6": { "type": "DATETIME", "options": { "arrayIndex": 5 } },
-            "field7": { "type": "STRING", "options": { "arrayIndex": 6 } },
-            "field8": { "type": "STRING" },
-            "field9": { "type": "STRING" },
-            "field10": { "type": "STRING" },
-            "field11": { "type": "STRING" },
-            "field12": { "type": "STRING" },
-            "curtime": { "type": "DATETIME", "defaultValue": "#current_timestamp" },
-            "remark": { "type": "STRING", "defaultValue": "test_simple_data_array_list" }
-        }
+        "models": [ {
+            "name": "tmigratetest",
+            "alias": { "privateAlias": "PROMPTDB" },
+            "fields": {
+                "field1": { "type": "STRING", "key": true, "options": { "arrayIndex": 0 } },
+                "field2": { "type": "DECIMAL", "options": { "arrayIndex": 1 } },
+                "field3": { "type": "INTEGER", "options": { "arrayIndex": 2 } },
+                "field4": { "type": "DATE", "options": { "arrayIndex": 3 } },
+                "field5": { "type": "TIME", "options": { "arrayIndex": 4 } },
+                "field6": { "type": "DATETIME", "options": { "arrayIndex": 5 } },
+                "field7": { "type": "STRING", "options": { "arrayIndex": 6 } },
+                "field8": { "type": "STRING" },
+                "field9": { "type": "STRING" },
+                "field10": { "type": "STRING" },
+                "field11": { "type": "STRING" },
+                "field12": { "type": "STRING" },
+                "curtime": { "type": "DATETIME", "defaultValue": "#current_timestamp" },
+                "remark": { "type": "STRING", "defaultValue": "test_simple_data_array_list" }
+            }
+        } ]
     }
 }

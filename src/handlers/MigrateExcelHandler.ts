@@ -69,7 +69,7 @@ export class MigrateExcelHandler extends MigrateTextHandler {
                     }
                 }
             }
-            dataset["lineIndex"] = index;
+            dataset["rowIndex"] = index;
             return dataset;
         }
         return undefined;
