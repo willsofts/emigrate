@@ -2,9 +2,11 @@ import { HTTP } from "@willsofts/will-api";
 import { KnModel, KnFieldSetting } from "@willsofts/will-db";
 import { KnContextInfo, KnValidateInfo, KnDataSet } from '@willsofts/will-core';
 import { VerifyError } from "@willsofts/will-core";
+import { KnDBConnector } from "@willsofts/will-sql";
 import { MigrateHandler } from "./MigrateHandler";
 import { MigrateUtility } from "../utils/MigrateUtility";
-import { MigrateRecordSet, MigrateResultSet, MigrateParams} from "../models/MigrateAlias";
+import { TaskModel, MigrateRecordSet, MigrateResultSet, MigrateParams } from "../models/MigrateAlias";
+import { DEFAULT_CALLING_SERVICE } from "../utils/EnvironmentVariable";
 import LineByLine from "n-readlines";
 import fs from 'fs';
 
@@ -18,7 +20,7 @@ export class MigrateTextHandler extends MigrateHandler {
         return Promise.resolve(vi);
     }
 
-    public override async doInserting(context: KnContextInfo, model: KnModel = this.model, calling: boolean = true): Promise<MigrateResultSet> {
+    public override async doInserting(context: KnContextInfo, model: KnModel = this.model, calling: boolean = DEFAULT_CALLING_SERVICE): Promise<MigrateResultSet> {
         let file = context.params.file;
         this.logger.debug(this.constructor.name+".doInserting: file",file);
         let filename = file;
@@ -26,11 +28,11 @@ export class MigrateTextHandler extends MigrateHandler {
             filename = file.path;
         }
         if(!filename || filename.trim().length==0) {
-            return Promise.reject(new VerifyError("File is undefined",HTTP.NOT_ACCEPTABLE,-16064));
+            return Promise.reject(new VerifyError("File is undefined",HTTP.NOT_ACCEPTABLE,-16065));
         }
         let foundfile = fs.existsSync(filename);
         if(!foundfile) {
-            return Promise.reject(new VerifyError("File not found",HTTP.NOT_ACCEPTABLE,-16065));
+            return Promise.reject(new VerifyError("File not found",HTTP.NOT_ACCEPTABLE,-16064));
         }        
         let taskid = context.params.taskid;
         let taskmodel = await this.getTaskModel(context,taskid);
@@ -40,11 +42,11 @@ export class MigrateTextHandler extends MigrateHandler {
         let uuid = this.randomUUID();
         if(!context.params.migrateid) context.params.migrateid = uuid;
         if(!context.params.processid) context.params.processid = uuid;
-        let param : MigrateParams = { authtoken: this.getTokenKey(context), filename: filename, fileinfo: file, calling: calling };
+        let param : MigrateParams = { authtoken: this.getTokenKey(context), filename: filename, fileinfo: file, calling: calling, async: context.params.async=="true" };
         return this.processInserting(context,taskmodel,param,context.params.dataset);
     }
 
-    public override async processInsertingModel(context: KnContextInfo, taskmodel: KnModel, param: MigrateParams): Promise<MigrateRecordSet> {
+    public override async processInsertingModel(context: KnContextInfo, taskmodel: TaskModel, param: MigrateParams, db: KnDBConnector | undefined): Promise<MigrateRecordSet> {
         if(!this.userToken) this.userToken = await this.getUserTokenInfo(context);
         if(!param.authtoken) param.authtoken = this.getTokenKey(context);
         let taskid = context.params.taskid;
@@ -61,15 +63,16 @@ export class MigrateTextHandler extends MigrateHandler {
             } if(typeof datalist === "object" && Object.keys(datalist).length == 0) {
                 return result;
             }
+            param.calling = false;
             if(param.calling) {
-                let params = { ...context.params, authtoken: param.authtoken, migrateid: migrateid, taskid: taskid, processid: processid, filename: param.filename, fileinfo: param.fileinfo, datapart: header, dataset: datalist };
-                //this.logger.debug(this.constructor.name+".processInserting: calling params",params);
+                //this not work on multi model (data double)
+                let params = { ...context.params, authtoken: param.authtoken, migrateid: migrateid, taskid: taskid, processid: processid, modelname: taskmodel.name, filename: param.filename, fileinfo: param.fileinfo, datapart: header, dataset: datalist };
                 return this.call("migrate.insert",params);
             } else {
                 let handler = new MigrateHandler();
                 handler.obtain(this.broker,this.logger);
                 handler.userToken = this.userToken;
-                return handler.processInsertingModel(context,taskmodel,param,datalist,header);
+                return handler.processInsertingModel(context,taskmodel,param,db,datalist,header);
             }
         }
         return result;

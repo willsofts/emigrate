@@ -1,5 +1,6 @@
 import { KnDBConfig, KnRecordSet } from "@willsofts/will-sql";
 import { KnModel, KnGenericObject } from "@willsofts/will-db";
+import { ParsedPath } from "path";
 
 export interface MigrateSetting {
     type?: string;
@@ -49,8 +50,14 @@ export interface RefConfig {
     name: string; 
 }
 
+export interface TaskModel extends KnModel {
+    resultset?: MigrateRecordSet;
+    dataset?: any;
+    datapart?: any;
+}
+
 export interface MigrateModel {
-    models: KnModel[];
+    models: TaskModel[];
     configs?: KnGenericObject;
 }
 
@@ -59,4 +66,27 @@ export interface MigrateParams {
     filename: string;
     fileinfo?: any;
     calling: boolean;    
+    async: boolean;
+    dominated?: boolean;
+}
+
+export interface DownloadSetting {
+    url: string;
+    target: string;
+    path?: string;
+    file?: string;
+    naming?: string;
+}
+
+export interface FileInfo {
+    originalname: string;
+    created: Date;
+    modified: Date;
+    size: number;
+    isDirectory: boolean;
+    isFile: boolean;
+    mimetype: string | undefined;
+    destination: string;
+    path: string;
+    info: ParsedPath;
 }

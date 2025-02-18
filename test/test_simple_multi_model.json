@@ -1,0 +1,7 @@
+{
+    "taskid":"test_simple_multi_model", 
+    "dataset":[
+        { "field1": "1111-1", "field2": 2500.55, "field3": 100, "field4": "2024-12-17", "field5": "10:10:10", "field6": "2024-12-17 10:10:10", "field7": "A" },
+        { "field1": "2222-2", "field2": 2200.55, "field3": 200, "field4": "2024-12-17", "field5": "10:10:10", "field6": "2024-12-17 10:10:10", "field7": "B" }
+    ]
+}

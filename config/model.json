@@ -937,5 +937,176 @@
                 "remark": { "type": "STRING", "defaultValue": "test_simple_data_array_list" }
             }
         } ]
+    },
+    "test_simple_multi_model": {
+        "models": [ 
+            {
+                "name": "tmigratetest",
+                "alias": { "privateAlias": "PROMPTDB" },
+                "fields": {
+                    "field1": { "type": "STRING", "key": true },
+                    "field2": { "type": "DECIMAL" },
+                    "field3": { "type": "INTEGER" },
+                    "field4": { "type": "DATE" },
+                    "field5": { "type": "TIME" },
+                    "field6": { "type": "DATETIME" },
+                    "field7": { "type": "STRING" },
+                    "field8": { "type": "STRING" },
+                    "field9": { "type": "STRING" },
+                    "field10": { "type": "STRING" },
+                    "field11": { "type": "STRING" },
+                    "field12": { "type": "STRING" },
+                    "curtime": { "type": "DATETIME", "defaultValue": "#current_timestamp" },
+                    "remark": { "type": "STRING", "defaultValue": "test_simple_multi_model" }
+                }
+            },
+            {
+                "name": "tso",
+                "alias": { "privateAlias": "PROMPTDB" },
+                "fields": {
+                    "mktid": { "type": "STRING", "options": { "mapper": "field1" } },
+                    "share": { "type": "STRING", "options": { "mapper": "field1" } },
+                    "unit": { "type": "DECIMAL", "options": { "mapper": "field3" } },
+                    "price": { "type": "DECIMAL", "options": { "mapper": "field2" } },
+                    "yield": { "type": "INTEGER" },
+                    "effdate": { "type": "DATE", "options": { "mapper": "field4" } },
+                    "efftime": { "type": "TIME", "options": { "mapper": "field5" } },
+                    "edittime": { "type": "DATETIME", "options": { "mapper": "field6" } },
+                    "sharename": { "type": "STRING", "options": { "mapper": "field7" } },
+                    "defvalue": { "type": "STRING" },
+                    "message": { "type": "STRING" },
+                    "remarks": { "type": "STRING", "defaultValue": "test_simple_multi_model" }
+                }
+            }
+        ]
+    },
+    "test_file_multi_model": { 
+        "models": [ 
+            {
+                "name": "tso",
+                "alias": { "privateAlias": "PROMPTDB" },
+                "fields": {
+                    "mktid": { "type": "STRING", "options": { "seqno": 1 } },
+                    "share": { "type": "STRING", "options": { "seqno": 2 } },
+                    "unit": { "type": "DECIMAL", "options": { "seqno": 3 } },
+                    "price": { "type": "DECIMAL", "options": { "seqno": 4 } },
+                    "yield": { "type": "INTEGER" },
+                    "effdate": { "type": "DATE", "options": { "seqno": 5 } },
+                    "efftime": { "type": "TIME", "options": { "seqno": 6 } },
+                    "edittime": { "type": "DATETIME", "options": { "seqno": 7 } },
+                    "sharename": { "type": "STRING", "options": { "seqno": 8 } },
+                    "defvalue": { "type": "STRING" },
+                    "message": { "type": "STRING" },
+                    "remarks": { "type": "STRING", "defaultValue": "test_file_multi_model" }
+                },
+                "settings": { "skip": 1, "delimiter": ",", "quotable": true }
+            },
+            {
+                "name": "ttso",
+                "alias": { "privateAlias": "PROMPTDB" },
+                "fields": {
+                    "mktid": { "type": "STRING", "options": { "seqno": 1 } },
+                    "share": { "type": "STRING", "options": { "seqno": 2 } },
+                    "unit": { "type": "DECIMAL", "options": { "seqno": 3 } },
+                    "price": { "type": "DECIMAL", "options": { "seqno": 4 } },
+                    "yield": { "type": "INTEGER" },
+                    "effdate": { "type": "DATE", "options": { "seqno": 5 } },
+                    "efftime": { "type": "TIME", "options": { "seqno": 6 } },
+                    "edittime": { "type": "DATETIME", "options": { "seqno": 7 } },
+                    "sharename": { "type": "STRING", "options": { "seqno": 8 } },
+                    "defvalue": { "type": "STRING" },
+                    "message": { "type": "STRING" },
+                    "remarks": { "type": "STRING", "defaultValue": "test_file_multi_model" }
+                },
+                "settings": { "skip": 1, "delimiter": ",", "quotable": true }
+            } 
+        ] 
+    },
+    "test_file_multi_model_dominate": {
+        "configs": { "isolateConnection": false },
+        "models": [ 
+            {
+                "name": "tso",
+                "alias": { "privateAlias": "PROMPTDB" },
+                "fields": {
+                    "mktid": { "type": "STRING", "options": { "seqno": 1 } },
+                    "share": { "type": "STRING", "options": { "seqno": 2 } },
+                    "unit": { "type": "DECIMAL", "options": { "seqno": 3 } },
+                    "price": { "type": "DECIMAL", "options": { "seqno": 4 } },
+                    "yield": { "type": "INTEGER" },
+                    "effdate": { "type": "DATE", "options": { "seqno": 5 } },
+                    "efftime": { "type": "TIME", "options": { "seqno": 6 } },
+                    "edittime": { "type": "DATETIME", "options": { "seqno": 7 } },
+                    "sharename": { "type": "STRING", "options": { "seqno": 8 } },
+                    "defvalue": { "type": "STRING" },
+                    "message": { "type": "STRING" },
+                    "remarks": { "type": "STRING", "defaultValue": "test_file_multi_model_dominate" }
+                },
+                "settings": { "skip": 1, "delimiter": ",", "quotable": true }
+            },
+            {
+                "name": "ttso",
+                "alias": { "privateAlias": "PROMPTDB" },
+                "fields": {
+                    "mktid": { "type": "STRING", "options": { "seqno": 1 } },
+                    "share": { "type": "STRING", "options": { "seqno": 2 } },
+                    "unit": { "type": "DECIMAL", "options": { "seqno": 3 } },
+                    "price": { "type": "DECIMAL", "options": { "seqno": 4 } },
+                    "yield": { "type": "INTEGER" },
+                    "effdate": { "type": "DATE", "options": { "seqno": 5 } },
+                    "efftime": { "type": "TIME", "options": { "seqno": 6 } },
+                    "edittime": { "type": "DATETIME", "options": { "seqno": 7 } },
+                    "sharename": { "type": "STRING", "options": { "seqno": 8 } },
+                    "defvalue": { "type": "STRING" },
+                    "message": { "type": "STRING" },
+                    "remarks": { "type": "STRING", "defaultValue": "test_file_multi_model_dominate" }
+                },
+                "settings": { "skip": 1, "delimiter": ",", "quotable": true }
+            } 
+        ] 
+    },
+    "test_file_text_download": { 
+        "configs": { "download": { "url": "http://localhost:8080/assets/tso.txt", "target": "tso.txt" } },
+        "models": [ {
+            "name": "tso",
+            "alias": { "privateAlias": "PROMPTDB" },
+            "fields": {
+                "mktid": { "type": "STRING", "options": { "seqno": 1 } },
+                "share": { "type": "STRING", "options": { "seqno": 2 } },
+                "unit": { "type": "DECIMAL", "options": { "seqno": 3 } },
+                "price": { "type": "DECIMAL", "options": { "seqno": 4 } },
+                "yield": { "type": "INTEGER" },
+                "effdate": { "type": "DATE", "options": { "seqno": 5 } },
+                "efftime": { "type": "TIME", "options": { "seqno": 6 } },
+                "edittime": { "type": "DATETIME", "options": { "seqno": 7 } },
+                "sharename": { "type": "STRING", "options": { "seqno": 8 } },
+                "defvalue": { "type": "STRING" },
+                "message": { "type": "STRING" },
+                "remarks": { "type": "STRING", "defaultValue": "test_file_text_download" }
+            },
+            "settings": { "skip": 1, "delimiter": ",", "quotable": true }
+        } ] 
+    },
+    "test_file_text_download_naming": { 
+        "configs": { "download": { "url": "http://localhost:8080/assets/tso.txt", "target": "tso.txt", "naming": "auto" } },
+        "models": [ {
+            "name": "tso",
+            "alias": { "privateAlias": "PROMPTDB" },
+            "fields": {
+                "mktid": { "type": "STRING", "options": { "seqno": 1 } },
+                "share": { "type": "STRING", "options": { "seqno": 2 } },
+                "unit": { "type": "DECIMAL", "options": { "seqno": 3 } },
+                "price": { "type": "DECIMAL", "options": { "seqno": 4 } },
+                "yield": { "type": "INTEGER" },
+                "effdate": { "type": "DATE", "options": { "seqno": 5 } },
+                "efftime": { "type": "TIME", "options": { "seqno": 6 } },
+                "edittime": { "type": "DATETIME", "options": { "seqno": 7 } },
+                "sharename": { "type": "STRING", "options": { "seqno": 8 } },
+                "defvalue": { "type": "STRING" },
+                "message": { "type": "STRING" },
+                "remarks": { "type": "STRING", "defaultValue": "test_file_text_download_naming" }
+            },
+            "settings": { "skip": 1, "delimiter": ",", "quotable": true }
+        } ] 
     }
 }

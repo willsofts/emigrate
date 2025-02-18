@@ -3,11 +3,57 @@ import { KnDBField, KnModel } from "@willsofts/will-db";
 import { KnRecordSet, KnSQL } from "@willsofts/will-sql";
 import { KnContextInfo, VerifyError } from '@willsofts/will-core';
 import { MigrateBase } from "./MigrateBase";
-import { MigrateConfig, RefConfig } from "../models/MigrateAlias";
+import { RefConfig, MigrateConfig, MigrateRecordSet, MigrateInfo, MigrateReject, MigrateParams, DownloadSetting } from "../models/MigrateAlias";
+import { MigrateLogHandler } from "./MigrateLogHandler";
+import { DownloadHandler } from "./DownloadHandler";
 import config from "@willsofts/will-util";
 
 export class MigrateOperate extends MigrateBase {
     
+    protected insertLogging(context: KnContextInfo, taskmodel: KnModel, param: MigrateParams, rs: MigrateRecordSet) {
+        let params = {authtoken: param.authtoken, ...rs, tablename: taskmodel.name, processfile: param.fileinfo?.path, sourcefile: param.fileinfo?.originalname || param.filename, filesize: param.fileinfo?.size };
+        if(param.calling) {
+            this.call("migratelog.insert",params).catch(ex => this.logger.error(ex));
+        } else {
+            let handler = new MigrateLogHandler();
+            handler.obtain(this.broker,this.logger);
+            handler.userToken = this.userToken;
+            handler.insert({params: params, meta: context.meta}).catch(ex => this.logger.error(ex));
+        }
+    }
+
+    protected updateLogging(context: KnContextInfo, param: MigrateParams, rs: MigrateRecordSet, info: MigrateInfo, reject: MigrateReject) {
+        let processstatus = "DONE";
+        let errormessage = undefined;
+        if(reject.reject) {
+            processstatus = "ERROR";
+            errormessage = this.getDBError(reject.throwable).message;
+        }
+        let params = {authtoken: param.authtoken, ...rs, ...info, processstatus: processstatus, errormessage: errormessage };
+        if(param.calling) {
+            this.call("migratelog.update",params).catch(ex => this.logger.error(ex));
+        } else {
+            let handler = new MigrateLogHandler();
+            handler.obtain(this.broker,this.logger);
+            handler.userToken = this.userToken;
+            handler.update({params: params, meta: context.meta}).catch(ex => this.logger.error(ex));
+        }
+    }
+
+    protected errorLogging(context: KnContextInfo, param: MigrateParams, result: MigrateRecordSet, ex: any) {
+        this.logger.error(ex); 
+        let err = this.getDBError(ex);
+        let params = {authtoken: param.authtoken, ...result, processstatus: "ERROR", errormessage: err.message };
+        if(param.calling) {
+            this.call("migratelog.update",params).catch(ex => this.logger.error(ex));
+        } else {
+            let handler = new MigrateLogHandler();
+            handler.obtain(this.broker,this.logger);
+            handler.userToken = this.userToken;
+            handler.update({params: params, meta: context.meta}).catch(ex => this.logger.error(ex));
+        }
+    }
+
     public async performTransformation(context: KnContextInfo, model: KnModel, datasource: any, datapart?: any): Promise<any> {
         let dataset = datasource;        
         if(model.settings?.xpath && model.settings?.xpath.trim().length>0) {
@@ -324,6 +370,12 @@ export class MigrateOperate extends MigrateBase {
             this.logger.error(this.constructor.name+".requestAPI: error:",ex);
             return Promise.reject(new VerifyError(ex.message,HTTP.INTERNAL_SERVER_ERROR,-11102));
         } 
+    }
+
+    public async performDownload(setting: DownloadSetting) : Promise<DownloadSetting | undefined> {
+        let handler = new DownloadHandler();
+        handler.obtain(this.broker,this.logger);
+        return await handler.performDownload(setting);
     }
 
 }

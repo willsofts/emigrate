@@ -103,3 +103,15 @@ curl -X POST http://localhost:8080/upload/migrate/file -F filename=@D:\exim\tso.
 curl -X POST http://localhost:8080/upload/migrate/file -F filename=@D:\exim\tso.xlsx -F taskid=test_file_excel -F type=excel
 curl -X POST http://localhost:8080/upload/migrate/file -F filename=@D:\exim\tso.xml -F taskid=test_file_xml
 */
+/*
+file {
+  fieldname: 'filename',
+  originalname: 'birth.png',
+  encoding: '7bit',
+  mimetype: 'image/png',
+  destination: 'C:\\Users\\ADMIN\\AppData\\Local\\Temp\\uploaded\\files',
+  filename: 'f51aa9e2-385b-4ae2-b024-2b65f1a5250b.png',
+  path: 'C:\\Users\\ADMIN\\AppData\\Local\\Temp\\uploaded\\files\\f51aa9e2-385b-4ae2-b024-2b65f1a5250b.png',
+  size: 10717
+}
+*/

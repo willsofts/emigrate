@@ -1,19 +1,30 @@
 import { HTTP } from "@willsofts/will-api";
 import { VerifyError } from "@willsofts/will-core";
 import { KnModel } from "@willsofts/will-db";
-import { KnContextInfo } from '@willsofts/will-core';
+import { KnContextInfo, KnValidateInfo } from '@willsofts/will-core';
 import { MigrateResultSet } from "../models/MigrateAlias";
 import { MigrateTextHandler } from "./MigrateTextHandler";
 import { MigrateJsonHandler } from "./MigrateJsonHandler";
 import { MigrateExcelHandler } from "./MigrateExcelHandler";
 import { MigrateXlsxHandler } from "./MigrateXlsxHandler";
 import { MigrateXmlHandler } from "./MigrateXmlHandler";
+import { MigrateUtility } from "../utils/MigrateUtility";
+import { DEFAULT_CALLING_SERVICE } from "../utils/EnvironmentVariable";
 import { TknOperateHandler } from "@willsofts/will-serv";
 import path from 'path';
+import fs from "fs";
 
 export class MigrateFileHandler extends MigrateTextHandler {
 
-    public handlers = [ {name: "file"}, {name: "text"}, {name: "csv"}, {name: "json"}, {name: "excel"}, {name: "xlsx"}, {name: "xml"} ];
+    public handlers = [ {name: "insert"}, {name: "file"}, {name: "text"}, {name: "csv"}, {name: "json"}, {name: "excel"}, {name: "xlsx"}, {name: "xml"} ];
+
+    protected override async validateRequireFields(context: KnContextInfo, model: KnModel, action?: string) : Promise<KnValidateInfo> {
+        let vi = this.validateParameters(context.params,"taskid");
+        if(!vi.valid) {
+            return Promise.reject(new VerifyError("Parameter not found ("+vi.info+")",HTTP.NOT_ACCEPTABLE,-16061));
+        }
+        return Promise.resolve(vi);
+    }
 
     public async file(context: KnContextInfo) : Promise<MigrateResultSet> {
         return this.callFunctional(context, {operate: "file", raw: false}, this.doFile);
@@ -48,47 +59,65 @@ export class MigrateFileHandler extends MigrateTextHandler {
         handler.userToken = this.userToken;
     }
 
-    protected async doText(context: KnContextInfo, model: KnModel) : Promise<MigrateResultSet> {
-        return await this.doInserting(context);
+    protected async doText(context: KnContextInfo, model: KnModel, calling: boolean = DEFAULT_CALLING_SERVICE) : Promise<MigrateResultSet> {
+        let handler = new MigrateTextHandler();
+        this.assignHandler(handler);
+        return await handler.doInserting(context,undefined,calling);
     }
 
-    protected async doJson(context: KnContextInfo, model: KnModel) : Promise<MigrateResultSet> {
+    protected async doJson(context: KnContextInfo, model: KnModel, calling: boolean = DEFAULT_CALLING_SERVICE) : Promise<MigrateResultSet> {
         let handler = new MigrateJsonHandler();
         this.assignHandler(handler);
-        return await handler.doInserting(context);
+        return await handler.doInserting(context,undefined,calling);
     }
 
-    protected async doExcel(context: KnContextInfo, model: KnModel) : Promise<MigrateResultSet> {
+    protected async doExcel(context: KnContextInfo, model: KnModel, calling: boolean = DEFAULT_CALLING_SERVICE) : Promise<MigrateResultSet> {
         let handler = new MigrateExcelHandler();
         this.assignHandler(handler);
-        return await handler.doInserting(context);
+        return await handler.doInserting(context,undefined,calling);
     }
 
-    protected async doXlsx(context: KnContextInfo, model: KnModel) : Promise<MigrateResultSet> {
+    protected async doXlsx(context: KnContextInfo, model: KnModel, calling: boolean = DEFAULT_CALLING_SERVICE) : Promise<MigrateResultSet> {
         let handler = new MigrateXlsxHandler();
         this.assignHandler(handler);
-        return await handler.doInserting(context);
+        return await handler.doInserting(context,undefined,calling);
     }
 
-    protected async doXml(context: KnContextInfo, model: KnModel) : Promise<MigrateResultSet> {
+    protected async doXml(context: KnContextInfo, model: KnModel, calling: boolean = DEFAULT_CALLING_SERVICE) : Promise<MigrateResultSet> {
         let handler = new MigrateXmlHandler();
         this.assignHandler(handler);
-        return await handler.doInserting(context);
+        return await handler.doInserting(context,undefined,calling);
     }
 
-    protected async doFile(context: KnContextInfo, model: KnModel) : Promise<MigrateResultSet> {
+    protected async doFile(context: KnContextInfo, model: KnModel, calling: boolean = DEFAULT_CALLING_SERVICE) : Promise<MigrateResultSet> {
+        //return await this.processFile(context, model, calling);        
+        return await this.doFileDownload(context,model,calling); 
+    }
+
+    protected async processFile(context: KnContextInfo, model: KnModel, calling: boolean = DEFAULT_CALLING_SERVICE) : Promise<MigrateResultSet> {
         await this.validateRequireFields(context,model);
         let file = context.params.file;
+        let filename = file;
+        if(typeof file === "object") {
+            filename = file.path;
+        }
+        if(!filename || filename.trim().length==0) {
+            return Promise.reject(new VerifyError("File is undefined",HTTP.NOT_ACCEPTABLE,-16065));
+        }
+        let foundfile = fs.existsSync(filename);
+        if(!foundfile) {
+            return Promise.reject(new VerifyError("File not found",HTTP.NOT_ACCEPTABLE,-16064));
+        }   
         let isText = false;
         let isJson = false;
         let isXlsx = false;
         let isXml = false;
-        if(file) {
+        if(filename) {
             const textfiletypes = new RegExp("text|txt|csv","i");
             const jsonfiletypes = new RegExp("json","i");
             const xlsxfiletypes = new RegExp("xlsx|xls","i");
             const xmlfiletypes = new RegExp("xml","i");
-            const extname = path.extname(file).toLowerCase();
+            const extname = path.extname(filename).toLowerCase();
             isText = textfiletypes.test(extname);
             isJson = jsonfiletypes.test(extname);
             isXlsx = xlsxfiletypes.test(extname);
@@ -113,6 +142,53 @@ export class MigrateFileHandler extends MigrateTextHandler {
             }
         }
         return Promise.reject(new VerifyError("Not supported",HTTP.NOT_ACCEPTABLE,-16067)); 
+    }
+
+    public override async doInserting(context: KnContextInfo, model: KnModel = this.model, calling: boolean = DEFAULT_CALLING_SERVICE): Promise<MigrateResultSet> {
+        return await this.doFileDownload(context,model,calling); 
+        /*
+        let file = context.params.file;
+        this.logger.debug(this.constructor.name+".doInserting: file",file);
+        let filename = file;
+        if(typeof file === "object") {
+            filename = file.path;
+        }
+        if(!filename || filename.trim().length==0) {
+            return Promise.reject(new VerifyError("File is undefined",HTTP.NOT_ACCEPTABLE,-16065));
+        }
+        let foundfile = fs.existsSync(filename);
+        if(!foundfile) {
+            return Promise.reject(new VerifyError("File not found",HTTP.NOT_ACCEPTABLE,-16064));
+        }   
+        return await this.doFile(context,model,calling);  
+        */   
+    }
+    
+    protected async doFileDownload(context: KnContextInfo, model: KnModel, calling: boolean = DEFAULT_CALLING_SERVICE) : Promise<MigrateResultSet> {
+        await this.validateRequireFields(context,model);
+        let taskid = context.params.taskid;
+        let taskmodel = await this.getTaskModel(context,taskid);
+        this.logger.debug(this.constructor.name+".doFileDownload: taskmodel",taskmodel);
+        if(!taskmodel || taskmodel.models?.length==0) {
+            return Promise.reject(new VerifyError("Model not found",HTTP.NOT_ACCEPTABLE,-16063));
+        }
+        let setting = taskmodel.configs?.download;
+        if(setting) {
+            let res = await this.performDownload(setting);
+            this.logger.debug(this.constructor.name+".doFileDownload: response",res);
+            if(res && res.file) {
+                try {
+                    let fileinfo = await MigrateUtility.getFileInfo(res.file);
+                    fileinfo.originalname = res.target;
+                    this.logger.debug(this.constructor.name+".doFileDownload: fileinfo",fileinfo);
+                    context.params.file = fileinfo;
+                    return await this.processFile(context,model,calling);
+                } catch(ex: any) {
+                    return Promise.reject(this.getDBError(ex));
+                }
+            }
+        }
+        return await this.processFile(context,model,calling);
     }
 
 }

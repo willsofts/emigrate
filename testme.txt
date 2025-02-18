@@ -175,7 +175,49 @@ curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/migra
 test download/report log:
 1. using migrate id
 curl -X POST http://localhost:8080/report/migrate/log -d "migrateid=f716bc6e-8ce4-4033-9ecb-113852c810c9" -o d:\log1.txt
-curl -X POST http://localhost:8080/report/migrate/log/json -d "migrateid=f716bc6e-8ce4-4033-9ecb-113852c810c9" -o d:\log1.txt
+curl -X POST http://localhost:8080/report/migrate/log/json -d "migrateid=f716bc6e-8ce4-4033-9ecb-113852c810c9" -o d:\log1.json
 2. using process id
 curl -X POST http://localhost:8080/report/migrate/log -d "processid=f716bc6e-8ce4-4033-9ecb-113852c810c9" -o d:\log2.txt
-curl -X POST http://localhost:8080/report/migrate/log/json -d "processid=f716bc6e-8ce4-4033-9ecb-113852c810c9" -o d:\log2.txt
+curl -X POST http://localhost:8080/report/migrate/log/json -d "processid=f716bc6e-8ce4-4033-9ecb-113852c810c9" -o d:\log2.json
+
+
+test multi model:
+1. simple data json
+curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/migrate/insert -d @test_simple_multi_model.json
+2. simple file text
+curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/migratetext/insert -d "{\"taskid\":\"test_file_multi_model\", \"file\": \"./assets/tso.txt\"}"
+3. get log
+curl -X POST http://localhost:8080/api/migratelog/get -d "processid=1aa6dd2b-e611-4474-89cf-2f046bc8a346"
+4. test error
+curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/migratetext/insert -d "{\"taskid\":\"test_file_multi_model\", \"file\": \"./assets/tso_error.txt\"}"
+
+5. dominate connection
+curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/migratetext/insert -d "{\"taskid\":\"test_file_multi_model_dominate\", \"file\": \"./assets/tso.txt\"}"
+curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/migratetext/insert -d "{\"taskid\":\"test_file_multi_model_dominate\", \"file\": \"./assets/tso.txt\", \"async\":\"true\"}"
+curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/migratetext/insert -d "{\"taskid\":\"test_file_multi_model_dominate\", \"file\": \"./assets/tso_error.txt\"}"
+curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/migratetext/insert -d "{\"taskid\":\"test_file_multi_model_dominate\", \"file\": \"./assets/tso_error.txt\", \"async\":\"true\"}"
+
+
+test example: 
+1. for api/download file handler
+curl http://localhost:8080/api/example/file -d "file=tso.txt"
+curl http://localhost:8080/api/example/file -d "file=tso_json_array.txt&type=json"
+
+2. using example service
+curl http://localhost:8080/report/example -d "file=tso.txt" -o d:\exim\download\tso.txt
+curl http://localhost:8080/report/example -d "file=tso_json_array.txt&type=json" -o d:\exim\download\tso_json_array.txt
+
+3. using static path
+curl http://localhost:8080/assets/tso.csv -o d:\exim\download\tso.csv
+curl http://localhost:8080/assets/tso.xml -o d:\exim\download\tso.xml
+
+
+test import with download file:
+1. using center api
+curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/migratefile/file -d "{\"taskid\":\"test_file_text_download\"}"
+2. using migratedownlod/file
+curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/migratedownload/file -d "{\"taskid\":\"test_file_text_download\"}"
+3. test auto naming
+curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/migratefile/file -d "{\"taskid\":\"test_file_text_download_naming\"}"
+
+
