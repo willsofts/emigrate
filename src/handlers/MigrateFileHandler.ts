@@ -126,19 +126,19 @@ export class MigrateFileHandler extends MigrateTextHandler {
         let type = context.params.type;
         if(isText) {
             if("json"==type) {
-                return this.doJson(context,model);
+                return this.doJson(context,model,calling);
             } else {
-                return this.doText(context,model);
+                return this.doText(context,model,calling);
             }
         } else if(isJson || "json"==type) {
-            return this.doJson(context,model);
+            return this.doJson(context,model,calling);
         } else if(isXml || "xml"==type) {
-            return this.doXml(context,model);
+            return this.doXml(context,model,calling);
         } else if(isXlsx) {
             if("excel"==type) {
-                return this.doExcel(context,model);
+                return this.doExcel(context,model,calling);
             } else {
-                return this.doXlsx(context,model);
+                return this.doXlsx(context,model,calling);
             }
         }
         return Promise.reject(new VerifyError("Not supported",HTTP.NOT_ACCEPTABLE,-16067)); 
@@ -146,22 +146,6 @@ export class MigrateFileHandler extends MigrateTextHandler {
 
     public override async doInserting(context: KnContextInfo, model: KnModel = this.model, calling: boolean = DEFAULT_CALLING_SERVICE): Promise<MigrateResultSet> {
         return await this.doFileDownload(context,model,calling); 
-        /*
-        let file = context.params.file;
-        this.logger.debug(this.constructor.name+".doInserting: file",file);
-        let filename = file;
-        if(typeof file === "object") {
-            filename = file.path;
-        }
-        if(!filename || filename.trim().length==0) {
-            return Promise.reject(new VerifyError("File is undefined",HTTP.NOT_ACCEPTABLE,-16065));
-        }
-        let foundfile = fs.existsSync(filename);
-        if(!foundfile) {
-            return Promise.reject(new VerifyError("File not found",HTTP.NOT_ACCEPTABLE,-16064));
-        }   
-        return await this.doFile(context,model,calling);  
-        */   
     }
     
     protected async doFileDownload(context: KnContextInfo, model: KnModel, calling: boolean = DEFAULT_CALLING_SERVICE) : Promise<MigrateResultSet> {
