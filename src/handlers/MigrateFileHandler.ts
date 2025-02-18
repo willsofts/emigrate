@@ -59,42 +59,61 @@ export class MigrateFileHandler extends MigrateTextHandler {
         handler.userToken = this.userToken;
     }
 
-    protected async doText(context: KnContextInfo, model: KnModel, calling: boolean = DEFAULT_CALLING_SERVICE) : Promise<MigrateResultSet> {
+    protected async doText(context: KnContextInfo, model: KnModel) : Promise<MigrateResultSet> {
+        return await this.doManipulating(context,model,undefined,"text"); 
+    }
+
+    protected async doJson(context: KnContextInfo, model: KnModel) : Promise<MigrateResultSet> {
+        return await this.doManipulating(context,model,undefined,"json"); 
+    }
+
+    protected async doExcel(context: KnContextInfo, model: KnModel) : Promise<MigrateResultSet> {
+        return await this.doManipulating(context,model,undefined,"excel"); 
+    }
+
+    protected async doXlsx(context: KnContextInfo, model: KnModel) : Promise<MigrateResultSet> {
+        return await this.doManipulating(context,model,undefined,"xlsx"); 
+    }
+
+    protected async doXml(context: KnContextInfo, model: KnModel) : Promise<MigrateResultSet> {
+        return await this.doManipulating(context,model,undefined,"xml"); 
+    }
+
+    protected async doFile(context: KnContextInfo, model: KnModel) : Promise<MigrateResultSet> {
+        return await this.doManipulating(context,model); 
+    }
+
+    protected async processText(context: KnContextInfo, model: KnModel = this.model, calling: boolean = DEFAULT_CALLING_SERVICE) : Promise<MigrateResultSet> {
         let handler = new MigrateTextHandler();
         this.assignHandler(handler);
         return await handler.doInserting(context,undefined,calling);
     }
 
-    protected async doJson(context: KnContextInfo, model: KnModel, calling: boolean = DEFAULT_CALLING_SERVICE) : Promise<MigrateResultSet> {
+    protected async processJson(context: KnContextInfo, model: KnModel = this.model, calling: boolean = DEFAULT_CALLING_SERVICE) : Promise<MigrateResultSet> {
         let handler = new MigrateJsonHandler();
         this.assignHandler(handler);
         return await handler.doInserting(context,undefined,calling);
     }
 
-    protected async doExcel(context: KnContextInfo, model: KnModel, calling: boolean = DEFAULT_CALLING_SERVICE) : Promise<MigrateResultSet> {
+    protected async processExcel(context: KnContextInfo, model: KnModel = this.model, calling: boolean = DEFAULT_CALLING_SERVICE) : Promise<MigrateResultSet> {
         let handler = new MigrateExcelHandler();
         this.assignHandler(handler);
         return await handler.doInserting(context,undefined,calling);
     }
 
-    protected async doXlsx(context: KnContextInfo, model: KnModel, calling: boolean = DEFAULT_CALLING_SERVICE) : Promise<MigrateResultSet> {
+    protected async processXlsx(context: KnContextInfo, model: KnModel = this.model, calling: boolean = DEFAULT_CALLING_SERVICE) : Promise<MigrateResultSet> {
         let handler = new MigrateXlsxHandler();
         this.assignHandler(handler);
         return await handler.doInserting(context,undefined,calling);
     }
 
-    protected async doXml(context: KnContextInfo, model: KnModel, calling: boolean = DEFAULT_CALLING_SERVICE) : Promise<MigrateResultSet> {
+    protected async processXml(context: KnContextInfo, model: KnModel = this.model, calling: boolean = DEFAULT_CALLING_SERVICE) : Promise<MigrateResultSet> {
         let handler = new MigrateXmlHandler();
         this.assignHandler(handler);
         return await handler.doInserting(context,undefined,calling);
     }
 
-    protected async doFile(context: KnContextInfo, model: KnModel, calling: boolean = DEFAULT_CALLING_SERVICE) : Promise<MigrateResultSet> {
-        //return await this.processFile(context, model, calling);        
-        return await this.doFileDownload(context,model,calling); 
-    }
-
-    protected async processFile(context: KnContextInfo, model: KnModel, calling: boolean = DEFAULT_CALLING_SERVICE) : Promise<MigrateResultSet> {
+    protected async processFile(context: KnContextInfo, model: KnModel = this.model, calling: boolean = DEFAULT_CALLING_SERVICE, fortype?: string) : Promise<MigrateResultSet> {
         await this.validateRequireFields(context,model);
         let file = context.params.file;
         let filename = file;
@@ -107,6 +126,19 @@ export class MigrateFileHandler extends MigrateTextHandler {
         let foundfile = fs.existsSync(filename);
         if(!foundfile) {
             return Promise.reject(new VerifyError("File not found",HTTP.NOT_ACCEPTABLE,-16064));
+        }
+        if(fortype) {
+            if("text"==fortype) {
+                return this.processText(context,model,calling); 
+            } else if("json"==fortype) {
+                return this.processJson(context,model,calling);
+            } else if("xml"==fortype) {
+                return this.processXml(context,model,calling);
+            } else if("excel"==fortype) {
+                return this.processExcel(context,model,calling);
+            } else if("xlsx"==fortype) {
+                return this.processXlsx(context,model,calling);
+            }
         }   
         let isText = false;
         let isJson = false;
@@ -126,29 +158,33 @@ export class MigrateFileHandler extends MigrateTextHandler {
         let type = context.params.type;
         if(isText) {
             if("json"==type) {
-                return this.doJson(context,model,calling);
+                return this.processJson(context,model,calling);
             } else {
-                return this.doText(context,model,calling);
+                return this.processText(context,model,calling);
             }
         } else if(isJson || "json"==type) {
-            return this.doJson(context,model,calling);
+            return this.processJson(context,model,calling);
         } else if(isXml || "xml"==type) {
-            return this.doXml(context,model,calling);
+            return this.processXml(context,model,calling);
         } else if(isXlsx) {
             if("excel"==type) {
-                return this.doExcel(context,model,calling);
+                return this.processExcel(context,model,calling);
             } else {
-                return this.doXlsx(context,model,calling);
+                return this.processXlsx(context,model,calling);
             }
         }
         return Promise.reject(new VerifyError("Not supported",HTTP.NOT_ACCEPTABLE,-16067)); 
     }
 
     public override async doInserting(context: KnContextInfo, model: KnModel = this.model, calling: boolean = DEFAULT_CALLING_SERVICE): Promise<MigrateResultSet> {
-        return await this.doFileDownload(context,model,calling); 
+        return await this.doManipulating(context,model,calling); 
     }
-    
-    protected async doFileDownload(context: KnContextInfo, model: KnModel, calling: boolean = DEFAULT_CALLING_SERVICE) : Promise<MigrateResultSet> {
+
+    protected async doManipulating(context: KnContextInfo, model: KnModel = this.model, calling: boolean = DEFAULT_CALLING_SERVICE, fortype?: string) : Promise<MigrateResultSet> {
+        return await this.doFileDownload(context, model, calling, fortype);
+    }
+
+    protected async doFileDownload(context: KnContextInfo, model: KnModel = this.model, calling: boolean = DEFAULT_CALLING_SERVICE, fortype?: string) : Promise<MigrateResultSet> {
         await this.validateRequireFields(context,model);
         let taskid = context.params.taskid;
         let taskmodel = await this.getTaskModel(context,taskid);
@@ -166,13 +202,14 @@ export class MigrateFileHandler extends MigrateTextHandler {
                     fileinfo.originalname = res.target;
                     this.logger.debug(this.constructor.name+".doFileDownload: fileinfo",fileinfo);
                     context.params.file = fileinfo;
-                    return await this.processFile(context,model,calling);
+                    if(setting?.type) context.params.type = setting.type;
+                    return await this.processFile(context,model,calling,fortype);
                 } catch(ex: any) {
                     return Promise.reject(this.getDBError(ex));
                 }
             }
         }
-        return await this.processFile(context,model,calling);
+        return await this.processFile(context,model,calling,fortype);
     }
 
 }

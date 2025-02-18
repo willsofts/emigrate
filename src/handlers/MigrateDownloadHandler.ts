@@ -11,19 +11,11 @@ export class MigrateDownloadHandler extends MigrateFileHandler {
 
     public handlers = [ {name: "insert"}, {name: "file"} ];
 
-    public async file(context: KnContextInfo) : Promise<MigrateResultSet> {
+    public override async file(context: KnContextInfo) : Promise<MigrateResultSet> {
         return this.callFunctional(context, {operate: "file", raw: false}, this.doFileDownload);
 	}
 
-    protected override async validateRequireFields(context: KnContextInfo, model: KnModel, action?: string) : Promise<KnValidateInfo> {
-        let vi = this.validateParameters(context.params,"taskid");
-        if(!vi.valid) {
-            return Promise.reject(new VerifyError("Parameter not found ("+vi.info+")",HTTP.NOT_ACCEPTABLE,-16061));
-        }
-        return Promise.resolve(vi);
-    }
-
-    protected async doFileDownload(context: KnContextInfo, model: KnModel, calling: boolean = DEFAULT_CALLING_SERVICE) : Promise<MigrateResultSet> {
+    protected override async doFileDownload(context: KnContextInfo, model: KnModel, calling: boolean = DEFAULT_CALLING_SERVICE) : Promise<MigrateResultSet> {
         await this.validateRequireFields(context,model);
         let taskid = context.params.taskid;
         let taskmodel = await this.getTaskModel(context,taskid);
@@ -53,8 +45,4 @@ export class MigrateDownloadHandler extends MigrateFileHandler {
         }
     }
     
-    public override async doInserting(context: KnContextInfo, model: KnModel = this.model, calling: boolean = DEFAULT_CALLING_SERVICE): Promise<MigrateResultSet> {
-        return await this.doFileDownload(context,model,calling);     
-    }
-
 }
