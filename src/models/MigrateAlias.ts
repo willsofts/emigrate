@@ -70,8 +70,8 @@ export interface MigrateParams {
     dominated?: boolean;
 }
 
-export interface DownloadSetting {
-    url: string;
+export interface FileSetting {
+    source: string;
     target: string;
     path?: string;
     file?: string;
@@ -79,6 +79,7 @@ export interface DownloadSetting {
 }
 
 export interface FileInfo {
+    type: string;
     originalname: string;
     created: Date;
     modified: Date;

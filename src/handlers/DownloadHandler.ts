@@ -1,5 +1,5 @@
 import { DOWNLOAD_FILE_PATH } from "../utils/EnvironmentVariable";
-import { DownloadSetting } from "../models/MigrateAlias";
+import { FileSetting } from "../models/MigrateAlias";
 import { TknOperateHandler } from "@willsofts/will-serv";
 import { pipeline } from 'stream';
 import { promisify } from 'util';
@@ -11,9 +11,9 @@ const pipe = promisify(pipeline);
 
 export class DownloadHandler extends TknOperateHandler {
 
-    public async performDownload(setting: DownloadSetting) : Promise<DownloadSetting | undefined> {
+    public async performDownload(setting: FileSetting) : Promise<FileSetting | undefined> {
         this.logger.debug(this.constructor.name+".performDownload: setting",setting);        
-        if(setting?.url && setting?.url.trim().length > 0 && setting?.target && setting?.target.trim().length > 0) {
+        if(setting?.source && setting?.source.trim().length > 0 && setting?.target && setting?.target.trim().length > 0) {
             setting.file = undefined;
             let info = path.parse(setting.target);
             let filename = setting.target;
@@ -31,7 +31,7 @@ export class DownloadHandler extends TknOperateHandler {
             if(!fs.existsSync(filepath)) {
                 fs.mkdirSync(filepath, { recursive: true });
             }    
-            const res = await fetch(setting.url);
+            const res = await fetch(setting.source);
             if (!res.ok) throw new Error(`Fail to download file: ${res.statusText}`);
             if (res.ok && res.body) {
                 try {

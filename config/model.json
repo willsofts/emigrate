@@ -1066,7 +1066,7 @@
         ] 
     },
     "test_file_text_download": { 
-        "configs": { "download": { "url": "http://localhost:8080/assets/tso.txt", "target": "tso.txt" } },
+        "configs": { "download": { "source": "http://localhost:8080/assets/tso.txt", "target": "tso.txt" } },
         "models": [ {
             "name": "tso",
             "alias": { "privateAlias": "PROMPTDB" },
@@ -1088,7 +1088,7 @@
         } ] 
     },
     "test_file_text_download_naming": { 
-        "configs": { "download": { "url": "http://localhost:8080/assets/tso.txt", "target": "tso.txt", "naming": "auto" } },
+        "configs": { "download": { "source": "http://localhost:8080/assets/tso.txt", "target": "tso.txt", "naming": "auto" } },
         "models": [ {
             "name": "tso",
             "alias": { "privateAlias": "PROMPTDB" },

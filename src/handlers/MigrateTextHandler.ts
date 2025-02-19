@@ -34,8 +34,10 @@ export class MigrateTextHandler extends MigrateHandler {
         if(!foundfile) {
             return Promise.reject(new VerifyError("File not found",HTTP.NOT_ACCEPTABLE,-16064));
         }        
-        let taskid = context.params.taskid;
-        let taskmodel = await this.getTaskModel(context,taskid);
+        let taskmodel = context.meta.taskmodel;
+        if(!taskmodel) {
+            taskmodel = await this.getTaskModel(context,context.params.taskid);
+        }
         if(!taskmodel || taskmodel.models?.length==0) {
             return Promise.reject(new VerifyError("Model not found",HTTP.NOT_ACCEPTABLE,-16063));
         }
@@ -49,7 +51,6 @@ export class MigrateTextHandler extends MigrateHandler {
     public override async processInsertingModel(context: KnContextInfo, taskmodel: TaskModel, param: MigrateParams, db: KnDBConnector | undefined): Promise<MigrateRecordSet> {
         if(!this.userToken) this.userToken = await this.getUserTokenInfo(context);
         if(!param.authtoken) param.authtoken = this.getTokenKey(context);
-        let taskid = context.params.taskid;
         let uuid = this.randomUUID();
         let migrateid = context.params.migrateid || uuid;
         let processid = context.params.processid || uuid;
@@ -63,17 +64,10 @@ export class MigrateTextHandler extends MigrateHandler {
             } if(typeof datalist === "object" && Object.keys(datalist).length == 0) {
                 return result;
             }
-            param.calling = false;
-            if(param.calling) {
-                //this not work on multi model (data double)
-                let params = { ...context.params, authtoken: param.authtoken, migrateid: migrateid, taskid: taskid, processid: processid, modelname: taskmodel.name, filename: param.filename, fileinfo: param.fileinfo, datapart: header, dataset: datalist };
-                return this.call("migrate.insert",params);
-            } else {
-                let handler = new MigrateHandler();
-                handler.obtain(this.broker,this.logger);
-                handler.userToken = this.userToken;
-                return handler.processInsertingModel(context,taskmodel,param,db,datalist,header);
-            }
+            let handler = new MigrateHandler();
+            handler.obtain(this.broker,this.logger);
+            handler.userToken = this.userToken;
+            return handler.processInsertingModel(context,taskmodel,param,db,datalist,header);
         }
         return result;
     }

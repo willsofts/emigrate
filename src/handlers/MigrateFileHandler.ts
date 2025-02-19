@@ -2,7 +2,7 @@ import { HTTP } from "@willsofts/will-api";
 import { VerifyError } from "@willsofts/will-core";
 import { KnModel } from "@willsofts/will-db";
 import { KnContextInfo, KnValidateInfo } from '@willsofts/will-core';
-import { MigrateResultSet } from "../models/MigrateAlias";
+import { MigrateResultSet, FileInfo } from "../models/MigrateAlias";
 import { MigrateTextHandler } from "./MigrateTextHandler";
 import { MigrateJsonHandler } from "./MigrateJsonHandler";
 import { MigrateExcelHandler } from "./MigrateExcelHandler";
@@ -128,7 +128,7 @@ export class MigrateFileHandler extends MigrateTextHandler {
             return Promise.reject(new VerifyError("File not found",HTTP.NOT_ACCEPTABLE,-16064));
         }
         if(fortype) {
-            if("text"==fortype) {
+            if("text"==fortype || "txt"==fortype || "csv"==fortype) {
                 return this.processText(context,model,calling); 
             } else if("json"==fortype) {
                 return this.processJson(context,model,calling);
@@ -181,14 +181,34 @@ export class MigrateFileHandler extends MigrateTextHandler {
     }
 
     protected async doManipulating(context: KnContextInfo, model: KnModel = this.model, calling: boolean = DEFAULT_CALLING_SERVICE, fortype?: string) : Promise<MigrateResultSet> {
-        return await this.doFileDownload(context, model, calling, fortype);
-    }
-
-    protected async doFileDownload(context: KnContextInfo, model: KnModel = this.model, calling: boolean = DEFAULT_CALLING_SERVICE, fortype?: string) : Promise<MigrateResultSet> {
         await this.validateRequireFields(context,model);
         let taskid = context.params.taskid;
         let taskmodel = await this.getTaskModel(context,taskid);
         this.logger.debug(this.constructor.name+".doFileDownload: taskmodel",taskmodel);
+        if(!taskmodel || taskmodel.models?.length==0) {
+            return Promise.reject(new VerifyError("Model not found",HTTP.NOT_ACCEPTABLE,-16063));
+        }
+        context.meta.taskmodel = taskmodel;
+        let fileinfo = await this.doFileDownload(context, model, calling, fortype);
+        if(fileinfo) {
+            context.params.file = fileinfo;
+            return await this.processFile(context,model,calling,fortype);
+        }
+        let fileftp = await this.doFileTransfer(context, model, calling, fortype);
+        if(fileftp) {
+            context.params.file = fileftp;
+            return await this.processFile(context,model,calling,fortype);
+        }
+        return await this.processFile(context,model,calling,fortype);
+    }
+
+    protected async doFileDownload(context: KnContextInfo, model: KnModel = this.model, calling: boolean = DEFAULT_CALLING_SERVICE, fortype?: string) : Promise<FileInfo | undefined> {
+        await this.validateRequireFields(context,model);
+        let taskmodel = context.meta.taskmodel;
+        if(!taskmodel) {
+            taskmodel = await this.getTaskModel(context,context.params.taskid);
+            this.logger.debug(this.constructor.name+".doFileDownload: taskmodel",taskmodel);
+        }
         if(!taskmodel || taskmodel.models?.length==0) {
             return Promise.reject(new VerifyError("Model not found",HTTP.NOT_ACCEPTABLE,-16063));
         }
@@ -200,16 +220,30 @@ export class MigrateFileHandler extends MigrateTextHandler {
                 try {
                     let fileinfo = await MigrateUtility.getFileInfo(res.file);
                     fileinfo.originalname = res.target;
-                    this.logger.debug(this.constructor.name+".doFileDownload: fileinfo",fileinfo);
-                    context.params.file = fileinfo;
-                    if(setting?.type) context.params.type = setting.type;
-                    return await this.processFile(context,model,calling,fortype);
+                    //this.logger.debug(this.constructor.name+".doFileDownload: fileinfo",fileinfo);
+                    return fileinfo;
                 } catch(ex: any) {
                     return Promise.reject(this.getDBError(ex));
                 }
             }
         }
-        return await this.processFile(context,model,calling,fortype);
+        return undefined;
     }
 
+    protected async doFileTransfer(context: KnContextInfo, model: KnModel = this.model, calling: boolean = DEFAULT_CALLING_SERVICE, fortype?: string) : Promise<FileInfo | undefined> {
+        await this.validateRequireFields(context,model);
+        let taskmodel = context.meta.taskmodel;
+        if(!taskmodel) {
+            taskmodel = await this.getTaskModel(context,context.params.taskid);
+            this.logger.debug(this.constructor.name+".doFileTransfer: taskmodel",taskmodel);
+        }
+        if(!taskmodel || taskmodel.models?.length==0) {
+            return Promise.reject(new VerifyError("Model not found",HTTP.NOT_ACCEPTABLE,-16063));
+        }
+        let setting = taskmodel.configs?.transfer;
+        if(setting) {
+
+        }
+        return undefined;
+    }
 }

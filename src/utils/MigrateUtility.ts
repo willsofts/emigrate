@@ -12,9 +12,13 @@ export class MigrateUtility {
 
     public static async getFileInfo(file: string) : Promise<FileInfo> {
         let info = path.parse(file);
+        let extension = info.ext;
+        let index = extension.indexOf('.');
+        if(index>=0) extension = extension.substring(index+1);
         let mimetype = mime.lookup(file);
         const stats = await fs.promises.stat(file);
         let result : FileInfo = {
+            type: extension,
             originalname: info.base,
             created: stats.birthtime,
             modified: stats.mtime,

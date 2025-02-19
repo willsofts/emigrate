@@ -3,7 +3,7 @@ import { KnDBField, KnModel } from "@willsofts/will-db";
 import { KnRecordSet, KnSQL } from "@willsofts/will-sql";
 import { KnContextInfo, VerifyError } from '@willsofts/will-core';
 import { MigrateBase } from "./MigrateBase";
-import { RefConfig, MigrateConfig, MigrateRecordSet, MigrateInfo, MigrateReject, MigrateParams, DownloadSetting } from "../models/MigrateAlias";
+import { RefConfig, MigrateConfig, MigrateRecordSet, MigrateInfo, MigrateReject, MigrateParams, FileSetting } from "../models/MigrateAlias";
 import { MigrateLogHandler } from "./MigrateLogHandler";
 import { DownloadHandler } from "./DownloadHandler";
 import config from "@willsofts/will-util";
@@ -372,7 +372,7 @@ export class MigrateOperate extends MigrateBase {
         } 
     }
 
-    public async performDownload(setting: DownloadSetting) : Promise<DownloadSetting | undefined> {
+    public async performDownload(setting: FileSetting) : Promise<FileSetting | undefined> {
         let handler = new DownloadHandler();
         handler.obtain(this.broker,this.logger);
         return await handler.performDownload(setting);
