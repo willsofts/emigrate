@@ -76,6 +76,9 @@ export interface FileSetting {
     path?: string;
     file?: string;
     naming?: string;
+    method?: string;
+    headers?: any;
+    body?: any;
 }
 
 export interface FileInfo {

@@ -42,7 +42,16 @@
 + support multi models
 
 2025-02-15
-+ support report logging error api
-    - report/migrate/log
-    - report/migrate/log/txt
-    - report/migrate/log/json
++ support download/report logging error api
+    - report/migrate/log        -> default as text file
+    - report/migrate/log/txt    -> text file
+    - report/migrate/log/json   -> json file
+
+2025-02-18
++ can download file from URL (support import by download file)
++ can auto naming download file
+
+2025-02-19
++ can transfer file from server (support import by ftp file)
++ can auto naming transfer file
+

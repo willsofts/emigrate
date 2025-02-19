@@ -1,0 +1,64 @@
+import { DOWNLOAD_FILE_PATH } from "../utils/EnvironmentVariable";
+import { FileSetting } from "../models/MigrateAlias";
+import { TknOperateHandler } from "@willsofts/will-serv";
+import { v4 as uuid } from 'uuid';
+import fs from "fs";
+import path from "path";
+import { pipeline } from 'stream';
+import { promisify } from 'util';
+
+const pipe = promisify(pipeline);
+
+export class FileDownloadHandler extends TknOperateHandler {
+
+    public async performDownload(setting: FileSetting) : Promise<FileSetting | undefined> {
+        this.logger.debug(this.constructor.name+".performDownload: setting",setting);        
+        if(setting?.source && setting?.source.trim().length > 0 && setting?.target && setting?.target.trim().length > 0) {
+            setting.file = undefined;
+            let info = path.parse(setting.target);
+            let filename = info.base; //setting.target;
+            if("auto"===setting.naming || "true"===setting.naming) {
+                let fileid = uuid();
+                filename = fileid + info.ext;        
+            }
+            let filepath = setting?.path || DOWNLOAD_FILE_PATH;
+            if(info.dir && info.dir.trim().length > 0) {
+                filepath = info.dir;
+            }
+            let fullfilename = path.join(filepath, filename);
+            if(!fs.existsSync(filepath)) {
+                fs.mkdirSync(filepath, { recursive: true });
+            }
+            let init = undefined;
+            let method = setting?.method || "GET";
+            if("GET"!=method && "HEAD"!=method) {
+                let headers = setting?.headers || {};
+                let data = setting?.body || {};    
+                let params = {};
+                let body = JSON.stringify(data);
+                init = Object.assign(params, { method: method, headers: headers, body });
+            }
+            this.logger.debug("try fetch:",setting.source);
+            try {
+                const res = await fetch(setting.source, init);
+                if (!res.ok) return Promise.reject(new Error(`Fail to download file: ${res.statusText}`));
+                if (res.ok && res.body) {
+                    this.logger.debug("saving as :",fullfilename);
+                    const writer = fs.createWriteStream(fullfilename, { autoClose: true });
+                    writer.on("error",(err) => { 
+                        this.logger.error(err); 
+                    });
+                    await pipe(res.body, writer);
+                    setting.file = fullfilename;
+                    return setting;
+                }
+            } catch (err: any) {
+                this.logger.error(err);
+                return Promise.reject(err);
+                //return Promise.reject(new Error(`Error during download ${err.message}`));
+            }                
+        }
+        return undefined;
+    }
+
+}

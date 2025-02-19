@@ -5,7 +5,8 @@ import { KnContextInfo, VerifyError } from '@willsofts/will-core';
 import { MigrateBase } from "./MigrateBase";
 import { RefConfig, MigrateConfig, MigrateRecordSet, MigrateInfo, MigrateReject, MigrateParams, FileSetting } from "../models/MigrateAlias";
 import { MigrateLogHandler } from "./MigrateLogHandler";
-import { DownloadHandler } from "./DownloadHandler";
+import { FileDownloadHandler } from "./FileDownloadHandler";
+import { FileTransferHandler } from "./FileTransferHandler";
 import config from "@willsofts/will-util";
 
 export class MigrateOperate extends MigrateBase {
@@ -357,7 +358,9 @@ export class MigrateOperate extends MigrateBase {
         let params = {};
         this.logger.debug(this.constructor.name+".requestAPI: fetch : url=",url," body=",body," headers=",headers);
         try {
-            let response = await fetch(url, Object.assign(Object.assign({}, params), { method: "POST", headers: {
+            let method = headers?.method || "POST";
+            if(headers?.method) delete headers.method;
+            let response = await fetch(url, Object.assign(Object.assign({}, params), { method: method, headers: {
                     "Content-Type": "application/json", ...headers
                 }, body }));
             if (!response.ok) {
@@ -372,8 +375,14 @@ export class MigrateOperate extends MigrateBase {
         } 
     }
 
-    public async performDownload(setting: FileSetting) : Promise<FileSetting | undefined> {
-        let handler = new DownloadHandler();
+    public async performFileDownload(setting: FileSetting) : Promise<FileSetting | undefined> {
+        let handler = new FileDownloadHandler();
+        handler.obtain(this.broker,this.logger);
+        return await handler.performDownload(setting);
+    }
+
+    public async performFileTransfer(setting: FileSetting) : Promise<FileSetting | undefined> {
+        let handler = new FileTransferHandler();
         handler.obtain(this.broker,this.logger);
         return await handler.performDownload(setting);
     }

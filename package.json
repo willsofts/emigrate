@@ -53,6 +53,7 @@
     "odbc": "^2.4.9",
     "oracledb": "^6.7.2",
     "pg": "^8.13.3",
+    "ssh2-sftp-client": "^11.0.0",
     "uuid": "^11.0.3",
     "xlsx": "^0.18.5"
   },
@@ -66,6 +67,7 @@
     "@types/n-readlines": "^1.0.6",
     "@types/node": "^22.10.2",
     "@types/node-fetch": "^2.6.12",
+    "@types/ssh2-sftp-client": "^9.0.4",
     "@types/uuid": "^10.0.0",
     "@types/xlsx": "^0.0.35",
     "ts-node": "^10.9.2",

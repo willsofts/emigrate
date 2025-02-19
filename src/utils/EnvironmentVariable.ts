@@ -19,3 +19,7 @@ export const MAX_EXPIRE_DATE: string = config.env("MAX_EXPIRE_DATE","31/12/9000"
 export const DEFAULT_CALLING_SERVICE: boolean = config.env("DEFAULT_CALLING_SERVICE","true") === "true";
 export const FILE_ASSETS: string = config.env("FILE_ASSETS","./assets");
 export const DOWNLOAD_FILE_PATH: string = config.env("DOWNLOAD_FILE_PATH") || os.tmpdir();
+export const UPLOAD_FILE_PATH: string = config.env("UPLOAD_FILE_PATH");
+export const IMPORT_FTP_HOST: string = config.env("IMPORT_FTP_HOST");
+export const IMPORT_FTP_USER: string = config.env("IMPORT_FTP_USER");
+export const IMPORT_FTP_PASSWORD: string = config.env("IMPORT_FTP_PASSWORD");

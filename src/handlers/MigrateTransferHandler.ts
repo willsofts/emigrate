@@ -7,24 +7,24 @@ import { MigrateFileHandler } from "./MigrateFileHandler";
 import { MigrateUtility } from "../utils/MigrateUtility";
 import { DEFAULT_CALLING_SERVICE } from "../utils/EnvironmentVariable";
 
-export class MigrateDownloadHandler extends MigrateFileHandler {
+export class MigrateTransferHandler extends MigrateFileHandler {
 
     public handlers = [ {name: "insert"}, {name: "file"} ];
 
-    protected override async doFileDownload(context: KnContextInfo, model: KnModel, calling: boolean = DEFAULT_CALLING_SERVICE) : Promise<FileInfo | undefined> {
+    protected override async doFileTransfer(context: KnContextInfo, model: KnModel, calling: boolean = DEFAULT_CALLING_SERVICE) : Promise<FileInfo | undefined> {
         await this.validateRequireFields(context,model);
         let taskmodel = context.meta.taskmodel;
         if(!taskmodel) {
             taskmodel = await this.getTaskModel(context,context.params.taskid);
-            this.logger.debug(this.constructor.name+".doFileDownload: taskmodel",taskmodel);
+            this.logger.debug(this.constructor.name+".doFileTransfer: taskmodel",taskmodel);
         }
         if(!taskmodel || taskmodel.models?.length==0) {
             return Promise.reject(new VerifyError("Model not found",HTTP.NOT_ACCEPTABLE,-16063));
         }
-        let setting = taskmodel.configs?.download;
+        let setting = taskmodel.configs?.transfer;
         if(setting) {
-            let res = await this.performFileDownload(setting);
-            this.logger.debug(this.constructor.name+".doFileDownload: response",res);
+            let res = await this.performFileTransfer(setting);
+            this.logger.debug(this.constructor.name+".doFileTransfer: response",res);
             if(res && res.file) {
                 try {
                     let fileinfo = await MigrateUtility.getFileInfo(res.file);
@@ -35,10 +35,10 @@ export class MigrateDownloadHandler extends MigrateFileHandler {
                     return Promise.reject(this.getDBError(ex));
                 }
             } else {
-                return Promise.reject(new VerifyError("Download info not found",HTTP.NOT_ACCEPTABLE,-16071));         
+                return Promise.reject(new VerifyError("Transfer info not found",HTTP.NOT_ACCEPTABLE,-16071));         
             }
         } else {
-            return Promise.reject(new VerifyError("No download setting found",HTTP.NOT_ACCEPTABLE,-16070));     
+            return Promise.reject(new VerifyError("No transfer setting found",HTTP.NOT_ACCEPTABLE,-16070));     
         }
     }
     

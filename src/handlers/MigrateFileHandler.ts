@@ -214,7 +214,7 @@ export class MigrateFileHandler extends MigrateTextHandler {
         }
         let setting = taskmodel.configs?.download;
         if(setting) {
-            let res = await this.performDownload(setting);
+            let res = await this.performFileDownload(setting);
             this.logger.debug(this.constructor.name+".doFileDownload: response",res);
             if(res && res.file) {
                 try {
@@ -242,7 +242,18 @@ export class MigrateFileHandler extends MigrateTextHandler {
         }
         let setting = taskmodel.configs?.transfer;
         if(setting) {
-
+            let res = await this.performFileTransfer(setting);
+            this.logger.debug(this.constructor.name+".doFileTransfer: response",res);
+            if(res && res.file) {
+                try {
+                    let fileinfo = await MigrateUtility.getFileInfo(res.file);
+                    fileinfo.originalname = res.target;
+                    this.logger.debug(this.constructor.name+".doFileTransfer: fileinfo",fileinfo);
+                    return fileinfo;
+                } catch(ex: any) {
+                    return Promise.reject(this.getDBError(ex));
+                }
+            }
         }
         return undefined;
     }

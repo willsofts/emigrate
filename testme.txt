@@ -202,6 +202,7 @@ test example:
 1. for api/download file handler
 curl http://localhost:8080/api/example/file -d "file=tso.txt"
 curl http://localhost:8080/api/example/file -d "file=tso_json_array.txt&type=json"
+curl -X POST http://localhost:8080/api/example/file?file=tso.txt
 
 2. using example service
 curl http://localhost:8080/report/example -d "file=tso.txt" -o d:\exim\download\tso.txt
@@ -215,9 +216,19 @@ curl http://localhost:8080/assets/tso.xml -o d:\exim\download\tso.xml
 test import with download file:
 1. using center api
 curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/migratefile/file -d "{\"taskid\":\"test_file_text_download\"}"
-2. using migratedownlod/file
-curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/migratedownload/file -d "{\"taskid\":\"test_file_text_download\"}"
-3. test auto naming
+2. test auto naming
 curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/migratefile/file -d "{\"taskid\":\"test_file_text_download_naming\"}"
+3. using migratedownlod/file
+curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/migratedownload/file -d "{\"taskid\":\"test_file_text_download\"}"
 
+example response:
+{"head":{"model":"api","method":"migratefile.file","errorcode":"0","errorflag":"N","errordesc":""},"body":{"taskid":"test_file_text_download_naming","processid":"84f99ed8-e9f8-4bfa-9d25-8b7b3b20ec2d","resultset":[{"migrateid":"db1fe634-3062-4f78-82a4-09c6e170d27d","processid":"84f99ed8-e9f8-4bfa-9d25-8b7b3b20ec2d","taskid":"test_file_text_download_naming","modelname":"tso","totalrecords":7,"errorrecords":0,"skiprecords":0,"records":7,"rows":[],"columns":null}]}}
+
+test import with ftp file:
+1. using center api
+curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/migratefile/file -d "{\"taskid\":\"test_file_text_ftp\"}"
+2. test auto naming
+curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/migratefile/file -d "{\"taskid\":\"test_file_text_ftp_naming\"}"
+3. using migrateftp/file
+curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/migrateftp/file -d "{\"taskid\":\"test_file_text_ftp\"}"
 
