@@ -23,3 +23,4 @@ export const UPLOAD_FILE_PATH: string = config.env("UPLOAD_FILE_PATH");
 export const IMPORT_FTP_HOST: string = config.env("IMPORT_FTP_HOST");
 export const IMPORT_FTP_USER: string = config.env("IMPORT_FTP_USER");
 export const IMPORT_FTP_PASSWORD: string = config.env("IMPORT_FTP_PASSWORD");
+export const IMPORT_FTP_KEYFILE: string = config.env("IMPORT_FTP_KEYFILE");

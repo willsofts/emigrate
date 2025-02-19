@@ -1,4 +1,4 @@
-import { DOWNLOAD_FILE_PATH, UPLOAD_FILE_PATH, IMPORT_FTP_HOST, IMPORT_FTP_USER, IMPORT_FTP_PASSWORD } from "../utils/EnvironmentVariable";
+import { DOWNLOAD_FILE_PATH, UPLOAD_FILE_PATH, IMPORT_FTP_HOST, IMPORT_FTP_USER, IMPORT_FTP_PASSWORD, IMPORT_FTP_KEYFILE } from "../utils/EnvironmentVariable";
 import { FileSetting } from "../models/MigrateAlias";
 import { TknOperateHandler } from "@willsofts/will-serv";
 import { v4 as uuid } from 'uuid';
@@ -20,13 +20,28 @@ export class FileTransferHandler extends TknOperateHandler {
     }
     
     public async getConfig(setting: any) : Promise<ConnectOptions> {
-        let config : ConnectOptions = {
+        let buffer = undefined;
+        let keyfile = setting?.keyfile || IMPORT_FTP_KEYFILE;
+        if(keyfile && keyfile.trim().length > 0) {
+            if(!fs.existsSync(keyfile)) {
+                return Promise.reject(new Error("Key file not found"));
+            }
+            buffer = fs.readFileSync(keyfile);
+        }
+        if(buffer) {
+            return {
+                host: setting?.host || IMPORT_FTP_HOST,
+                port: setting?.port,
+                username: setting?.user || IMPORT_FTP_USER,
+                privateKey: buffer,
+            };
+        }
+        return {
             host: setting?.host || IMPORT_FTP_HOST,
             port: setting?.port,
             username: setting?.user || IMPORT_FTP_USER,
             password: setting?.password || IMPORT_FTP_PASSWORD
         };
-        return config;
     }
 
     public async performDownload(setting: FileSetting) : Promise<FileSetting | undefined> {
