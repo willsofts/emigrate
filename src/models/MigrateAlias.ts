@@ -70,6 +70,11 @@ export interface MigrateParams {
     dominated?: boolean;
 }
 
+export interface PluginSetting {
+    name: string;
+    property: any;
+}
+
 export interface FileSetting {
     source: string;
     target: string;

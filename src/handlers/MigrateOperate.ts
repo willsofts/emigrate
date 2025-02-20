@@ -3,10 +3,8 @@ import { KnDBField, KnModel } from "@willsofts/will-db";
 import { KnRecordSet, KnSQL } from "@willsofts/will-sql";
 import { KnContextInfo, VerifyError } from '@willsofts/will-core';
 import { MigrateBase } from "./MigrateBase";
-import { RefConfig, MigrateConfig, MigrateRecordSet, MigrateInfo, MigrateReject, MigrateParams, FileSetting } from "../models/MigrateAlias";
+import { RefConfig, MigrateConfig, MigrateRecordSet, MigrateInfo, MigrateReject, MigrateParams } from "../models/MigrateAlias";
 import { MigrateLogHandler } from "./MigrateLogHandler";
-import { FileDownloadHandler } from "./FileDownloadHandler";
-import { FileTransferHandler } from "./FileTransferHandler";
 import config from "@willsofts/will-util";
 
 export class MigrateOperate extends MigrateBase {
@@ -373,18 +371,6 @@ export class MigrateOperate extends MigrateBase {
             this.logger.error(this.constructor.name+".requestAPI: error:",ex);
             return Promise.reject(new VerifyError(ex.message,HTTP.INTERNAL_SERVER_ERROR,-11102));
         } 
-    }
-
-    public async performFileDownload(setting: FileSetting) : Promise<FileSetting | undefined> {
-        let handler = new FileDownloadHandler();
-        handler.obtain(this.broker,this.logger);
-        return await handler.performDownload(setting);
-    }
-
-    public async performFileTransfer(setting: FileSetting) : Promise<FileSetting | undefined> {
-        let handler = new FileTransferHandler();
-        handler.obtain(this.broker,this.logger);
-        return await handler.performDownload(setting);
     }
 
 }

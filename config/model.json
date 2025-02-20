@@ -1066,7 +1066,12 @@
         ] 
     },
     "test_file_text_download": { 
-        "configs": { "download": { "source": "http://localhost:8080/assets/tso.txt", "target": "tso.txt" } },
+        "configs": { 
+            "plugin": { 
+                "name": "download", 
+                "property": { "source": "http://localhost:8080/assets/tso.txt", "target": "tso.txt" } 
+            } 
+        },
         "models": [ {
             "name": "tso",
             "alias": { "privateAlias": "PROMPTDB" },
@@ -1088,7 +1093,12 @@
         } ] 
     },
     "test_file_text_download_naming": { 
-        "configs": { "download": { "source": "http://localhost:8080/assets/tso.txt", "target": "tso.txt", "naming": "auto" } },
+        "configs": { 
+            "plugin": {
+                "name": "download",
+                "property": { "source": "http://localhost:8080/assets/tso.txt", "target": "tso.txt", "naming": "auto" } 
+            }
+        },
         "models": [ {
             "name": "tso",
             "alias": { "privateAlias": "PROMPTDB" },
@@ -1105,6 +1115,60 @@
                 "defvalue": { "type": "STRING" },
                 "message": { "type": "STRING" },
                 "remarks": { "type": "STRING", "defaultValue": "test_file_text_download_naming" }
+            },
+            "settings": { "skip": 1, "delimiter": ",", "quotable": true }
+        } ] 
+    },
+    "test_file_text_ftp": { 
+        "configs": { 
+            "plugin": {
+                "name": "transfer",
+                "property": { "source": "/home/sbaadm/assets/tso.txt", "target": "tso_ftp.txt", "host": "10.22.26.75", "user": "sbaadm", "password": "sbaadm@freewill" } 
+            }
+        },
+        "models": [ {
+            "name": "tso",
+            "alias": { "privateAlias": "PROMPTDB" },
+            "fields": {
+                "mktid": { "type": "STRING", "options": { "seqno": 1 } },
+                "share": { "type": "STRING", "options": { "seqno": 2 } },
+                "unit": { "type": "DECIMAL", "options": { "seqno": 3 } },
+                "price": { "type": "DECIMAL", "options": { "seqno": 4 } },
+                "yield": { "type": "INTEGER" },
+                "effdate": { "type": "DATE", "options": { "seqno": 5 } },
+                "efftime": { "type": "TIME", "options": { "seqno": 6 } },
+                "edittime": { "type": "DATETIME", "options": { "seqno": 7 } },
+                "sharename": { "type": "STRING", "options": { "seqno": 8 } },
+                "defvalue": { "type": "STRING" },
+                "message": { "type": "STRING" },
+                "remarks": { "type": "STRING", "defaultValue": "test_file_text_ftp" }
+            },
+            "settings": { "skip": 1, "delimiter": ",", "quotable": true }
+        } ] 
+    },
+    "test_file_text_ftp_naming": { 
+        "configs": { 
+            "plugin": {
+                "name": "transfer",
+                "property": { "source": "/home/sbaadm/assets/tso.txt", "target": "tso_ftp.txt", "naming": "auto", "remarks": "default config by config/defaut.json" } 
+            }
+        },
+        "models": [ {
+            "name": "tso",
+            "alias": { "privateAlias": "PROMPTDB" },
+            "fields": {
+                "mktid": { "type": "STRING", "options": { "seqno": 1 } },
+                "share": { "type": "STRING", "options": { "seqno": 2 } },
+                "unit": { "type": "DECIMAL", "options": { "seqno": 3 } },
+                "price": { "type": "DECIMAL", "options": { "seqno": 4 } },
+                "yield": { "type": "INTEGER" },
+                "effdate": { "type": "DATE", "options": { "seqno": 5 } },
+                "efftime": { "type": "TIME", "options": { "seqno": 6 } },
+                "edittime": { "type": "DATETIME", "options": { "seqno": 7 } },
+                "sharename": { "type": "STRING", "options": { "seqno": 8 } },
+                "defvalue": { "type": "STRING" },
+                "message": { "type": "STRING" },
+                "remarks": { "type": "STRING", "defaultValue": "test_file_text_ftp_naming" }
             },
             "settings": { "skip": 1, "delimiter": ",", "quotable": true }
         } ] 

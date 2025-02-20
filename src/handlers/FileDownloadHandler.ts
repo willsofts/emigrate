@@ -1,6 +1,8 @@
+import { KnModel } from "@willsofts/will-db";
+import { KnContextInfo } from '@willsofts/will-core';
 import { DOWNLOAD_FILE_PATH } from "../utils/EnvironmentVariable";
-import { FileSetting } from "../models/MigrateAlias";
-import { TknOperateHandler } from "@willsofts/will-serv";
+import { FileSetting, PluginSetting } from "../models/MigrateAlias";
+import { PluginHandler } from "./PluginHandler";
 import { v4 as uuid } from 'uuid';
 import fs from "fs";
 import path from "path";
@@ -9,10 +11,11 @@ import { promisify } from 'util';
 
 const pipe = promisify(pipeline);
 
-export class FileDownloadHandler extends TknOperateHandler {
+export class FileDownloadHandler extends PluginHandler {
 
-    public async performDownload(setting: FileSetting) : Promise<FileSetting | undefined> {
-        this.logger.debug(this.constructor.name+".performDownload: setting",setting);        
+    public override async performDownload(plugin: PluginSetting, context?: KnContextInfo, model: KnModel = this.model) : Promise<FileSetting | undefined> {
+        this.logger.debug(this.constructor.name+".performDownload: plugin",plugin);        
+        let setting = plugin.property;
         if(setting?.source && setting?.source.trim().length > 0 && setting?.target && setting?.target.trim().length > 0) {
             setting.file = undefined;
             let info = path.parse(setting.target);

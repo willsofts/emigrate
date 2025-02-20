@@ -1,13 +1,15 @@
+import { KnModel } from "@willsofts/will-db";
+import { KnContextInfo } from '@willsofts/will-core';
 import { DOWNLOAD_FILE_PATH, UPLOAD_FILE_PATH, IMPORT_FTP_HOST, IMPORT_FTP_USER, IMPORT_FTP_PASSWORD, IMPORT_FTP_KEYFILE } from "../utils/EnvironmentVariable";
-import { FileSetting } from "../models/MigrateAlias";
-import { TknOperateHandler } from "@willsofts/will-serv";
+import { FileSetting, PluginSetting } from "../models/MigrateAlias";
+import { PluginHandler } from "./PluginHandler";
 import { v4 as uuid } from 'uuid';
 import fs from "fs";
 import path from "path";
 import SftpClient from "ssh2-sftp-client";
 import { ConnectOptions } from "ssh2-sftp-client";
 
-export class FileTransferHandler extends TknOperateHandler {
+export class FileTransferHandler extends PluginHandler {
 
     private client : SftpClient | undefined = undefined;
 
@@ -44,8 +46,9 @@ export class FileTransferHandler extends TknOperateHandler {
         };
     }
 
-    public async performDownload(setting: FileSetting) : Promise<FileSetting | undefined> {
-        this.logger.debug(this.constructor.name+".performDownload: setting",setting);        
+    public override async performDownload(plugin: PluginSetting, context?: KnContextInfo, model: KnModel = this.model) : Promise<FileSetting | undefined> {
+        this.logger.debug(this.constructor.name+".performDownload: plugin",plugin);        
+        let setting = plugin.property;
         if(setting?.source && setting?.source.trim().length > 0 && setting?.target && setting?.target.trim().length > 0) {
             setting.file = undefined;
             let info = path.parse(setting.target);
@@ -84,8 +87,9 @@ export class FileTransferHandler extends TknOperateHandler {
         return undefined;
     }
 
-    public async performUpload(setting: FileSetting) : Promise<FileSetting | undefined> {
-        this.logger.debug(this.constructor.name+".performUpload: setting",setting);        
+    public async performUpload(plugin: PluginSetting, context?: KnContextInfo, model: KnModel = this.model) : Promise<FileSetting | undefined> {
+        this.logger.debug(this.constructor.name+".performDownload: plugin",plugin);        
+        let setting = plugin.property;
         if(setting?.source && setting?.source.trim().length > 0 && setting?.target && setting?.target.trim().length > 0) {
             setting.file = undefined;
             let info = path.parse(setting.target);

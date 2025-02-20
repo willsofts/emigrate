@@ -4,6 +4,11 @@ import { KnContextInfo } from "@willsofts/will-core";
 import { KnDBConnector, KnDBFault, KnSQL } from "@willsofts/will-sql";
 import { TknOperateHandler } from "@willsofts/will-serv";
 import { PRIVATE_SECTION } from "../utils/EnvironmentVariable";
+import { PluginSetting } from "../models/MigrateAlias";
+import { FileDownloadHandler } from "./FileDownloadHandler";
+import { FileTransferHandler } from "./FileTransferHandler";
+import { PluginHandler } from './PluginHandler';
+
 const crypto = require('crypto');
 
 export const CHARACTER_SET = ['@','#','$','%','^','&','*','(',')','-','_','+','=','/','\\',':',';','|','[',']','{','}','<','>','?','.',',','"','\''];
@@ -105,4 +110,32 @@ export class MigrateBase extends TknOperateHandler {
         return undefined;
     }
 
+    public async getPluginHandler(plugin: PluginSetting | undefined) : Promise<PluginHandler | undefined> {
+        if(plugin) {
+            if("download"==plugin.name) {
+                let handler = new FileDownloadHandler();
+                handler.obtain(this.broker,this.logger);
+                return handler;
+            } else if("transfer"==plugin.name) {
+                let handler = new FileTransferHandler();
+                handler.obtain(this.broker,this.logger);
+                return handler;
+            }
+        }
+        return undefined;
+    }
+    
+    /*
+    public async performFileDownload(setting: FileSetting) : Promise<FileSetting | undefined> {
+        let handler = new FileDownloadHandler();
+        handler.obtain(this.broker,this.logger);
+        return await handler.performDownload(setting);
+    }
+
+    public async performFileTransfer(setting: FileSetting) : Promise<FileSetting | undefined> {
+        let handler = new FileTransferHandler();
+        handler.obtain(this.broker,this.logger);
+        return await handler.performDownload(setting);
+    }
+    */
 }
