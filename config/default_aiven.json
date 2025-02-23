@@ -1,10 +1,4 @@
 {
-    "ATTACH_MAIL_HOST": "imap.gmail.com",
-    "ATTACH_MAIL_USER": "ezprompt@gmail.com",
-    "ATTACH_MAIL_PASSWORD": "nzazlorszucrhrbb",
-    "IMPORT_FTP_HOST": "10.22.26.75",
-    "IMPORT_FTP_USER": "sbaadm",
-    "IMPORT_FTP_PASSWORD": "sbaadm@freewill",
     "HTTP_PORT": 8080,
     "BASE_URL": "",
     "BASE_STORAGE": "session",
@@ -20,8 +14,8 @@
     "PRIVATE_SECTION": "PROMPTDB",
     "DB_SECTION": "AUTHDB",
     "DB_TRACKER": "AUTHDB",
-    "AUTHDB" : { "alias": "mysql2", "dialect": "mysql", "url":"", "user": "root", "password": "root", "host": "localhost", "port": 3306, "database": "migrateauth", "options": { "charset": "utf8", "connectionLimit": 100 } },
-    "PROMPTDB" : { "alias": "mysql2", "dialect": "mysql", "url":"", "user": "root", "password": "root", "host": "localhost", "port": 3306, "database": "migratedb", "options": { "charset": "utf8", "connectionLimit": 100 } },
+    "AUTHDB" : { "alias": "mysql2", "dialect": "mysql", "url":"", "user": "avnadmin", "password": "U2FsdGVkX1+aGi4UkwT7pa4cSq6evOOXi0oE8KIJIIuq4TLBmrCD6qjMJBURvqnZ", "password_ENCRYPTED": "true", "host": "mysql-tassan-tassunoros-aa6f.e.aivencloud.com", "port": 27177, "database": "migrateauth", "options": { "charset": "utf8", "connectionLimit": 1000 } },
+    "PROMPTDB" : { "alias": "mysql2", "dialect": "mysql", "url":"", "user": "avnadmin", "password": "U2FsdGVkX1+aGi4UkwT7pa4cSq6evOOXi0oE8KIJIIuq4TLBmrCD6qjMJBURvqnZ", "password_ENCRYPTED": "true", "host": "mysql-tassan-tassunoros-aa6f.e.aivencloud.com", "port": 27177, "database": "migratedb", "options": { "charset": "utf8", "connectionLimit": 1000 } },
     "authentications": [
         { "authtype":"SYSTEM", "domainname":"freewillgroup.com", "tenanturl":"", "basedn":"" , "enabled": true }
     ],
