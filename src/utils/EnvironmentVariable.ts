@@ -24,3 +24,15 @@ export const IMPORT_FTP_HOST: string = config.env("IMPORT_FTP_HOST");
 export const IMPORT_FTP_USER: string = config.env("IMPORT_FTP_USER");
 export const IMPORT_FTP_PASSWORD: string = config.env("IMPORT_FTP_PASSWORD");
 export const IMPORT_FTP_KEYFILE: string = config.env("IMPORT_FTP_KEYFILE");
+export const ATTACH_MAIL_HOST: string = config.env("ATTACH_MAIL_HOST");
+export const ATTACH_MAIL_PORT: number = parseInt(config.env("ATTACH_MAIL_PORT","993")) || 993;
+export const ATTACH_MAIL_USER: string = config.env("ATTACH_MAIL_USER");
+export const ATTACH_MAIL_PASSWORD: string = config.env("ATTACH_MAIL_PASSWORD");
+export const ATTACH_MAIL_TLS: boolean = config.env("ATTACH_MAIL_TLS","true") === "true";
+export const ATTACH_MAIL_TIMEOUT: number = parseInt(config.env("ATTACH_MAIL_TIMEOUT","3000")) || 3000;
+export const ATTACH_MAIL_MARKSEEN: boolean = config.env("ATTACH_MAIL_MARKSEEN","true") === "true";
+export const ATTACH_MAIL_FROM: string = config.env("ATTACH_MAIL_FROM");
+export const ATTACH_MAIL_SUBJECT: string = config.env("ATTACH_MAIL_SUBJECT");
+export const ATTACH_MAIL_FILENAME: string = config.env("ATTACH_MAIL_FILENAME");
+export const ATTACH_FILE_PATH: string = config.env("ATTACH_FILE_PATH") || os.tmpdir();
+

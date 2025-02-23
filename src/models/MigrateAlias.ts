@@ -80,6 +80,7 @@ export interface FileSetting {
     target: string;
     path?: string;
     file?: string;
+    originalname?: string;
     naming?: string;
     method?: string;
     headers?: any;

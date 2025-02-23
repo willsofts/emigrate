@@ -1172,5 +1172,59 @@
             },
             "settings": { "skip": 1, "delimiter": ",", "quotable": true }
         } ] 
+    },
+    "test_file_text_attach": { 
+        "configs": { 
+            "plugin": {
+                "name": "mail",
+                "property": { "source": "tassunoros@gmail.com", "target": "tso.txt", "host": "imap.gmail.com", "user": "ezprompt@gmail.com", "password": "nzazlorszucrhrbb", "subject": "Attach File", "markSeen": false } 
+            }
+        },
+        "models": [ {
+            "name": "tso",
+            "alias": { "privateAlias": "PROMPTDB" },
+            "fields": {
+                "mktid": { "type": "STRING", "options": { "seqno": 1 } },
+                "share": { "type": "STRING", "options": { "seqno": 2 } },
+                "unit": { "type": "DECIMAL", "options": { "seqno": 3 } },
+                "price": { "type": "DECIMAL", "options": { "seqno": 4 } },
+                "yield": { "type": "INTEGER" },
+                "effdate": { "type": "DATE", "options": { "seqno": 5 } },
+                "efftime": { "type": "TIME", "options": { "seqno": 6 } },
+                "edittime": { "type": "DATETIME", "options": { "seqno": 7 } },
+                "sharename": { "type": "STRING", "options": { "seqno": 8 } },
+                "defvalue": { "type": "STRING" },
+                "message": { "type": "STRING" },
+                "remarks": { "type": "STRING", "defaultValue": "test_file_text_attach" }
+            },
+            "settings": { "skip": 1, "delimiter": ",", "quotable": true }
+        } ] 
+    },
+    "test_file_text_attach_naming": { 
+        "configs": { 
+            "plugin": {
+                "name": "mail",
+                "property": { "source": "tassunoros@gmail.com", "target": "tso.txt", "subject": "Attach File", "markSeen": false, "naming": "auto", "remarks": "default config by config/defaut.json"} 
+            }
+        },
+        "models": [ {
+            "name": "tso",
+            "alias": { "privateAlias": "PROMPTDB" },
+            "fields": {
+                "mktid": { "type": "STRING", "options": { "seqno": 1 } },
+                "share": { "type": "STRING", "options": { "seqno": 2 } },
+                "unit": { "type": "DECIMAL", "options": { "seqno": 3 } },
+                "price": { "type": "DECIMAL", "options": { "seqno": 4 } },
+                "yield": { "type": "INTEGER" },
+                "effdate": { "type": "DATE", "options": { "seqno": 5 } },
+                "efftime": { "type": "TIME", "options": { "seqno": 6 } },
+                "edittime": { "type": "DATETIME", "options": { "seqno": 7 } },
+                "sharename": { "type": "STRING", "options": { "seqno": 8 } },
+                "defvalue": { "type": "STRING" },
+                "message": { "type": "STRING" },
+                "remarks": { "type": "STRING", "defaultValue": "test_file_text_attach_naming" }
+            },
+            "settings": { "skip": 1, "delimiter": ",", "quotable": true }
+        } ] 
     }
 }

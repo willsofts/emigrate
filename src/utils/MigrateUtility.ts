@@ -4,6 +4,21 @@ import mime from "mime-types";
 import { FileInfo } from "../models/MigrateAlias";
 export class MigrateUtility {
     
+    public static maskAttributes(object: any, attributesToMask: string[] = ["password"]) {
+        if(!object) return object;
+        const data = JSON.parse(JSON.stringify(object));
+        for (const key in data) {
+            if (data.hasOwnProperty(key)) {
+                if (attributesToMask.includes(key) && typeof data[key] === 'string') {
+                    data[key] = '******'; // Mask the attribute
+                } else if (typeof data[key] === 'object' && data[key] !== null) {
+                    data[key] = this.maskAttributes(data[key], attributesToMask); // Recursively mask nested objects
+                }
+            }
+        }
+        return data;
+    }
+
     public static removeDoubleQuote(text: string) {
         if(text.charAt(0)=="\"") text = text.substring(1);
         if(text.charAt(text.length-1)=="\"") text = text.substring(0,text.length-1);

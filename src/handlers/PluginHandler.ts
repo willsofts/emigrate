@@ -15,7 +15,7 @@ export class PluginHandler extends TknOperateHandler {
             if(res && res.file) {
                 try {
                     let fileinfo = await MigrateUtility.getFileInfo(res.file);
-                    fileinfo.originalname = res.target;
+                    fileinfo.originalname = res.originalname || res.target;
                     return fileinfo;
                 } catch(ex: any) {
                     return Promise.reject(this.getDBError(ex));

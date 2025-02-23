@@ -192,7 +192,7 @@ export class MigrateFileHandler extends MigrateTextHandler {
         if(plugin) {
             let handler = await this.getPluginHandler(plugin);
             if(handler) {
-                let fileinfo = await handler.perform(plugin,context,model);
+                let fileinfo = await handler.perform(plugin,context,model);                
                 if(fileinfo) {
                     context.params.file = fileinfo;
                     return await this.processFile(context,model,calling,fortype);

@@ -7,6 +7,7 @@ import { PRIVATE_SECTION } from "../utils/EnvironmentVariable";
 import { PluginSetting } from "../models/MigrateAlias";
 import { FileDownloadHandler } from "./FileDownloadHandler";
 import { FileTransferHandler } from "./FileTransferHandler";
+import { FileAttachmentHandler } from './FileAttachmentHandler';
 import { PluginHandler } from './PluginHandler';
 
 const crypto = require('crypto');
@@ -120,22 +121,13 @@ export class MigrateBase extends TknOperateHandler {
                 let handler = new FileTransferHandler();
                 handler.obtain(this.broker,this.logger);
                 return handler;
+            } else if("mail"==plugin.name) {
+                let handler = new FileAttachmentHandler();
+                handler.obtain(this.broker,this.logger);
+                return handler;
             }
         }
         return undefined;
     }
     
-    /*
-    public async performFileDownload(setting: FileSetting) : Promise<FileSetting | undefined> {
-        let handler = new FileDownloadHandler();
-        handler.obtain(this.broker,this.logger);
-        return await handler.performDownload(setting);
-    }
-
-    public async performFileTransfer(setting: FileSetting) : Promise<FileSetting | undefined> {
-        let handler = new FileTransferHandler();
-        handler.obtain(this.broker,this.logger);
-        return await handler.performDownload(setting);
-    }
-    */
 }
