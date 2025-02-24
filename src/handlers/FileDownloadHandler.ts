@@ -29,7 +29,7 @@ export class FileDownloadHandler extends PluginHandler {
             if(info.dir && info.dir.trim().length > 0) {
                 filepath = info.dir;
             }
-            let fullfilename = path.join(filepath, filename);
+            let fullfilename = path.join(filepath, filename);            
             if(!fs.existsSync(filepath)) {
                 fs.mkdirSync(filepath, { recursive: true });
             }
@@ -47,19 +47,21 @@ export class FileDownloadHandler extends PluginHandler {
                 const res = await fetch(setting.source, init);
                 if (!res.ok) return Promise.reject(new Error(`Fail to download file: ${res.statusText}`));
                 if (res.ok && res.body) {
+                    let writeError = undefined;
                     this.logger.debug("saving as :",fullfilename);
                     const writer = fs.createWriteStream(fullfilename, { autoClose: true });
                     writer.on("error",(err) => { 
-                        this.logger.error(err); 
+                        writeError = err;
+                        this.logger.error(this.constructor.name+".performDownload: write error",err); 
                     });
                     await pipe(res.body, writer);
+                    if(writeError) throw writeError;
                     setting.file = fullfilename;
                     return setting;
                 }
             } catch (err: any) {
-                this.logger.error(err);
+                this.logger.error(this.constructor.name+".performDownload: error",err);
                 return Promise.reject(err);
-                //return Promise.reject(new Error(`Error during download ${err.message}`));
             }                
         }
         return undefined;

@@ -1,11 +1,16 @@
+import { Arguments } from "@willsofts/will-util";
 import { FileDownloadHandler } from "../handlers/FileDownloadHandler";
 import { DOWNLOAD_FILE_PATH } from "../utils/EnvironmentVariable";
 
-let setting = { name: "download", property: { source: "http://localhost:8080/assets/tso.txt", target: "download.txt", path: DOWNLOAD_FILE_PATH } };
 let args = process.argv.slice(2);
-if(args.length>0) setting.property.source = args[0];
-if(args.length>1) setting.property.target = args[1];
-if(args.length>2) setting.property.path = args[2];
+let setting = { 
+    name: "download", 
+    property: { 
+        source: Arguments.getString(args,"http://localhost:8080/assets/tso.txt","-url","-source") as string,
+        target: Arguments.getString(args,"download.txt","-t","-target") as string,
+        path: Arguments.getString(args,DOWNLOAD_FILE_PATH,"-path") as string, 
+    } 
+};
 
 async function testDownload(setting:any) {
     let handler = new FileDownloadHandler();
@@ -15,4 +20,4 @@ async function testDownload(setting:any) {
 testDownload(setting);
 
 //node dist/test/test.file.download.js
-//node dist/test/test.file.download.js http://localhost:8080/assets/ttso.txt
+//node dist/test/test.file.download.js -url http://localhost:8080/assets/ttso.txt
