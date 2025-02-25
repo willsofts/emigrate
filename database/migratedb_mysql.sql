@@ -102,6 +102,8 @@ INSERT INTO `tmigrateconnect` (`conectid`, `connectname`, `connecttype`, `connec
 
 -- Dumping structure for table migratedb.tmigratelog
 CREATE TABLE IF NOT EXISTS `tmigratelog` (
+  `migrateid` varchar(50) NOT NULL,
+  `taskid` varchar(50) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
   `processid` varchar(50) NOT NULL,
   `processdate` date NOT NULL,
   `processtime` time NOT NULL,
@@ -118,7 +120,6 @@ CREATE TABLE IF NOT EXISTS `tmigratelog` (
   `logname` varchar(200) DEFAULT NULL,
   `errorname` varchar(200) DEFAULT NULL,
   `notename` varchar(200) DEFAULT NULL,
-  `taskid` varchar(50) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
   `tablename` varchar(50) DEFAULT NULL,
   `totalrecords` bigint DEFAULT '0',
   `records` bigint DEFAULT '0',
@@ -138,7 +139,8 @@ CREATE TABLE IF NOT EXISTS `tmigratelog` (
   `errormessage` text CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci,
   `errorcontents` text CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci,
   `remarks` text CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci,
-  PRIMARY KEY (`processid`) USING BTREE
+  PRIMARY KEY (`migrateid`),
+  KEY `processid` (`processid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COMMENT='table keep migrate log history';
 
 -- Dumping data for table migratedb.tmigratelog: ~0 rows (approximately)
@@ -184,8 +186,9 @@ CREATE TABLE IF NOT EXISTS `tmigratestep` (
 CREATE TABLE IF NOT EXISTS `tmigratetask` (
   `taskid` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `taskname` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
-  `modelid` varchar(50) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT 'tmigratemodel.modelid',
+  `tasktype` varchar(10) COLLATE utf8mb4_general_ci NOT NULL DEFAULT 'IMPORT',
   `connectid` varchar(50) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT 'tmigrateconnect.connectid',
+  `taskconfigs` text COLLATE utf8mb4_general_ci,
   `createdate` date DEFAULT NULL,
   `createtime` time DEFAULT NULL,
   `createmillis` bigint DEFAULT NULL,
@@ -198,8 +201,20 @@ CREATE TABLE IF NOT EXISTS `tmigratetask` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='table keep migrate task info';
 
 -- Dumping data for table migratedb.tmigratetask: ~1 rows (approximately)
-INSERT INTO `tmigratetask` (`taskid`, `taskname`, `modelid`, `connectid`, `createdate`, `createtime`, `createmillis`, `createuser`, `editdate`, `edittime`, `editmillis`, `edituser`) VALUES
-	('tmigrate', 'Migrate Testing', 'tmigrate', 'PROMPDB', '2024-12-17', '15:35:23', NULL, NULL, '2024-12-17', '15:35:28', NULL, NULL);
+INSERT INTO `tmigratetask` (`taskid`, `taskname`, `tasktype`, `connectid`, `taskconfigs`, `createdate`, `createtime`, `createmillis`, `createuser`, `editdate`, `edittime`, `editmillis`, `edituser`) VALUES
+	('tmigrate', 'Migrate Testing', 'IMPORT', 'PROMPDB', NULL, '2024-12-17', '15:35:23', NULL, NULL, '2024-12-17', '15:35:28', NULL, NULL);
+
+-- Dumping structure for table migratedb.tmigratetaskmodel
+CREATE TABLE IF NOT EXISTS `tmigratetaskmodel` (
+  `taskid` varchar(50) COLLATE utf8mb4_general_ci NOT NULL COMMENT 'tmigratetask.taskid',
+  `modelid` varchar(50) COLLATE utf8mb4_general_ci NOT NULL COMMENT 'tmigratemodel.modelid',
+  `seqno` int NOT NULL DEFAULT (0),
+  PRIMARY KEY (`taskid`,`modelid`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='table keep model in task';
+
+-- Dumping data for table migratedb.tmigratetaskmodel: ~0 rows (approximately)
+INSERT INTO `tmigratetaskmodel` (`taskid`, `modelid`, `seqno`) VALUES
+	('tmigrate', 'tmigrate', 0);
 
 -- Dumping structure for table migratedb.tmigratetest
 CREATE TABLE IF NOT EXISTS `tmigratetest` (
@@ -220,24 +235,6 @@ CREATE TABLE IF NOT EXISTS `tmigratetest` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- Dumping data for table migratedb.tmigratetest: ~0 rows (approximately)
-
--- Dumping structure for table migratedb.tso
-CREATE TABLE IF NOT EXISTS `tso` (
-  `mktid` varchar(10) NOT NULL DEFAULT '',
-  `share` varchar(10) DEFAULT NULL,
-  `unit` decimal(10,0) DEFAULT NULL,
-  `price` decimal(10,2) DEFAULT '0.00',
-  `yield` int DEFAULT NULL,
-  `effdate` date DEFAULT NULL,
-  `efftime` time DEFAULT NULL,
-  `edittime` datetime DEFAULT NULL,
-  `sharename` varchar(30) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
-  `defvalue` varchar(50) DEFAULT NULL,
-  `message` varchar(50) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
-  `remarks` mediumtext CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
-
--- Dumping data for table migratedb.tso: ~0 rows (approximately)
 
 /*!40103 SET TIME_ZONE=IFNULL(@OLD_TIME_ZONE, 'system') */;
 /*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;
