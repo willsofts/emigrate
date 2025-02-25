@@ -1226,5 +1226,57 @@
             },
             "settings": { "skip": 1, "delimiter": ",", "quotable": true }
         } ] 
+    },
+    "test_file_date": { 
+        "models": [ {
+            "name": "tmigratetestdate",
+            "alias": { "privateAlias": "PROMPTDB" },
+            "fields": {
+                "date1": { "type": "DATETIME", "options": { "seqno": 1, "format": "YYYY-MM-DD HH:mm:ss", "locale": "en", "example": "2025-02-24 10:10:10" } },
+                "date2": { "type": "DATETIME", "options": { "seqno": 2, "format": "YYYY-MMM-DD HH:mm:ss", "locale": "en", "example": "2025-Feb-24 10:10:10" } },
+                "date3": { "type": "DATETIME", "options": { "seqno": 3, "format": "DD MMM YYYY HH:mm:ss", "locale": "en", "example": "24 Feb 2025 10:10:10" } },
+                "date4": { "type": "DATETIME", "options": { "seqno": 4, "format": "DD MMMM YYYY HH:mm:ss", "locale": "en", "example": "24 February 2025 10:10:10" } },
+                "date5": { "type": "DATETIME", "options": { "seqno": 5, "format": "YYYY-MM-DD HH:mm:ss", "locale": "th", "example": "2568-02-24 10:10:10" } },
+                "date6": { "type": "DATETIME", "options": { "seqno": 6, "format": "YYYY-MMM-DD HH:mm:ss", "locale": "th", "example": "2568-ก.พ.-24 10:10:10" } },
+                "date7": { "type": "DATETIME", "options": { "seqno": 7, "format": "DD MMM YYYY HH:mm:ss", "locale": "th", "example": "24 ก.พ. 2568 10:10:10" } },
+                "date8": { "type": "DATETIME", "options": { "seqno": 8, "format": "DD MMMM YYYY HH:mm:ss", "locale": "th", "example": "24 กุมภาพันธ์ 2568 10:10:10" } },
+                "date9": { "type": "DATETIME", "options": { "seqno": 9, "format": "YYYY-MM-DD HH:mm:ss", "locale": "th", "example": "2568-02-24 10:10:10" } },
+                "date10": { "type": "DATETIME", "options": { "seqno": 10, "format": "YYYY-MMM-DD HH:mm:ss", "locale": "th", "example": "2025-ก.พ.-24 10:10:10" } },
+                "date11": { "type": "DATETIME", "options": { "seqno": 11, "format": "DD MMM YYYY HH:mm:ss", "locale": "en", "example": "24 ก.พ. 2025 10:10:10" } },
+                "date12": { "type": "DATETIME", "options": { "seqno": 12, "format": "DD MMMM YYYY HH:mm:ss", "locale": "en", "example": "24 กุมภาพันธ์ 2025 10:10:10" } },
+                "date13": { "type": "DATETIME", "options": { "seqno": 13, "format": "DD/MM/YYYY HH:mm:ss", "locale": "en", "example": "24/02/2025 10:10:10" } },
+                "date14": { "type": "DATETIME", "options": { "seqno": 14, "format": "DD-MM-YYYY HH:mm:ss", "locale": "en", "example": "24-02-2025 10:10:10" } },
+                "date15": { "type": "DATETIME", "options": { "seqno": 15, "format": "MM/DD/YYYY hh:mm:ss A", "locale": "en", "example": "02/24/2025 11:10:10 AM" } },
+                "date16": { "type": "DATETIME", "options": { "seqno": 16, "format": "MM/DD/YYYY hh:mm:ss A", "locale": "en", "example": "02/24/2025 11:10:10 PM" } },
+                "remarks": { "type": "STRING", "defaultValue": "test_file_date" }
+            },
+            "settings": { "skip": 1, "delimiter": ",", "quotable": true }
+        } ] 
+    },
+    "test_file_date_comma": { 
+        "models": [ {
+            "name": "tmigratetestdate",
+            "alias": { "privateAlias": "PROMPTDB" },
+            "fields": {
+                "date1": { "type": "DATETIME", "options": { "seqno": 1, "format": "YYYY-MM-DD HH:mm:ss", "locale": "en", "example": "2025-02-24 10:10:10" } },
+                "date2": { "type": "DATETIME", "options": { "seqno": 2, "format": "YYYY-MMM-DD HH:mm:ss", "locale": "en", "example": "2025-Feb-24 10:10:10" } },
+                "date3": { "type": "DATETIME", "options": { "seqno": 3, "format": "DD MMM YYYY HH:mm:ss", "locale": "en", "example": "24 Feb 2025 10:10:10" } },
+                "date4": { "type": "DATETIME", "options": { "seqno": 4, "format": "DD MMMM YYYY HH:mm:ss", "locale": "en", "example": "24 February 2025 10:10:10" } },
+                "date5": { "type": "DATETIME", "options": { "seqno": 5, "format": "YYYY-MM-DD HH:mm:ss", "locale": "th", "example": "2568-02-24 10:10:10" } },
+                "date6": { "type": "DATETIME", "options": { "seqno": 6, "format": "YYYY-MMM-DD HH:mm:ss", "locale": "th", "example": "2568-ก.พ.-24 10:10:10" } },
+                "date7": { "type": "DATETIME", "options": { "seqno": 7, "format": "DD MMM YYYY HH:mm:ss", "locale": "th", "example": "24 ก.พ. 2568 10:10:10" } },
+                "date8": { "type": "DATETIME", "options": { "seqno": 8, "format": "DD MMMM YYYY HH:mm:ss", "locale": "th", "example": "24 กุมภาพันธ์ 2568 10:10:10" } },
+                "date9": { "type": "DATETIME", "options": { "seqno": 9, "format": "YYYY-MM-DD HH:mm:ss", "locale": "th", "example": "2568-02-24 10:10:10" } },
+                "date10": { "type": "DATETIME", "options": { "seqno": 10, "format": "YYYY-MMM-DD HH:mm:ss", "locale": "th", "example": "2025-ก.พ.-24 10:10:10" } },
+                "date11": { "type": "DATETIME", "options": { "seqno": 11, "format": "DD MMM YYYY HH:mm:ss", "locale": "en", "example": "24 ก.พ. 2025 10:10:10" } },
+                "date12": { "type": "DATETIME", "options": { "seqno": 12, "format": "DD MMMM YYYY HH:mm:ss", "locale": "en", "example": "24 กุมภาพันธ์ 2025 10:10:10" } },
+                "date13": { "type": "DATETIME", "options": { "seqno": 13, "format": "DD/MM/YYYY HH:mm:ss", "locale": "en", "example": "24/02/2025 10:10:10" } },
+                "date14": { "type": "DATETIME", "options": { "seqno": 14, "format": "DD-MM-YYYY HH:mm:ss", "locale": "en", "example": "24-02-2025 10:10:10" } },
+                "date15": { "type": "DATETIME", "options": { "seqno": 15, "format": "MM/DD/YYYY, hh:mm:ss A", "locale": "en", "example": "02/24/2025, 11:10:10 AM" } },
+                "date16": { "type": "DATETIME", "options": { "seqno": 16, "format": "MM/DD/YYYY, hh:mm:ss A", "locale": "en", "example": "02/24/2025, 11:10:10 PM" } },
+                "remarks": { "type": "STRING", "defaultValue": "test_file_date_comma" }
+            },
+            "settings": { "skip": 1, "delimiter": ",", "quotable": true }
+        } ] 
     }
 }

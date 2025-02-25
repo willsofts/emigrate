@@ -182,7 +182,7 @@ export class MigrateTextHandler extends MigrateHandler {
         let settings = taskmodel.settings;
         let delimiter = ",";
         if(settings?.delimiter) delimiter = settings.delimiter;
-        let texts = text.split(delimiter=="TAB"?'\t':delimiter);
+        let texts = delimiter==',' ? text.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/) : text.split(delimiter=="TAB"?'\t':delimiter);
         return await this.scrapeDataArray(taskmodel, fields, texts, index);
     }
 

@@ -1,7 +1,8 @@
 import { v4 as uuid } from 'uuid';
-import { KnModel } from "@willsofts/will-db";
+import { KnModel, KnParamInfo, KnSQLUtils } from "@willsofts/will-db";
 import { KnContextInfo } from "@willsofts/will-core";
-import { KnDBConnector, KnDBFault, KnSQL } from "@willsofts/will-sql";
+import { KnDBConnector, KnDBFault, KnSQL, KnDBUtils, KnDBTypes } from "@willsofts/will-sql";
+import { Utilities } from "@willsofts/will-util";
 import { TknOperateHandler } from "@willsofts/will-serv";
 import { PRIVATE_SECTION } from "../utils/EnvironmentVariable";
 import { PluginSetting } from "../models/MigrateAlias";
@@ -9,12 +10,14 @@ import { FileDownloadHandler } from "./FileDownloadHandler";
 import { FileTransferHandler } from "./FileTransferHandler";
 import { FileAttachmentHandler } from './FileAttachmentHandler';
 import { PluginHandler } from './PluginHandler';
+import { MigrateDate } from "../utils/MigrateDate";
 
 const crypto = require('crypto');
 
 export const CHARACTER_SET = ['@','#','$','%','^','&','*','(',')','-','_','+','=','/','\\',':',';','|','[',']','{','}','<','>','?','.',',','"','\''];
 
 export class MigrateBase extends TknOperateHandler {
+    public dateparser = new MigrateDate();
     public section = PRIVATE_SECTION;
     public model : KnModel = { name: "tmigrate", alias: { privateAlias: this.section } };
     
@@ -48,6 +51,22 @@ export class MigrateBase extends TknOperateHandler {
         }
         return [defaultValue,false];
     }
+
+    public override tryParseParameterValue(param: KnParamInfo): any {
+        let dbf = KnSQLUtils.getDBField(param.name,param.model);
+        if(dbf) {
+            let dbt = KnDBUtils.parseDBTypes(dbf.type);
+            if(dbt === KnDBTypes.DATE || dbt === KnDBTypes.TIME || dbt === KnDBTypes.DATETIME) {
+                let value = param.value;
+                if(typeof value === "string" && value.trim().length > 0) {
+                    if(dbf.options?.format && dbf.options?.format.trim().length > 0) {
+                        return this.dateparser.parseDate(value,dbf.options.format,dbf.options?.locale);
+                    }
+                }
+            }
+        }
+        return super.tryParseParameterValue(param);
+    }    
 
     public tryParseFunction(handler: any, ...args: string[]) : Function | undefined {
         let func : Function | undefined = handler;

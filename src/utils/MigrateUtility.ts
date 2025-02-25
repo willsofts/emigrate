@@ -2,6 +2,7 @@ import fs from "fs";
 import path from "path";
 import mime from "mime-types";
 import { FileInfo } from "../models/MigrateAlias";
+
 export class MigrateUtility {
     
     public static maskAttributes(object: any, attributesToMask: string[] = ["password"]) {
