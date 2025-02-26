@@ -5,7 +5,7 @@ import { VerifyError } from "@willsofts/will-core";
 import { KnDBConnector } from "@willsofts/will-sql";
 import { MigrateHandler } from "./MigrateHandler";
 import { MigrateUtility } from "../utils/MigrateUtility";
-import { TaskModel, MigrateRecordSet, MigrateResultSet, MigrateParams } from "../models/MigrateAlias";
+import { TaskModel, MigrateRecordSet, MigrateResultSet, MigrateParams, MigrateRecords } from "../models/MigrateAlias";
 import { DEFAULT_CALLING_SERVICE } from "../utils/EnvironmentVariable";
 import LineByLine from "n-readlines";
 import fs from 'fs';
@@ -44,8 +44,8 @@ export class MigrateTextHandler extends MigrateHandler {
         let uuid = this.randomUUID();
         if(!context.params.migrateid) context.params.migrateid = uuid;
         if(!context.params.processid) context.params.processid = uuid;
-        let param : MigrateParams = { authtoken: this.getTokenKey(context), filename: filename, fileinfo: file, calling: calling, async: context.params.async=="true" };
-        return this.processInserting(context,taskmodel,param,context.params.dataset);
+        let param : MigrateParams = { authtoken: this.getTokenKey(context), filename: filename, fileinfo: file, calling: calling, async: String(context.params.async)=="true" };
+        return await this.processInserting(context,taskmodel,param,context.params.dataset);
     }
 
     public override async processInsertingModel(context: KnContextInfo, taskmodel: TaskModel, param: MigrateParams, db: KnDBConnector | undefined): Promise<MigrateRecordSet> {
@@ -64,10 +64,11 @@ export class MigrateTextHandler extends MigrateHandler {
             } if(typeof datalist === "object" && Object.keys(datalist).length == 0) {
                 return result;
             }
+            let rc : MigrateRecords = { totalrecords: datalist.length, errorrecords: 0, skiprecords: 0 };
             let handler = new MigrateHandler();
             handler.obtain(this.broker,this.logger);
             handler.userToken = this.userToken;
-            return handler.processInsertingModel(context,taskmodel,param,db,datalist,header);
+            return await handler.processInsertingModel(context,taskmodel,param,db,rc,datalist,header);
         }
         return result;
     }

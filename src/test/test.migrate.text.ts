@@ -10,3 +10,5 @@ async function testMigrateText(file: string) {
     console.log("result:",result);
 }
 testMigrateText(file);
+
+//node dist/test/test.migrate.text.js

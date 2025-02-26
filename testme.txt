@@ -232,3 +232,17 @@ curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/migra
 3. using migrateftp/file
 curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/migrateftp/file -d "{\"taskid\":\"test_file_text_ftp\"}"
 
+
+setting up sftp server on windows:
+1. add OpenSSH Server 
+    - Go to Settings > System > Optional features and click on View features.
+    - Locate “OpenSSH server” feature, select it, click Next, and then click Add.
+2. create sftp user account
+    - net localgroup sftpusers /add
+    - net user [username] [password] /add /comment:"SFTP User Account" /home:"C:\SFTP\[username]"
+    - net localgroup sftpusers [username] /add
+3. test sftp [username]@localhost
+
+
+
+

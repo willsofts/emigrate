@@ -9,6 +9,7 @@ import { Request, Response } from 'express';
 import path from 'path';
 
 export class MigrateLogHandler extends TknOperateHandler {
+    public dumping: boolean = false;
     public section = PRIVATE_SECTION;
     public model : KnModel = { 
         name: "tmigratelog", 

@@ -2,7 +2,6 @@ import { v4 as uuid } from 'uuid';
 import { KnModel, KnParamInfo, KnSQLUtils } from "@willsofts/will-db";
 import { KnContextInfo } from "@willsofts/will-core";
 import { KnDBConnector, KnDBFault, KnSQL, KnDBUtils, KnDBTypes } from "@willsofts/will-sql";
-import { Utilities } from "@willsofts/will-util";
 import { TknOperateHandler } from "@willsofts/will-serv";
 import { PRIVATE_SECTION } from "../utils/EnvironmentVariable";
 import { PluginSetting } from "../models/MigrateAlias";
@@ -20,7 +19,8 @@ export class MigrateBase extends TknOperateHandler {
     public dateparser = new MigrateDate();
     public section = PRIVATE_SECTION;
     public model : KnModel = { name: "tmigrate", alias: { privateAlias: this.section } };
-    
+    public dumping: boolean = false;
+
     public randomUUID() : string {
         return uuid();
     }

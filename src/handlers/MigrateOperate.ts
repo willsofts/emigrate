@@ -118,6 +118,7 @@ export class MigrateOperate extends MigrateBase {
 
     public scratchData(mapper: string, dataSet: any, dataTarget: any) : any {
         if(mapper && mapper.trim().length>0) {
+            // % = environment variable, @ = find out from root tag, $ or . = find out from current node
             let firstchar = mapper.charAt(0);
             let configTag = firstchar=="%";
             let reservedTag = firstchar=='$' || firstchar=='.';
@@ -129,6 +130,7 @@ export class MigrateOperate extends MigrateBase {
                 return config.env(mapper);
             }
             let path = mapper.split('.');
+            //find out data in array at index specified
             let regex = new RegExp(`\\[(\\d+)\\]$`);
             let results = path.reduce((item: any, part: any) => { 
                 let match = part.match(regex); 

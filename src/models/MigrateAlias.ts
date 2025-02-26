@@ -18,6 +18,12 @@ export interface MigrateConfig extends KnDBConfig, MigrateSetting {
 
 }
 
+export interface MigrateRecords {
+    totalrecords: number;
+    errorrecords: number;
+    skiprecords: number;
+}
+
 export interface MigrateRecordSet extends KnRecordSet {
     migrateid: string;
     processid: string;
