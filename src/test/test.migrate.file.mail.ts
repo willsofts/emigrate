@@ -1,6 +1,6 @@
 import { MigrateFileHandler } from "../handlers/MigrateFileHandler";
 
-let taskid = "test_file_text_ftp";
+let taskid = "test_file_text_attach";
 let file = "./assets/tso.txt";
 let args = process.argv.slice(2);
 if(args.length>0) taskid = args[0];
@@ -14,5 +14,5 @@ async function testMigrateText(file: string, taskid: string) {
 }
 testMigrateText(file,taskid);
 
-//node dist/test/test.migrate.file.transfer.js
-//node dist/test/test.migrate.file.transfer.js test_file_text_ftp_naming
+//node dist/test/test.migrate.file.mail.js
+//node dist/test/test.migrate.file.mail.js test_file_text_attach_naming

@@ -12,3 +12,5 @@ async function testMigrateText(file: string, taskid: string) {
     console.log("result:",result);
 }
 testMigrateText(file,taskid);
+
+//node dist/test/test.migrate.file.js

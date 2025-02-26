@@ -1,10 +1,10 @@
 import KnService from "@willsofts/will-db";
 import { ServiceSchema } from "moleculer";
-import { MigrateTransferHandler } from "../handlers/MigrateTransferHandler";
+import { MigrateFTPHandler } from "../handlers/MigrateFTPHandler";
 
-const MigrateTransferService : ServiceSchema = {
+const MigrateFTPService : ServiceSchema = {
     name: "migrateftp",
     mixins: [KnService],
-    handler: new MigrateTransferHandler(), 
+    handler: new MigrateFTPHandler(), 
 }
-export = MigrateTransferService;
+export = MigrateFTPService;

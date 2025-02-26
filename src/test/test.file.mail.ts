@@ -25,4 +25,4 @@ async function testGetMailAttachment(setting:any) {
 }
 testGetMailAttachment(setting);
 
-//node dist/test/test.file.attachment.js
+//node dist/test/test.file.mail.js

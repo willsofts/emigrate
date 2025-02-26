@@ -21,4 +21,4 @@ async function testTransfer(setting:any) {
 }
 testTransfer(setting);
 
-//node dist/test/test.file.transfer.key.js
+//node dist/test/test.file.ftp.key.js
