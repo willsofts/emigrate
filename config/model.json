@@ -1278,5 +1278,86 @@
             },
             "settings": { "skip": 1, "delimiter": ",", "quotable": true }
         } ] 
+    },
+    "test_file_text_download_reconcile": { 
+        "configs": { 
+            "plugin": { 
+                "name": "download", 
+                "property": { "source": "http://localhost:8080/assets/tso.txt", "target": "tso.txt" },
+                "filetype": "txt" 
+            },
+            "reconcile": {
+                "name": "download", 
+                "property": { "source": "http://localhost:8080/assets/tso_count.txt", "target": "tso_count.txt" },
+                "filetype": "txt",
+                "model": {
+                    "name": "counter",
+                    "fields": {
+                        "counter": { "type": "INTEGER", "options": { "seqno": 1 } }
+                    },
+                    "settings": { "skip": 1, "delimiter": ",", "quotable": true }        
+                } 
+            }
+        },
+        "models": [ {
+            "name": "tso",
+            "alias": { "privateAlias": "PROMPTDB" },
+            "fields": {
+                "mktid": { "type": "STRING", "options": { "seqno": 1 } },
+                "share": { "type": "STRING", "options": { "seqno": 2 } },
+                "unit": { "type": "DECIMAL", "options": { "seqno": 3 } },
+                "price": { "type": "DECIMAL", "options": { "seqno": 4 } },
+                "yield": { "type": "INTEGER" },
+                "effdate": { "type": "DATE", "options": { "seqno": 5 } },
+                "efftime": { "type": "TIME", "options": { "seqno": 6 } },
+                "edittime": { "type": "DATETIME", "options": { "seqno": 7 } },
+                "sharename": { "type": "STRING", "options": { "seqno": 8 } },
+                "defvalue": { "type": "STRING" },
+                "message": { "type": "STRING" },
+                "remarks": { "type": "STRING", "defaultValue": "test_file_text_download_reconcile" }
+            },
+            "settings": { "skip": 1, "delimiter": ",", "quotable": true }
+        } ] 
+    },
+    "test_file_text_download_reconcile_error": { 
+        "configs": { 
+            "plugin": { 
+                "name": "download", 
+                "property": { "source": "http://localhost:8080/assets/tso.csv", "target": "tso.csv" },
+                "filetype": "csv" 
+            },
+            "reconcile": {
+                "name": "download", 
+                "property": { "source": "http://localhost:8080/assets/tso_count.txt", "target": "tso_count.txt" },
+                "filetype": "txt",
+                "model": {
+                    "name": "counter",
+                    "fields": {
+                        "counter": { "type": "INTEGER", "options": { "seqno": 1 } }
+                    },
+                    "settings": { "skip": 1, "delimiter": ",", "quotable": true }        
+                } 
+            }
+        },
+        "models": [ {
+            "name": "tso",
+            "alias": { "privateAlias": "PROMPTDB" },
+            "fields": {
+                "mktid": { "type": "STRING", "options": { "seqno": 1 } },
+                "share": { "type": "STRING", "options": { "seqno": 2 } },
+                "unit": { "type": "DECIMAL", "options": { "seqno": 3 } },
+                "price": { "type": "DECIMAL", "options": { "seqno": 4 } },
+                "yield": { "type": "INTEGER" },
+                "effdate": { "type": "DATE", "options": { "seqno": 5 } },
+                "efftime": { "type": "TIME", "options": { "seqno": 6 } },
+                "edittime": { "type": "DATETIME", "options": { "seqno": 7 } },
+                "sharename": { "type": "STRING", "options": { "seqno": 8 } },
+                "defvalue": { "type": "STRING" },
+                "message": { "type": "STRING" },
+                "remarks": { "type": "STRING", "defaultValue": "test_file_text_download_reconcile_error" }
+            },
+            "settings": { "skip": 1, "delimiter": ",", "quotable": true }
+        } ] 
     }
+
 }

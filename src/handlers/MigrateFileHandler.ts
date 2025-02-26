@@ -2,7 +2,7 @@ import { HTTP } from "@willsofts/will-api";
 import { VerifyError } from "@willsofts/will-core";
 import { KnModel } from "@willsofts/will-db";
 import { KnContextInfo, KnValidateInfo } from '@willsofts/will-core';
-import { MigrateResultSet } from "../models/MigrateAlias";
+import { MigrateResultSet, PluginSetting, FileInfo, MigrateModel } from "../models/MigrateAlias";
 import { MigrateTextHandler } from "./MigrateTextHandler";
 import { MigrateJsonHandler } from "./MigrateJsonHandler";
 import { MigrateExcelHandler } from "./MigrateExcelHandler";
@@ -188,18 +188,133 @@ export class MigrateFileHandler extends MigrateTextHandler {
             return Promise.reject(new VerifyError("Model not found",HTTP.NOT_ACCEPTABLE,-16063));
         }
         context.meta.taskmodel = taskmodel;
-        let plugin = taskmodel.configs?.plugin;        
+        let plugin = taskmodel.configs?.plugin as PluginSetting;        
         if(plugin) {
             let handler = await this.getPluginHandler(plugin);
             if(handler) {
                 let fileinfo = await handler.perform(plugin,context,model);                
                 if(fileinfo) {
                     context.params.file = fileinfo;
-                    return await this.processFile(context,model,calling,fortype);
+                    await this.doReconcile(context,taskmodel,model);
+                    return await this.processFile(context,model,calling,fortype || plugin?.filetype);
                 }
             }
         }
         return await this.processFile(context,model,calling,fortype);
+    }
+
+    protected async doReconcile(context: KnContextInfo, taskmodel: MigrateModel, model: KnModel = this.model) : Promise<void> {
+        let reconcile = taskmodel.configs?.reconcile as PluginSetting;
+        let reconcile_model = taskmodel.configs?.reconcile?.model as KnModel;
+        if(reconcile && reconcile_model) {
+            this.logger.debug(this.constructor.name+".doRecocile: reconcile setting",reconcile,", model:",reconcile_model);
+            let reconcile_handler = await this.getPluginHandler(reconcile);
+            if(reconcile_handler) {
+                let reconcile_fileinfo = await reconcile_handler.perform(reconcile,context,reconcile_model);
+                if(reconcile_fileinfo) {
+                    let [reconcile_data] = await this.processFileReading(context,reconcile_model,reconcile_fileinfo,reconcile?.filetype);
+                    this.logger.debug(this.constructor.name+".doReconcile: reconcile data",reconcile_data);
+                    if(reconcile_data) {
+                        let dataitem = Array.isArray(reconcile_data) ? reconcile_data[0] : reconcile_data;
+                        let datakeys = Object.keys(dataitem);
+                        if(datakeys.length > 0) {
+                            let counter_data = dataitem[reconcile_model.name || datakeys[0]];
+                            if(counter_data) {
+                                context.params.reconcile = parseInt(counter_data);
+                            }
+                        }                        
+                    }
+                }
+            }
+        }
+    }
+
+    protected async processTextReading(context: KnContextInfo, model: KnModel = this.model, file: string) : Promise<[any,any]> {
+        let handler = new MigrateTextHandler();
+        this.assignHandler(handler);
+        return await handler.performReading(context,model,file);
+    }
+
+    protected async processJsonReading(context: KnContextInfo, model: KnModel = this.model, file: string) : Promise<[any,any]> {
+        let handler = new MigrateJsonHandler();
+        this.assignHandler(handler);
+        return await handler.performReading(context,model,file);
+    }
+
+    protected async processExcelReading(context: KnContextInfo, model: KnModel = this.model, file: string) : Promise<[any,any]> {
+        let handler = new MigrateExcelHandler();
+        this.assignHandler(handler);
+        return await handler.performReading(context,model,file);
+    }
+
+    protected async processXlsxReading(context: KnContextInfo, model: KnModel = this.model, file: string) : Promise<[any,any]> {
+        let handler = new MigrateXlsxHandler();
+        this.assignHandler(handler);
+        return await handler.performReading(context,model,file);
+    }
+
+    protected async processXmlReading(context: KnContextInfo, model: KnModel = this.model, file: string) : Promise<[any,any]> {
+        let handler = new MigrateXmlHandler();
+        this.assignHandler(handler);
+        return await handler.performReading(context,model,file);
+    }
+
+    protected async processFileReading(context: KnContextInfo, model: KnModel = this.model, file: FileInfo, fortype?: string) : Promise<[any,any]> {
+        let filename = file.path;
+        if(!filename || filename.trim().length==0) {
+            return Promise.reject(new VerifyError("File is undefined",HTTP.NOT_ACCEPTABLE,-16065));
+        }
+        let foundfile = fs.existsSync(filename);
+        if(!foundfile) {
+            return Promise.reject(new VerifyError("File not found",HTTP.NOT_ACCEPTABLE,-16064));
+        }
+        if(fortype) {
+            if("text"==fortype || "txt"==fortype || "csv"==fortype) {
+                return this.processTextReading(context,model,filename); 
+            } else if("json"==fortype) {
+                return this.processJsonReading(context,model,filename);
+            } else if("xml"==fortype) {
+                return this.processXmlReading(context,model,filename);
+            } else if("excel"==fortype) {
+                return this.processExcelReading(context,model,filename);
+            } else if("xlsx"==fortype) {
+                return this.processXlsxReading(context,model,filename);
+            }
+        }   
+        let isText = false;
+        let isJson = false;
+        let isXlsx = false;
+        let isXml = false;
+        if(filename) {
+            const textfiletypes = new RegExp("text|txt|csv","i");
+            const jsonfiletypes = new RegExp("json","i");
+            const xlsxfiletypes = new RegExp("xlsx|xls","i");
+            const xmlfiletypes = new RegExp("xml","i");
+            const extname = path.extname(filename).toLowerCase();
+            isText = textfiletypes.test(extname);
+            isJson = jsonfiletypes.test(extname);
+            isXlsx = xlsxfiletypes.test(extname);
+            isXml = xmlfiletypes.test(extname);
+        }
+        let type = context.params.type;
+        if(isText) {
+            if("json"==type) {
+                return this.processJsonReading(context,model,filename);
+            } else {
+                return this.processTextReading(context,model,filename);
+            }
+        } else if(isJson || "json"==type) {
+            return this.processJsonReading(context,model,filename);
+        } else if(isXml || "xml"==type) {
+            return this.processXmlReading(context,model,filename);
+        } else if(isXlsx) {
+            if("excel"==type) {
+                return this.processExcelReading(context,model,filename);
+            } else {
+                return this.processXlsxReading(context,model,filename);
+            }
+        }
+        return Promise.reject(new VerifyError("Not supported",HTTP.NOT_ACCEPTABLE,-16067)); 
     }
 
 }

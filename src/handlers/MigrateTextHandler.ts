@@ -54,17 +54,20 @@ export class MigrateTextHandler extends MigrateHandler {
         let uuid = this.randomUUID();
         let migrateid = context.params.migrateid || uuid;
         let processid = context.params.processid || uuid;
-        this.logger.debug(this.constructor.name+".processInserting: model",taskmodel,"filename",param.filename);
+        this.logger.debug(this.constructor.name+".processInsertingModel: model",taskmodel,"filename",param.filename);
         let result = { migrateid: migrateid, processid: processid, taskid: context.params.taskid, modelname: taskmodel.name, totalrecords: 0, errorrecords: 0, skiprecords: 0, ...this.createRecordSet() };
         let [datalist,header] = await this.performReading(context, taskmodel, param.filename);
         if(datalist) {
-            //check empty array of empty object
-            if(Array.isArray(datalist) && datalist.length == 0) {
-                return result;
-            } if(typeof datalist === "object" && Object.keys(datalist).length == 0) {
+            if(this.isEmptyObject(datalist)) {
                 return result;
             }
-            let rc : MigrateRecords = { totalrecords: datalist.length, errorrecords: 0, skiprecords: 0 };
+            let totalrecords = Array.isArray(datalist) ? datalist.length : 1;
+            let reconcile = context.params.reconcile;
+            this.logger.debug(this.constructor.name+".processInsertModel: reconcile",reconcile," total",totalrecords);
+            if(typeof reconcile !== 'undefined' && reconcile != totalrecords) {
+                return Promise.reject(new VerifyError("Reconcile error ("+totalrecords+":"+reconcile+")",HTTP.NOT_ACCEPTABLE,-16072));
+            }
+            let rc : MigrateRecords = { totalrecords: totalrecords, errorrecords: 0, skiprecords: 0 };
             let handler = new MigrateHandler();
             handler.obtain(this.broker,this.logger);
             handler.userToken = this.userToken;

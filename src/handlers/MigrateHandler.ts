@@ -3,7 +3,7 @@ import { KnModel } from "@willsofts/will-db";
 import { KnDBConnector, KnSQL } from "@willsofts/will-sql";
 import { KnContextInfo, KnValidateInfo, VerifyError } from '@willsofts/will-core';
 import { MigrateOperate } from "./MigrateOperate";
-import { TaskModel, MigrateConfig, MigrateRecordSet, MigrateResultSet, MigrateInfo, MigrateReject, MigrateModel, MigrateParams, MigrateRecords } from "../models/MigrateAlias";
+import { TaskModel, MigrateConfig, MigrateRecordSet, MigrateResultSet, MigrateInfo, MigrateReject, MigrateModel, MigrateParams, MigrateRecords, MigrateFilter } from "../models/MigrateAlias";
 
 const task_models = require("../../config/model.json");
 
@@ -274,21 +274,26 @@ export class MigrateHandler extends MigrateOperate {
         let index = 0;
         while(!info.exception && (index < datalist.length)) {
             let data = datalist[index];
-            try {
-                let ctx : KnContextInfo = { params: data, meta: context.meta };
-                await this.performCreating(ctx, model, db);
-                result.records++;
-            } catch(ex: any) {
-                reject.throwable = ex;
-                this.logger.error(ex);
-                result.errorrecords++;
-                info.errorcontents.push(data);
-                if(verifyError) {
-                    info.errormessage = this.getDBError(ex).message;
-                    info.exception = true;
-                }
-                if(onException) {
-                    onException.call(this,context,model,index,data,ex);
+            let filter = await this.performFiltering(context,model,db,rc,data);
+            if(filter.cancel) {
+                result.skiprecords++;
+            } else {
+                try {
+                    let ctx : KnContextInfo = { params: data, meta: context.meta };
+                    await this.performCreating(ctx, model, db);
+                    result.records++;
+                } catch(ex: any) {
+                    reject.throwable = ex;
+                    this.logger.error(ex);
+                    result.errorrecords++;
+                    info.errorcontents.push(data);
+                    if(verifyError) {
+                        info.errormessage = this.getDBError(ex).message;
+                        info.exception = true;
+                    }
+                    if(onException) {
+                        onException.call(this,context,model,index,data,ex);
+                    }
                 }
             }
             index++;
@@ -404,6 +409,10 @@ export class MigrateHandler extends MigrateOperate {
             };
         }
         return result;
+    }
+
+    protected async performFiltering(context: KnContextInfo, model: KnModel, db: KnDBConnector, rc: MigrateRecords, dataset: any): Promise<MigrateFilter> {
+        return { cancel: false };
     }
 
 }

@@ -26,6 +26,7 @@ export class MigrateDownloadHandler extends MigrateFileHandler {
                 let fileinfo = await handler.perform(plugin,context,model);
                 if(fileinfo) {
                     context.params.file = fileinfo;
+                    await this.doReconcile(context,taskmodel,model);
                     return await this.processFile(context,model,calling,fortype);
                 }
             } else {

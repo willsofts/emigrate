@@ -6,7 +6,7 @@ import { MigrateFileHandler } from "./MigrateFileHandler";
 import { MigrateResultSet } from "../models/MigrateAlias";
 import { DEFAULT_CALLING_SERVICE } from "../utils/EnvironmentVariable";
 
-export class MigrateTransferHandler extends MigrateFileHandler {
+export class MigrateAttachmentHandler extends MigrateFileHandler {
 
     public handlers = [ {name: "insert"}, {name: "file"} ];
 
@@ -20,7 +20,7 @@ export class MigrateTransferHandler extends MigrateFileHandler {
         }
         context.meta.taskmodel = taskmodel;
         let plugin = taskmodel.configs?.plugin;        
-        if(plugin && plugin.name=="transfer") {
+        if(plugin && plugin.name=="mail") {
             let handler = await this.getPluginHandler(plugin);
             if(handler) {
                 let fileinfo = await handler.perform(plugin,context,model);
@@ -30,10 +30,10 @@ export class MigrateTransferHandler extends MigrateFileHandler {
                     return await this.processFile(context,model,calling,fortype);
                 }
             } else {
-                return Promise.reject(new VerifyError("Transfer info not found",HTTP.NOT_ACCEPTABLE,-16071));
+                return Promise.reject(new VerifyError("Mail info not found",HTTP.NOT_ACCEPTABLE,-16071));
             }
         }
-        return Promise.reject(new VerifyError("No transfer setting found",HTTP.NOT_ACCEPTABLE,-16070));
+        return Promise.reject(new VerifyError("Mail setting found",HTTP.NOT_ACCEPTABLE,-16070));
     }
     
 }

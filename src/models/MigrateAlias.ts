@@ -76,9 +76,15 @@ export interface MigrateParams {
     dominated?: boolean;
 }
 
+export interface MigrateFilter {
+    cancel: boolean;    
+    throwable?: any;
+}
+
 export interface PluginSetting {
     name: string;
     property: any;
+    filetype?: string;
 }
 
 export interface FileSetting {

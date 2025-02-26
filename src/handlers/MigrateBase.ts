@@ -29,6 +29,18 @@ export class MigrateBase extends TknOperateHandler {
         return new KnDBFault(this.getSQLError(err),code,state);
     }
 
+    public isEmptyObject(data: any) : boolean {
+        //check empty array of empty object
+        if(data) {
+            if(Array.isArray(data) && data.length == 0) {
+                return true;
+            } if(typeof data === "object" && Object.keys(data).length == 0) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public parseDefaultValue(defaultValue: string) : [any,boolean] {
         if("#current_date"==defaultValue || "#current_time"==defaultValue || "#current_timestamp"==defaultValue || "#systemdate"==defaultValue || "#systemtime"==defaultValue || "#systemtimestamp"==defaultValue || "#kndate"==defaultValue) {
             return [new Date(),true];
