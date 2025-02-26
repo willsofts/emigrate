@@ -54,4 +54,16 @@
 2025-02-19
 + can transfer file from server (support import by ftp file)
 + can auto naming transfer file
++ can using key file (with OpenSSH format)
+
+2025-02-23
++ can import file from mail attachment
++ can auto naming file from mail attachment
+
+2025-02-25
++ can import with vary date format
++ can mix date format with TH/EN locale
+
+2025-02-26
++ can import with reconcile file 
 
