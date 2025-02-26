@@ -19,8 +19,8 @@ export const MONTH_LIST = [
 
 export class MigrateDate {
 
-    protected getMonthName(match: string, english: boolean = false): string {
-        if(english) {
+    protected getMonthName(match: string, locale: string = 'en'): string {
+        if('en'==locale) {
             match = match.toLowerCase();
             let result = MONTH_LIST.find(item => item.short_en.toLowerCase() === match);
             if (result) return result.short_th;
@@ -38,10 +38,10 @@ export class MigrateDate {
     protected convertMonth(dateString: string, locale: string): string {
         if("en"==locale) {
             //in case of en, check th month is exist? then replace it
-            return dateString.replace(/(?:ม\.ค\.|ก\.พ\.|มี\.ค\.|เม\.ย\.|พ\.ค\.|มิ\.ย\.|ก\.ค\.|ส\.ค\.|ก\.ย\.|ต\.ค\.|พ\.ย\.|ธ\.ค\.|มกราคม|กุมภาพันธ์|มีนาคม|เมษายน|พฤษภาคม|มิถุนายน|กรกฎาคม|สิงหาคม|กันยายน|ตุลาคม|พฤศจิกายน|ธันวาคม)/g, match => this.getMonthName(match));
+            return dateString.replace(/(?:ม\.ค\.|ก\.พ\.|มี\.ค\.|เม\.ย\.|พ\.ค\.|มิ\.ย\.|ก\.ค\.|ส\.ค\.|ก\.ย\.|ต\.ค\.|พ\.ย\.|ธ\.ค\.|มกราคม|กุมภาพันธ์|มีนาคม|เมษายน|พฤษภาคม|มิถุนายน|กรกฎาคม|สิงหาคม|กันยายน|ตุลาคม|พฤศจิกายน|ธันวาคม)/g, match => this.getMonthName(match,'th'));
         } else if("th"==locale) {
             //in case of th, check en month is exist? then replace it 
-            return dateString.replace(/(?:January|February|March|April|May|June|July|August|September|October|November|December|Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)/gi, match => this.getMonthName(match,true));
+            return dateString.replace(/(?:January|February|March|April|May|June|July|August|September|October|November|December|Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)/gi, match => this.getMonthName(match,'en'));
         }    
         return dateString;
     }
