@@ -3,7 +3,7 @@ import { KnModel } from "@willsofts/will-db";
 import { KnDBConnector, KnSQL } from "@willsofts/will-sql";
 import { KnContextInfo, KnValidateInfo, VerifyError } from '@willsofts/will-core';
 import { MigrateOperate } from "./MigrateOperate";
-import { TaskModel, MigrateConfig, MigrateRecordSet, MigrateResultSet, MigrateInfo, MigrateReject, MigrateModel, MigrateParams, MigrateRecords, MigrateFilter } from "../models/MigrateAlias";
+import { TaskModel, MigrateConfig, MigrateRecordSet, MigrateResultSet, MigrateInfo, MigrateReject, MigrateModel, MigrateParams, MigrateRecords, FilterInfo } from "../models/MigrateAlias";
 
 const task_models = require("../../config/model.json");
 
@@ -411,7 +411,7 @@ export class MigrateHandler extends MigrateOperate {
         return result;
     }
 
-    protected async performFiltering(context: KnContextInfo, model: KnModel, db: KnDBConnector, rc: MigrateRecords, dataset: any): Promise<MigrateFilter> {
+    protected async performFiltering(context: KnContextInfo, model: KnModel, db: KnDBConnector, rc: MigrateRecords, dataset: any): Promise<FilterInfo> {
         return { cancel: false };
     }
 

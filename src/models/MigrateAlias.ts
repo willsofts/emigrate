@@ -76,7 +76,7 @@ export interface MigrateParams {
     dominated?: boolean;
 }
 
-export interface MigrateFilter {
+export interface FilterInfo {
     cancel: boolean;    
     throwable?: any;
 }
