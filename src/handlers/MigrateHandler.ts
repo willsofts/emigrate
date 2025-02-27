@@ -4,6 +4,7 @@ import { KnDBConnector, KnSQL } from "@willsofts/will-sql";
 import { KnContextInfo, KnValidateInfo, VerifyError } from '@willsofts/will-core';
 import { MigrateOperate } from "./MigrateOperate";
 import { TaskModel, MigrateConfig, MigrateRecordSet, MigrateResultSet, MigrateInfo, MigrateReject, MigrateModel, MigrateParams, MigrateRecords, FilterInfo } from "../models/MigrateAlias";
+import { MigrateFilter } from "../utils/MigrateFilter";
 
 const task_models = require("../../config/model.json");
 
@@ -275,7 +276,7 @@ export class MigrateHandler extends MigrateOperate {
         while(!info.exception && (index < datalist.length)) {
             let data = datalist[index];
             let filter = await this.performFiltering(context,model,db,rc,data);
-            if(filter.cancel) {
+            if(filter?.cancel) {
                 result.skiprecords++;
             } else {
                 try {
@@ -411,7 +412,23 @@ export class MigrateHandler extends MigrateOperate {
         return result;
     }
 
-    protected async performFiltering(context: KnContextInfo, model: KnModel, db: KnDBConnector, rc: MigrateRecords, dataset: any): Promise<FilterInfo> {
+    protected async performFiltering(context: KnContextInfo, model: KnModel, db: KnDBConnector, rc: MigrateRecords, data: any): Promise<FilterInfo> {
+        let filters = model.settings?.filters;
+        if(filters) {
+            if(filters?.handler) {
+                let func = this.tryParseFunction(filters?.handler,'data','db','model','context');
+                if(func) {
+                    let result = func(data,db,model,context);
+                    if(result != undefined || result != null) {
+                        if(typeof result === "boolean") return { cancel: result };
+                        return result;
+                    }
+                    return { cancel: false };
+                }
+            }
+            let filter = new MigrateFilter({ model: model, filters: filters, logger: this.logger });
+            return await filter.performFilter(data);
+        }
         return { cancel: false };
     }
 

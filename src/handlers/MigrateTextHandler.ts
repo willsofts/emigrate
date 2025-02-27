@@ -63,7 +63,7 @@ export class MigrateTextHandler extends MigrateHandler {
             }
             let totalrecords = Array.isArray(datalist) ? datalist.length : 1;
             let reconcile = context.params.reconcile;
-            this.logger.debug(this.constructor.name+".processInsertModel: reconcile",reconcile," total",totalrecords);
+            this.logger.debug(this.constructor.name+".processInsertModel: total",totalrecords,"reconcile",reconcile);
             if(typeof reconcile !== 'undefined' && reconcile != totalrecords) {
                 return Promise.reject(new VerifyError("Reconcile error ("+totalrecords+":"+reconcile+")",HTTP.NOT_ACCEPTABLE,-16072));
             }

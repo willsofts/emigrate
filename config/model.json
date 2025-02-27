@@ -1358,6 +1358,83 @@
             },
             "settings": { "skip": 1, "delimiter": ",", "quotable": true }
         } ] 
+    },
+    "test_file_text_filter": { 
+        "models": [ {
+            "name": "tso",
+            "alias": { "privateAlias": "PROMPTDB" },
+            "fields": {
+                "mktid": { "type": "STRING", "options": { "seqno": 1 } },
+                "share": { "type": "STRING", "options": { "seqno": 2 } },
+                "unit": { "type": "DECIMAL", "options": { "seqno": 3 } },
+                "price": { "type": "DECIMAL", "options": { "seqno": 4 } },
+                "yield": { "type": "INTEGER" },
+                "effdate": { "type": "DATE", "options": { "seqno": 5 } },
+                "efftime": { "type": "TIME", "options": { "seqno": 6 } },
+                "edittime": { "type": "DATETIME", "options": { "seqno": 7 } },
+                "sharename": { "type": "STRING", "options": { "seqno": 8 } },
+                "defvalue": { "type": "STRING" },
+                "message": { "type": "STRING" },
+                "remarks": { "type": "STRING", "defaultValue": "test_file_text_filter" }
+            },
+            "settings": { "skip": 1, "delimiter": ",", "quotable": true,
+                "statement": {
+                    "prestatement": {
+                        "sql": "delete from tso "
+                    }
+                },
+                "filters": {
+                    "operator": "or",
+                    "filter": [
+                        {
+                            "operator": "and",
+                            "columns": [
+                                {"name": "share", "condition": "==", "value": "BBL" }
+                            ]
+                        }
+                    ]
+                }
+            }
+        } ] 
+    },
+    "test_file_text_filter_range": { 
+        "models": [ {
+            "name": "tso",
+            "alias": { "privateAlias": "PROMPTDB" },
+            "fields": {
+                "mktid": { "type": "STRING", "options": { "seqno": 1 } },
+                "share": { "type": "STRING", "options": { "seqno": 2 } },
+                "unit": { "type": "DECIMAL", "options": { "seqno": 3 } },
+                "price": { "type": "DECIMAL", "options": { "seqno": 4 } },
+                "yield": { "type": "INTEGER" },
+                "effdate": { "type": "DATE", "options": { "seqno": 5 } },
+                "efftime": { "type": "TIME", "options": { "seqno": 6 } },
+                "edittime": { "type": "DATETIME", "options": { "seqno": 7 } },
+                "sharename": { "type": "STRING", "options": { "seqno": 8 } },
+                "defvalue": { "type": "STRING" },
+                "message": { "type": "STRING" },
+                "remarks": { "type": "STRING", "defaultValue": "test_file_text_filter" }
+            },
+            "settings": { "skip": 1, "delimiter": ",", "quotable": true,
+                "statement": {
+                    "prestatement": {
+                        "sql": "delete from tso "
+                    }
+                },
+                "filters": {
+                    "operator": "or",
+                    "filter": [
+                        {
+                            "operator": "and",
+                            "columns": [
+                                {"name": "share", "condition": "==", "value": "BBL" },
+                                {"name": "unit", "condition": "#inner-range", "from": "1", "to": "1000" }
+                            ]
+                        }
+                    ]
+                }
+            }
+        } ] 
     }
 
 }

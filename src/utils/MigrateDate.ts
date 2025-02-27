@@ -19,7 +19,7 @@ export const MONTH_LIST = [
 
 export class MigrateDate {
 
-    protected getMonthName(match: string, locale: string = 'en'): string {
+    protected getMonthName(match: string, locale: string = 'en') : string {
         if('en'==locale) {
             match = match.toLowerCase();
             let result = MONTH_LIST.find(item => item.short_en.toLowerCase() === match);
@@ -35,7 +35,7 @@ export class MigrateDate {
         return match;
     }
     
-    protected convertMonth(dateString: string, locale: string): string {
+    protected convertMonth(dateString: string, locale: string) : string {
         if("en"==locale) {
             //in case of en, check th month is exist? then replace it
             return dateString.replace(/(?:ม\.ค\.|ก\.พ\.|มี\.ค\.|เม\.ย\.|พ\.ค\.|มิ\.ย\.|ก\.ค\.|ส\.ค\.|ก\.ย\.|ต\.ค\.|พ\.ย\.|ธ\.ค\.|มกราคม|กุมภาพันธ์|มีนาคม|เมษายน|พฤษภาคม|มิถุนายน|กรกฎาคม|สิงหาคม|กันยายน|ตุลาคม|พฤศจิกายน|ธันวาคม)/g, match => this.getMonthName(match,'th'));
@@ -46,11 +46,11 @@ export class MigrateDate {
         return dateString;
     }
     
-    public parseDate(dateString: string, format: string, locale: string = "en", minADYear: number = MIN_AD_YEAR) {
+    public parseDate(dateString: string, format: string, locale: string = "en", minADYear: number = MIN_AD_YEAR) : Date | undefined {
         moment.locale(locale);
         dateString = this.convertMonth(dateString,locale);
         const parsedDate = moment(dateString, format);    
-        if(!parsedDate.isValid()) return null;
+        if(!parsedDate.isValid()) return undefined;
         let date = parsedDate.toDate();
         let year = date.getFullYear();
         if(year > minADYear) {

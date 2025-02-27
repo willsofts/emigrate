@@ -250,6 +250,10 @@ curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/migra
 2. error reconcile
 curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/migratefile/file -d "{\"taskid\":\"test_file_text_download_reconcile_error\"}"
 
+test filter data:
+curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/migratefile/file -d "{\"taskid\":\"test_file_text_filter\", \"file\": \"./assets/tso.txt\"}"
+curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/migratefile/file -d "{\"taskid\":\"test_file_text_filter_range\", \"file\": \"./assets/tso.txt\"}"
+
 
 setting up sftp server on windows:
 1. add OpenSSH Server 

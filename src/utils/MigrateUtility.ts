@@ -1,7 +1,13 @@
 import fs from "fs";
 import path from "path";
 import mime from "mime-types";
+import { KnParamInfo, KnSQLUtils } from "@willsofts/will-db";
+import { KnDBUtils, KnDBTypes } from "@willsofts/will-sql";
+import { Utilities } from "@willsofts/will-util";
 import { FileInfo } from "../models/MigrateAlias";
+import { MigrateDate } from "../utils/MigrateDate";
+
+const dateparser = new MigrateDate();
 
 export class MigrateUtility {
     
@@ -47,6 +53,28 @@ export class MigrateUtility {
             info: info
         };
         return result;
+    }
+
+    public static tryParseDate(param: KnParamInfo) : Date | undefined {
+        let dbf = KnSQLUtils.getDBField(param.name,param.model);
+        if(dbf) {
+            let dbt = KnDBUtils.parseDBTypes(dbf.type);
+            if(dbt === KnDBTypes.DATE || dbt === KnDBTypes.TIME || dbt === KnDBTypes.DATETIME) {
+                let value = param.value;
+                if(typeof value === "string" && value.trim().length > 0) {
+                    if(dbf.options?.format && dbf.options?.format.trim().length > 0) {
+                        return dateparser.parseDate(value,dbf.options.format,dbf.options?.locale);
+                    }
+                    if(dbt === KnDBTypes.DATE || dbt === KnDBTypes.DATETIME) { 
+                        return Utilities.parseDate(value);
+                    }
+                    if(dbt === KnDBTypes.TIME) {
+                        return Utilities.parseTime(value);
+                    }
+                }
+            }
+        }
+        return undefined;
     }
 
 }
