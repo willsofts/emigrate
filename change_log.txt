@@ -67,3 +67,5 @@
 2025-02-26
 + can import with reconcile file 
 
+2025-02-27
++ can import with filter data setting
