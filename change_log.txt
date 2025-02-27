@@ -65,7 +65,8 @@
 + can mix date format with TH/EN locale
 
 2025-02-26
-+ can import with reconcile file 
++ can import with reconcile file (cross check between : data file & reconcile file)
+(reconcile file contain number of total records)
 
 2025-02-27
 + can import with filter data setting
