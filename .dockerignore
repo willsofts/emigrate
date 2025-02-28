@@ -12,3 +12,5 @@ docker_push.txt
 docker-compose.yml
 Dockerfile
 testme.txt
+src/test
+dist/test
