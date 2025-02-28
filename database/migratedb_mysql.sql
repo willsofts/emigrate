@@ -65,6 +65,26 @@ INSERT INTO `tdialect` (`dialectid`, `dialectalias`, `dialecttitle`, `dialectnam
 	('ORACLE', 'ORACLE', 'ORACLE Database', 'ORACLE', '', '0', '1', 5, NULL),
 	('POSTGRES', 'POSTGRES', 'PostgreSQL', 'PostgreSQL', '', '0', '1', 3, NULL);
 
+-- Dumping structure for table migratedb.tmigrate
+CREATE TABLE IF NOT EXISTS `tmigrate` (
+  `field1` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `field2` decimal(20,6) DEFAULT NULL,
+  `field3` int DEFAULT NULL,
+  `field4` date DEFAULT NULL,
+  `field5` time DEFAULT NULL,
+  `field6` datetime DEFAULT NULL,
+  `field7` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `field8` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `field9` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `field10` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `field11` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `field12` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `curtime` datetime DEFAULT NULL,
+  `remark` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- Dumping data for table migratedb.tmigrate: ~0 rows (approximately)
+
 -- Dumping structure for table migratedb.tmigrateconnect
 CREATE TABLE IF NOT EXISTS `tmigrateconnect` (
   `conectid` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
@@ -143,7 +163,7 @@ CREATE TABLE IF NOT EXISTS `tmigratelog` (
   KEY `processid` (`processid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COMMENT='table keep migrate log history';
 
--- Dumping data for table migratedb.tmigratelog: ~0 rows (approximately)
+-- Dumping data for table migratedb.tmigratelog: ~196 rows (approximately)
 
 -- Dumping structure for table migratedb.tmigratemodel
 CREATE TABLE IF NOT EXISTS `tmigratemodel` (
@@ -166,21 +186,6 @@ CREATE TABLE IF NOT EXISTS `tmigratemodel` (
 -- Dumping data for table migratedb.tmigratemodel: ~1 rows (approximately)
 INSERT INTO `tmigratemodel` (`modelid`, `modelname`, `tablename`, `tablefields`, `tablesettings`, `createdate`, `createtime`, `createmillis`, `createuser`, `editdate`, `edittime`, `editmillis`, `edituser`) VALUES
 	('tmigrate', 'Migrate', 'tmigrate', '{\r\n"field1": { "type": "STRING", "key": true },\r\n"field2": { "type": "DECIMAL" },\r\n"field3": { "type": "INTEGER" },\r\n"field4": { "type": "DATE" },\r\n"field5": { "type": "TIME" },\r\n"field6": { "type": "DATETIME" },\r\n"field7": { "type": "STRING" , "options": {\r\n          "handler": "function handler(data,dataset,model,context) { console.log(\'model\',model,data,dataset); switch(data.field7) { case \'A\': data.field8 = \'Anonymous\'; break; case \'B\': data.field8 = \'Bad Request\'; break; case \'C\': data.field8 = \'Counter Attack\'; break; } }"\r\n          }\r\n          },\r\n"field8": { "type": "STRING" },\r\n"field9": { "type": "STRING" },\r\n"curtime": { "type": "DATETIME", "defaultValue": "#current_timestamp" }\r\n}', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
-
--- Dumping structure for table migratedb.tmigratestep
-CREATE TABLE IF NOT EXISTS `tmigratestep` (
-  `taskid` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
-  `stepid` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
-  `stepname` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
-  `steptype` varchar(5) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT 'START,PROCESS,END',
-  `stepno` int NOT NULL DEFAULT '0',
-  `stepstatus` varchar(50) COLLATE utf8mb4_general_ci DEFAULT NULL,
-  `nextstep` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
-  PRIMARY KEY (`stepid`),
-  KEY `taskid` (`taskid`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='table keep migrate step';
-
--- Dumping data for table migratedb.tmigratestep: ~0 rows (approximately)
 
 -- Dumping structure for table migratedb.tmigratetask
 CREATE TABLE IF NOT EXISTS `tmigratetask` (
@@ -212,7 +217,7 @@ CREATE TABLE IF NOT EXISTS `tmigratetaskmodel` (
   PRIMARY KEY (`taskid`,`modelid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='table keep model in task';
 
--- Dumping data for table migratedb.tmigratetaskmodel: ~0 rows (approximately)
+-- Dumping data for table migratedb.tmigratetaskmodel: ~1 rows (approximately)
 INSERT INTO `tmigratetaskmodel` (`taskid`, `modelid`, `seqno`) VALUES
 	('tmigrate', 'tmigrate', 0);
 
@@ -235,6 +240,67 @@ CREATE TABLE IF NOT EXISTS `tmigratetest` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- Dumping data for table migratedb.tmigratetest: ~0 rows (approximately)
+
+-- Dumping structure for table migratedb.tmigratetestdate
+CREATE TABLE IF NOT EXISTS `tmigratetestdate` (
+  `date1` datetime DEFAULT NULL,
+  `date2` datetime DEFAULT NULL,
+  `date3` datetime DEFAULT NULL,
+  `date4` datetime DEFAULT NULL,
+  `date5` datetime DEFAULT NULL,
+  `date6` datetime DEFAULT NULL,
+  `date7` datetime DEFAULT NULL,
+  `date8` datetime DEFAULT NULL,
+  `date9` datetime DEFAULT NULL,
+  `date10` datetime DEFAULT NULL,
+  `date11` datetime DEFAULT NULL,
+  `date12` datetime DEFAULT NULL,
+  `date13` datetime DEFAULT NULL,
+  `date14` datetime DEFAULT NULL,
+  `date15` datetime DEFAULT NULL,
+  `date16` datetime DEFAULT NULL,
+  `remarks` varchar(50) COLLATE utf8mb4_general_ci DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- Dumping data for table migratedb.tmigratetestdate: ~0 rows (approximately)
+
+-- Dumping structure for table migratedb.tso
+CREATE TABLE IF NOT EXISTS `tso` (
+  `mktid` varchar(10) NOT NULL DEFAULT '',
+  `share` varchar(10) DEFAULT NULL,
+  `unit` decimal(10,0) DEFAULT NULL,
+  `price` decimal(10,2) DEFAULT '0.00',
+  `yield` int DEFAULT NULL,
+  `effdate` date DEFAULT NULL,
+  `efftime` time DEFAULT NULL,
+  `edittime` datetime DEFAULT NULL,
+  `sharename` varchar(30) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
+  `defvalue` varchar(50) DEFAULT NULL,
+  `message` varchar(50) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
+  `remarks` mediumtext CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci,
+  `defdatetime` datetime DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
+
+-- Dumping data for table migratedb.tso: ~0 rows (approximately)
+
+-- Dumping structure for table migratedb.ttso
+CREATE TABLE IF NOT EXISTS `ttso` (
+  `mktid` varchar(10) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL DEFAULT '',
+  `share` varchar(10) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
+  `unit` decimal(10,0) DEFAULT NULL,
+  `price` decimal(10,2) DEFAULT '0.00',
+  `yield` int DEFAULT NULL,
+  `effdate` date DEFAULT NULL,
+  `efftime` time DEFAULT NULL,
+  `edittime` datetime DEFAULT NULL,
+  `sharename` varchar(30) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
+  `defvalue` varchar(50) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
+  `message` varchar(50) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
+  `remarks` mediumtext CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci,
+  `defdatetime` datetime DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
+
+-- Dumping data for table migratedb.ttso: ~0 rows (approximately)
 
 /*!40103 SET TIME_ZONE=IFNULL(@OLD_TIME_ZONE, 'system') */;
 /*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;

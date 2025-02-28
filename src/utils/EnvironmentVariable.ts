@@ -15,6 +15,7 @@ export const ALLOW_RAW_PARAMETERS: boolean = config.env("ALLOW_RAW_PARAMETERS") 
 export const DB_SECTION: string = config.env("DB_SECTION","MYSQL");
 export const PRIVATE_SECTION: string = config.env("PRIVATE_SECTION","MYSQL");
 export const MAX_EXPIRE_DATE: string = config.env("MAX_EXPIRE_DATE","31/12/9000"); 
+export const MENU_TREE: boolean = config.env("MENU_TREE","true") === "true";
 
 export const DEFAULT_CALLING_SERVICE: boolean = config.env("DEFAULT_CALLING_SERVICE","true") === "true";
 export const FILE_ASSETS: string = config.env("FILE_ASSETS","./assets");

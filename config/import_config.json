@@ -1,0 +1,90 @@
+{    
+    "IMPORT001": {
+        "title": "Sample Import Excel File",
+        "group": "GRP001",
+        "groupname": "Import Excel",
+        "items": [
+            {
+                "name": "ITEM001",
+                "type": "excel",
+                "title": "Import tso.xls",
+                "naming": "auto",
+                "source": "tso.xls",
+                "model": "tso_model",
+                "skip": 1,
+                "sheetname": "tso"   
+            }
+        ]
+    },
+    "IMPORT002": {
+        "title": "Import Excel File With Reference",
+        "group": "GRP001",
+        "groupname": "Import Excel",
+        "items": [
+            {
+                "name": "ITEM002",
+                "type": "excel",
+                "title": "Import tso.xls",
+                "naming": "auto",
+                "source": "tso.xls",
+                "model": "tso_model",
+                "skip": 1,
+                "sheetname": "tso"   
+            },
+            {
+                "name": "ITEM002",
+                "type": "excel",
+                "title": "Import tso.xls",
+                "naming": "auto",
+                "source": "tso.xls",
+                "model": "tso_model",
+                "skip": 1,
+                "sheetname": "tas",
+                "refer": "ITEM001"   
+            }
+        ]
+    },
+    "IMPORT003": {
+        "title": "Sample Import Text File",
+        "group": "GRP002",
+        "groupname": "Import Text",
+        "items": [
+            {
+                "name": "ITEM001",
+                "type": "text",
+                "title": "Import tso.txt",
+                "naming": "auto",
+                "source": "tso.txt",
+                "model": "tso_model",
+                "skip": 1,
+                "sheetname": "tso",
+                "statement": {
+                    "sql": "delete from tso where mktid=?mktid",
+                    "params": [
+                        {"name": "mktid", "type": "STRING", "caption": "Marketing", "default": "#knuser" }
+                    ]
+                }
+            }
+        ]
+    },
+    "IMPORT004": {
+        "title": "Sample Import Text File With Post Statement",
+        "group": "GRP002",
+        "groupname": "Import Text",
+        "items": [
+            {
+                "name": "ITEM001",
+                "type": "text",
+                "title": "Import tso.txt",
+                "naming": "auto",
+                "source": "tso.txt",
+                "model": "tso_model",
+                "skip": 1,
+                "sheetname": "tso",
+                "poststatement": {
+                    "sql": "update tso set remarks=NULL"
+                }
+            }
+        ]
+    }
+}

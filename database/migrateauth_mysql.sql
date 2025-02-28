@@ -1,3 +1,10 @@
+-- --------------------------------------------------------
+-- Host:                         127.0.0.1
+-- Server version:               8.3.0 - MySQL Community Server - GPL
+-- Server OS:                    Win64
+-- HeidiSQL Version:             12.6.0.6765
+-- --------------------------------------------------------
+
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET NAMES utf8 */;
 /*!50503 SET NAMES utf8mb4 */;
@@ -7,9 +14,12 @@
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
+
+-- Dumping database structure for migrateauth
 CREATE DATABASE IF NOT EXISTS `migrateauth` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
 USE `migrateauth`;
 
+-- Dumping structure for table migrateauth.tactivate
 CREATE TABLE IF NOT EXISTS `tactivate` (
   `activatekey` varchar(100) NOT NULL,
   `activateuser` varchar(100) NOT NULL,
@@ -33,7 +43,9 @@ CREATE TABLE IF NOT EXISTS `tactivate` (
   PRIMARY KEY (`activatekey`,`activateuser`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COMMENT='table keep activate info';
 
+-- Dumping data for table migrateauth.tactivate: ~0 rows (approximately)
 
+-- Dumping structure for table migrateauth.tactivatehistory
 CREATE TABLE IF NOT EXISTS `tactivatehistory` (
   `activatekey` varchar(100) NOT NULL,
   `activateuser` varchar(100) NOT NULL,
@@ -56,7 +68,9 @@ CREATE TABLE IF NOT EXISTS `tactivatehistory` (
   `activatecontents` mediumtext
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COMMENT='table keep activate history';
 
+-- Dumping data for table migrateauth.tactivatehistory: ~0 rows (approximately)
 
+-- Dumping structure for table migrateauth.tcaptcha
 CREATE TABLE IF NOT EXISTS `tcaptcha` (
   `capid` varchar(50) NOT NULL,
   `captext` varchar(50) NOT NULL,
@@ -70,7 +84,12 @@ CREATE TABLE IF NOT EXISTS `tcaptcha` (
   PRIMARY KEY (`capid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
+-- Dumping data for table migrateauth.tcaptcha: ~2 rows (approximately)
+INSERT INTO `tcaptcha` (`capid`, `captext`, `capanswer`, `createdate`, `createtime`, `createmillis`, `expiretimes`, `expiredate`, `expiretime`) VALUES
+	('041aef87-489f-48f2-a81e-02329dc9f422', '43 + 31', '74', '2025-02-27', '19:57:47', 1740661067264, 1740662867264, '2025-02-27', '20:27:47'),
+	('d93c5d6d-44ab-47f6-b52e-9f231ea838e1', '84 + 97', '181', '2025-02-27', '19:56:31', 1740660990870, 1740662790870, '2025-02-27', '20:26:31');
 
+-- Dumping structure for table migrateauth.tconfig
 CREATE TABLE IF NOT EXISTS `tconfig` (
   `category` varchar(50) NOT NULL,
   `colname` varchar(50) NOT NULL,
@@ -81,6 +100,7 @@ CREATE TABLE IF NOT EXISTS `tconfig` (
   PRIMARY KEY (`category`,`colname`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COMMENT='keep program custom configuration';
 
+-- Dumping data for table migrateauth.tconfig: ~17 rows (approximately)
 INSERT INTO `tconfig` (`category`, `colname`, `colvalue`, `colflag`, `seqno`, `remarks`) VALUES
 	('2FA', 'FACTORISSUER', 'AssureSystem', NULL, 0, NULL),
 	('2FA', 'FACTORVERIFY', 'false', NULL, 0, NULL),
@@ -100,6 +120,7 @@ INSERT INTO `tconfig` (`category`, `colname`, `colvalue`, `colflag`, `seqno`, `r
 	('FORGOTPASSWORDMAIL', 'MAIL_TITLE', 'System Management', NULL, 0, NULL),
 	('FORGOTPASSWORDMAIL', 'MAIL_USER', 'ezprompt', NULL, 0, NULL);
 
+-- Dumping structure for table migrateauth.tconstant
 CREATE TABLE IF NOT EXISTS `tconstant` (
   `typename` varchar(50) NOT NULL,
   `typeid` varchar(50) NOT NULL,
@@ -110,6 +131,7 @@ CREATE TABLE IF NOT EXISTS `tconstant` (
   PRIMARY KEY (`typename`,`typeid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=tis620 COMMENT='table keep constant/category description';
 
+-- Dumping data for table migrateauth.tconstant: ~68 rows (approximately)
 INSERT INTO `tconstant` (`typename`, `typeid`, `nameen`, `nameth`, `seqno`, `iconfile`) VALUES
 	('tactive', '0', 'Active', 'ใช้งาน', 1, NULL),
 	('tactive', '1', 'Inactive', 'ไม่ใช้งาน', 2, NULL),
@@ -180,6 +202,7 @@ INSERT INTO `tconstant` (`typename`, `typeid`, `nameen`, `nameth`, `seqno`, `ico
 	('tvisible', '0', 'Visible', 'มองเห็น', 1, NULL),
 	('tvisible', '1', 'Invisible', 'มองไม่เห็น', 2, NULL);
 
+-- Dumping structure for table migrateauth.tcpwd
 CREATE TABLE IF NOT EXISTS `tcpwd` (
   `userid` varchar(60) NOT NULL,
   `category` varchar(50) NOT NULL,
@@ -187,7 +210,9 @@ CREATE TABLE IF NOT EXISTS `tcpwd` (
   PRIMARY KEY (`userid`,`category`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COMMENT='table category of password policy';
 
+-- Dumping data for table migrateauth.tcpwd: ~0 rows (approximately)
 
+-- Dumping structure for table migrateauth.tdirectory
 CREATE TABLE IF NOT EXISTS `tdirectory` (
   `domainid` varchar(50) NOT NULL,
   `domainname` varchar(50) NOT NULL,
@@ -210,7 +235,19 @@ CREATE TABLE IF NOT EXISTS `tdirectory` (
   KEY `applicationid` (`applicationid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COMMENT='table keep active directory information';
 
+-- Dumping data for table migrateauth.tdirectory: ~0 rows (approximately)
 
+-- Dumping structure for table migrateauth.tfavor
+CREATE TABLE IF NOT EXISTS `tfavor` (
+  `userid` varchar(60) NOT NULL COMMENT 'tuser.userid',
+  `programid` varchar(20) NOT NULL COMMENT 'tprog.programid',
+  `seqno` int NOT NULL DEFAULT '0',
+  PRIMARY KEY (`userid`,`programid`,`seqno`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COMMENT='table keep user favorite menu';
+
+-- Dumping data for table migrateauth.tfavor: ~0 rows (approximately)
+
+-- Dumping structure for table migrateauth.tgroup
 CREATE TABLE IF NOT EXISTS `tgroup` (
   `groupname` varchar(50) NOT NULL DEFAULT '',
   `supergroup` varchar(50) DEFAULT '',
@@ -229,6 +266,7 @@ CREATE TABLE IF NOT EXISTS `tgroup` (
   PRIMARY KEY (`groupname`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COMMENT='table group info';
 
+-- Dumping data for table migrateauth.tgroup: ~12 rows (approximately)
 INSERT INTO `tgroup` (`groupname`, `supergroup`, `nameen`, `nameth`, `seqno`, `iconstyle`, `privateflag`, `usertype`, `mobilegroup`, `xmltext`, `menutext`, `editdate`, `edittime`, `edituser`) VALUES
 	('ADMIN', 'MD', 'Administrator', 'ผู้ดูแลระบบ', 1, 'fa fa-globe', '0', 'A', NULL, NULL, NULL, NULL, NULL, NULL),
 	('CENTER', 'MD', 'Center Administrator', 'ผู้บริหารระบบส่วนกลาง', 5, 'fa fa-tasks', '1', 'A', NULL, NULL, NULL, NULL, NULL, NULL),
@@ -243,12 +281,14 @@ INSERT INTO `tgroup` (`groupname`, `supergroup`, `nameen`, `nameth`, `seqno`, `i
 	('SUPERVISOR', NULL, 'Supervisor', 'ผู้ควบคุม', 12, NULL, '0', 'S', NULL, NULL, NULL, NULL, NULL, NULL),
 	('TESTER', 'ADMIN', 'Tester', 'ผู้ทดสอบ', 13, 'fa fa-desktop', '0', 'O', NULL, NULL, NULL, NULL, NULL, NULL);
 
+-- Dumping structure for table migrateauth.tnpwd
 CREATE TABLE IF NOT EXISTS `tnpwd` (
   `reservenum` varchar(50) NOT NULL,
   `remarks` varchar(150) DEFAULT NULL,
   PRIMARY KEY (`reservenum`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COMMENT='table keep number restriction in password prohibition';
 
+-- Dumping data for table migrateauth.tnpwd: ~43 rows (approximately)
 INSERT INTO `tnpwd` (`reservenum`, `remarks`) VALUES
 	('060', 'TrueMove, TrueMoveH'),
 	('061', 'AIS, DTAC, TrueMoveH'),
@@ -294,6 +334,7 @@ INSERT INTO `tnpwd` (`reservenum`, `remarks`) VALUES
 	('098', 'AIS'),
 	('099', 'AIS, TrueMoveH');
 
+-- Dumping structure for table migrateauth.tpasskey
 CREATE TABLE IF NOT EXISTS `tpasskey` (
   `keyid` varchar(50) NOT NULL COMMENT 'UUID',
   `keypass` varchar(350) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
@@ -317,7 +358,9 @@ CREATE TABLE IF NOT EXISTS `tpasskey` (
   KEY `site_userid` (`site`,`userid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COMMENT='table keep pass key';
 
+-- Dumping data for table migrateauth.tpasskey: ~0 rows (approximately)
 
+-- Dumping structure for table migrateauth.tppwd
 CREATE TABLE IF NOT EXISTS `tppwd` (
   `userid` varchar(60) NOT NULL DEFAULT '',
   `checkreservepwd` varchar(1) DEFAULT '0',
@@ -350,9 +393,11 @@ CREATE TABLE IF NOT EXISTS `tppwd` (
   PRIMARY KEY (`userid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
+-- Dumping data for table migrateauth.tppwd: ~1 rows (approximately)
 INSERT INTO `tppwd` (`userid`, `checkreservepwd`, `checkpersonal`, `checkmatchpattern`, `checkmatchnumber`, `timenotusedoldpwd`, `alertbeforeexpire`, `pwdexpireday`, `notloginafterday`, `notchgpwduntilday`, `minpwdlength`, `alphainpwd`, `otherinpwd`, `maxsamechar`, `mindiffchar`, `maxarrangechar`, `loginfailtime`, `fromip`, `toip`, `starttime`, `endtime`, `groupflag`, `maxloginfailtime`, `checkdictpwd`, `maxpwdlength`, `digitinpwd`, `upperinpwd`, `lowerinpwd`) VALUES
 	('DEFAULT', '1', '1', '0', '1', 0, 0, 120, 0, 7, 3, 0, 1, 0, 0, 0, 0, NULL, NULL, NULL, NULL, '1', 0, 0, 0, 1, 1, 1);
 
+-- Dumping structure for table migrateauth.tprod
 CREATE TABLE IF NOT EXISTS `tprod` (
   `product` varchar(50) NOT NULL DEFAULT '',
   `nameen` varchar(100) NOT NULL,
@@ -371,10 +416,11 @@ CREATE TABLE IF NOT EXISTS `tprod` (
   PRIMARY KEY (`product`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COMMENT='table keep product or module';
 
+-- Dumping data for table migrateauth.tprod: ~1 rows (approximately)
 INSERT INTO `tprod` (`product`, `nameen`, `nameth`, `seqno`, `serialid`, `startdate`, `url`, `capital`, `verified`, `centerflag`, `iconfile`, `editdate`, `edittime`, `edituser`) VALUES
-	('AI', 'AI Module', 'AI Module', 90, NULL, NULL, NULL, NULL, '0', '1', 'prompt.png', NULL, NULL, NULL),
 	('PROMPT', 'Prompt Module', 'Prompt Module', 99, NULL, NULL, NULL, NULL, '0', '1', 'prompt.png', NULL, NULL, NULL);
 
+-- Dumping structure for table migrateauth.tprog
 CREATE TABLE IF NOT EXISTS `tprog` (
   `product` varchar(30) NOT NULL DEFAULT '' COMMENT 'tprod.product',
   `programid` varchar(20) NOT NULL,
@@ -396,19 +442,13 @@ CREATE TABLE IF NOT EXISTS `tprog` (
   PRIMARY KEY (`programid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COMMENT='table keep program name';
 
+-- Dumping data for table migrateauth.tprog: ~3 rows (approximately)
 INSERT INTO `tprog` (`product`, `programid`, `progname`, `prognameth`, `progtype`, `appstype`, `description`, `parameters`, `progsystem`, `iconfile`, `iconstyle`, `shortname`, `shortnameth`, `progpath`, `editdate`, `edittime`, `edituser`) VALUES
-	('AI', 'ask', 'Ask Me', 'Ask Me', 'F', 'W', 'Ask Me', NULL, 'F', NULL, NULL, 'Ask', 'Ask', '/show/html/ask', NULL, NULL, NULL),
-	('AI', 'chatdoc', 'Chat Doc', 'Chat Doc', 'F', 'W', 'Chat Doc', NULL, 'F', '', NULL, 'Chat Doc', 'Chat Doc', '/show/html/chatdoc', NULL, NULL, NULL),
-	('AI', 'chatimage', 'Chat Image', 'Chat Image', 'F', 'W', 'Chat Image', NULL, 'F', '', NULL, 'Chat Image', 'Chat Image', '/show/html/chatimage', NULL, NULL, NULL),
-	('AI', 'chatimageollama', 'Chat Image Vision', 'Chat Image Vision', 'F', 'W', 'Chat Image Vision', NULL, 'F', '', NULL, 'Image Vision', 'Image Vision', '/show/html/chatimageollama', NULL, NULL, NULL),
-	('AI', 'chatnote', 'Chat Note', 'Chat Note', 'F', 'W', 'Chat Note', NULL, 'F', '', NULL, 'Chat Note', 'Chat Note', '/show/html/chatnote', NULL, NULL, NULL),
-	('AI', 'chatpdf', 'Chat PDF', 'Chat PDF', 'F', 'W', 'Chat PDF', '', 'F', '', NULL, 'Chat PDF', 'Chat PDF', '/show/html/chatpdf', NULL, NULL, NULL),
-	('AI', 'filterdoc', 'Classify Doc', 'Classify Doc', 'F', 'W', 'Classify Doc', NULL, 'F', '', NULL, 'Classify Doc', 'Classify Doc', NULL, NULL, NULL, NULL),
-	('AI', 'ocr', 'OCR Me', 'OCR Me', 'F', 'W', 'OCR Me', NULL, 'F', NULL, NULL, 'OCR', 'OCR', '/show/html/ocr', NULL, NULL, NULL),
-	('AI', 'quest', 'Question & Answer', 'Question & Answer', 'F', 'W', 'Question & Answer', NULL, 'F', NULL, 'fa fa-th', 'Q&A', 'Q&A', '/show/html/quest', NULL, NULL, NULL),
-	('PROMPT', 'sftu004', 'Access Token', 'Access Token', 'F', 'W', 'Access Token', NULL, 'F', 'sftu004.png', NULL, 'Token', 'Token', NULL, NULL, NULL, NULL),
-	('AI', 'vision', 'Vision Me', 'Vision Me', 'F', 'W', 'Vision Me', NULL, 'F', NULL, NULL, 'Vision', 'Vision', '/show/html/vision', NULL, NULL, NULL);
+	('PROMPT', 'sfte012', 'Configure Setting', 'Configure Setting', 'F', 'W', 'Configure Setting', NULL, 'F', 'sfte012.png', NULL, 'Configure', 'Configure', NULL, NULL, NULL, NULL),
+	('PROMPT', 'sftq001', 'Tracking', 'Tracking', 'F', 'W', 'Tracking', NULL, 'F', 'sftq001.png', NULL, 'Tracking', 'Tracking', NULL, NULL, NULL, NULL),
+	('PROMPT', 'sftu004', 'Access Token', 'Access Token', 'F', 'W', 'Access Token', NULL, 'F', 'sftu004.png', NULL, 'Token', 'Token', NULL, NULL, NULL, NULL);
 
+-- Dumping structure for table migrateauth.tproggrp
 CREATE TABLE IF NOT EXISTS `tproggrp` (
   `groupname` varchar(50) NOT NULL COMMENT 'tgroup.groupname',
   `programid` varchar(20) NOT NULL COMMENT 'tprog.programid',
@@ -417,24 +457,19 @@ CREATE TABLE IF NOT EXISTS `tproggrp` (
   PRIMARY KEY (`groupname`,`programid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COMMENT='table keep program by group';
 
+-- Dumping data for table migrateauth.tproggrp: ~3 rows (approximately)
 INSERT INTO `tproggrp` (`groupname`, `programid`, `parameters`, `seqno`) VALUES
-	('MENU', 'ask', NULL, 2),
-	('MENU', 'chatdoc', NULL, 6),
-	('MENU', 'chatimage', NULL, 8),
-	('MENU', 'chatimageollama', NULL, 9),
-	('MENU', 'chatnote', NULL, 7),
-	('MENU', 'chatpdf', NULL, 5),
-	('MENU', 'filterdoc', NULL, 10),
-	('MENU', 'ocr', NULL, 4),
-	('MENU', 'quest', NULL, 1),
-	('MENU', 'vision', NULL, 3),
+	('ADMIN', 'sfte012', NULL, 1),
+	('ADMIN', 'sftq001', NULL, 2),
 	('SETTING', 'sftu004', NULL, 1);
 
+-- Dumping structure for table migrateauth.trpwd
 CREATE TABLE IF NOT EXISTS `trpwd` (
   `reservepwd` varchar(50) NOT NULL DEFAULT '',
   PRIMARY KEY (`reservepwd`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
+-- Dumping data for table migrateauth.trpwd: ~25 rows (approximately)
 INSERT INTO `trpwd` (`reservepwd`) VALUES
 	('P@ssw0rd'),
 	('P@ssw1rd'),
@@ -462,6 +497,7 @@ INSERT INTO `trpwd` (`reservepwd`) VALUES
 	('Qaz12wsx'),
 	('Qwerty123');
 
+-- Dumping structure for table migrateauth.trxlog
 CREATE TABLE IF NOT EXISTS `trxlog` (
   `keyid` varchar(50) NOT NULL,
   `curtime` bigint unsigned DEFAULT NULL,
@@ -486,11 +522,9 @@ CREATE TABLE IF NOT EXISTS `trxlog` (
   PRIMARY KEY (`keyid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
-INSERT INTO `trxlog` (`keyid`, `curtime`, `trxtime`, `editdate`, `edittime`, `transtime`, `caller`, `sender`, `owner`, `processtype`, `trxstatus`, `attachs`, `refer`, `note`, `package`, `action`, `quotable`, `grouper`, `remark`, `contents`) VALUES
-	('59f85ab9-b682-4ddc-8839-c2b50c73f0a3', 1733369271133, 1733369271117, '2024-12-05', '10:28:03', '2024-12-05 10:27:51', NULL, '"System Management" <ezprompt@gmail.com>', 'tassun_oro@hotmail.com', 'mail', 'C', NULL, NULL, NULL, NULL, NULL, 'Confirm New Account', '59f85ab9-b682-4ddc-8839-c2b50c73f0a3', '{"accepted":["tassun_oro@hotmail.com"],"rejected":[],"ehlo":["SIZE 35882577","8BITMIME","AUTH LOGIN PLAIN XOAUTH2 PLAIN-CLIENTTOKEN OAUTHBEARER XOAUTH","ENHANCEDSTATUSCODES","PIPELINING","CHUNKING","SMTPUTF8"],"envelopeTime":727,"messageTime":658,"messageSize":558,"response":"250 2.0.0 OK  1733369283 d2e1a72fcca58-725a29e8ef5sm243996b3a.48 - gsmtp","envelope":{"from":"ezprompt@gmail.com","to":["tassun_oro@hotmail.com"]},"messageId":"<1ca765bf-f93e-4006-1cdb-a7b71e1b7c96@gmail.com>"}', '<p>Dear, Toucher Oros.<br />New account was created for access system.<br />To confirm, please kindly use information below.<br />user = tassun_oro@hotmail.com<br />password = 12E216b3<br />yours sincerely,<br />Administrator</p>'),
-	('5a05e665-1a48-4e04-b6e7-610818195a61', 1733371694651, 1733371694630, '2024-12-05', '11:08:17', '2024-12-05 11:08:15', NULL, '"System Management" <ezprompt@gmail.com>', 'tassun_oro@hotmail.com', 'mail', 'C', NULL, NULL, NULL, NULL, NULL, 'Confirm New Account', '5a05e665-1a48-4e04-b6e7-610818195a61', '{"accepted":["tassun_oro@hotmail.com"],"rejected":[],"ehlo":["SIZE 35882577","8BITMIME","AUTH LOGIN PLAIN XOAUTH2 PLAIN-CLIENTTOKEN OAUTHBEARER XOAUTH","ENHANCEDSTATUSCODES","PIPELINING","CHUNKING","SMTPUTF8"],"envelopeTime":749,"messageTime":648,"messageSize":558,"response":"250 2.0.0 OK  1733371696 d9443c01a7336-215f8f26c77sm3193965ad.230 - gsmtp","envelope":{"from":"ezprompt@gmail.com","to":["tassun_oro@hotmail.com"]},"messageId":"<6a706b5e-0ff8-f800-3b24-97c47c33ab88@gmail.com>"}', '<p>Dear, Toucher Oros.<br />New account was created for access system.<br />To confirm, please kindly use information below.<br />user = tassun_oro@hotmail.com<br />password = 0Db765a1<br />yours sincerely,<br />Administrator</p>'),
-	('9e7df41c-b012-4b69-9715-a936ca5eae62', 1733306855587, 1733306855579, '2024-12-04', '17:07:39', '2024-12-04 17:07:36', NULL, '"System Management" <ezprompt@gmail.com>', 'tassun_oro@hotmail.com', 'mail', 'C', NULL, NULL, NULL, NULL, NULL, 'Confirm New Account', '9e7df41c-b012-4b69-9715-a936ca5eae62', '{"accepted":["tassun_oro@hotmail.com"],"rejected":[],"ehlo":["SIZE 35882577","8BITMIME","AUTH LOGIN PLAIN XOAUTH2 PLAIN-CLIENTTOKEN OAUTHBEARER XOAUTH","ENHANCEDSTATUSCODES","PIPELINING","CHUNKING","SMTPUTF8"],"envelopeTime":738,"messageTime":748,"messageSize":554,"response":"250 2.0.0 OK  1733306858 d2e1a72fcca58-7254176f634sm11976050b3a.59 - gsmtp","envelope":{"from":"ezprompt@gmail.com","to":["tassun_oro@hotmail.com"]},"messageId":"<83a01b29-028b-17c9-d0f5-93de19820a82@gmail.com>"}', '<p>Dear, Toucher .<br />New account was created for access system.<br />To confirm, please kindly use information below.<br />user = tassun_oro@hotmail.com<br />password = B03adcd2<br />yours sincerely,<br />Administrator</p>');
+-- Dumping data for table migrateauth.trxlog: ~0 rows (approximately)
 
+-- Dumping structure for table migrateauth.trxres
 CREATE TABLE IF NOT EXISTS `trxres` (
   `keyid` varchar(50) NOT NULL,
   `curtime` bigint DEFAULT NULL,
@@ -514,7 +548,9 @@ CREATE TABLE IF NOT EXISTS `trxres` (
   `contents` mediumtext
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COMMENT='transaction response log';
 
+-- Dumping data for table migrateauth.trxres: ~0 rows (approximately)
 
+-- Dumping structure for table migrateauth.ttemplate
 CREATE TABLE IF NOT EXISTS `ttemplate` (
   `template` varchar(50) NOT NULL,
   `templatetype` varchar(50) NOT NULL,
@@ -527,10 +563,12 @@ CREATE TABLE IF NOT EXISTS `ttemplate` (
   PRIMARY KEY (`template`,`templatetype`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COMMENT='table keep template mail';
 
+-- Dumping data for table migrateauth.ttemplate: ~2 rows (approximately)
 INSERT INTO `ttemplate` (`template`, `templatetype`, `subjecttitle`, `contents`, `contexts`, `editdate`, `edittime`, `edituser`) VALUES
 	('USER_FORGOT', 'MAIL_NOTIFY', 'Confirm Password Changed', 'Dear, ${userfullname}.<br/>\r\nConfirm your password was changed.<br/>\r\nuser = ${username}<br>\r\npassword = ${userpassword}<br>\r\nyours sincerely,<br>		\r\nAdministrator<br/>', 'Dear, ${userfullname}.<br/>\r\nConfirm your password was changed.<br/>\r\nuser = ${username}<br>\r\npassword = ${userpassword}<br>\r\nyours sincerely,<br>		\r\nAdministrator<br/>', NULL, NULL, NULL),
 	('USER_INFO', 'MAIL_NOTIFY', 'Confirm New Account', '<p>Dear, ${userfullname}.<br />New account was created for access system.<br />To confirm, please kindly use information below.<br />user = ${username}<br />password = ${userpassword}<br />yours sincerely,<br />Administrator</p>', '<p>Dear, ${userfullname}.<br />New account was created for access system.<br />To confirm, please kindly use information below.<br />user = ${username}<br />password = ${userpassword}<br />yours sincerely,<br />Administrator</p>', '2023-10-26', '10:41:22', 'tso');
 
+-- Dumping structure for table migrateauth.ttemplatetag
 CREATE TABLE IF NOT EXISTS `ttemplatetag` (
   `tagname` varchar(50) NOT NULL,
   `tagtitle` varchar(50) NOT NULL,
@@ -538,6 +576,7 @@ CREATE TABLE IF NOT EXISTS `ttemplatetag` (
   PRIMARY KEY (`tagname`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COMMENT='table keep template custom tag';
 
+-- Dumping data for table migrateauth.ttemplatetag: ~11 rows (approximately)
 INSERT INTO `ttemplatetag` (`tagname`, `tagtitle`, `seqno`) VALUES
 	('${datacontents}', 'Data Info', 0),
 	('${datetime}', 'Date Time', 0),
@@ -551,6 +590,7 @@ INSERT INTO `ttemplatetag` (`tagname`, `tagtitle`, `seqno`) VALUES
 	('${username}', 'User ID', 0),
 	('${userpassword}', 'User Password', 0);
 
+-- Dumping structure for table migrateauth.tupwd
 CREATE TABLE IF NOT EXISTS `tupwd` (
   `serverdatetime` datetime DEFAULT NULL,
   `systemdate` date NOT NULL DEFAULT '0000-00-00',
@@ -559,7 +599,9 @@ CREATE TABLE IF NOT EXISTS `tupwd` (
   `edituserid` varchar(50) NOT NULL DEFAULT ''
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
+-- Dumping data for table migrateauth.tupwd: ~0 rows (approximately)
 
+-- Dumping structure for table migrateauth.tuser
 CREATE TABLE IF NOT EXISTS `tuser` (
   `userid` varchar(50) NOT NULL,
   `username` varchar(50) NOT NULL,
@@ -599,8 +641,9 @@ CREATE TABLE IF NOT EXISTS `tuser` (
   UNIQUE KEY `username` (`username`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COMMENT='table keep user info';
 
+-- Dumping data for table migrateauth.tuser: ~14 rows (approximately)
 INSERT INTO `tuser` (`userid`, `username`, `site`, `startdate`, `enddate`, `status`, `userpassword`, `passwordexpiredate`, `passwordchangedate`, `passwordchangetime`, `showphoto`, `adminflag`, `groupflag`, `theme`, `firstpage`, `loginfailtimes`, `failtime`, `lockflag`, `usertype`, `iconfile`, `accessdate`, `accesstime`, `accesshits`, `siteflag`, `branchflag`, `approveflag`, `changeflag`, `newflag`, `activeflag`, `mistakens`, `mistakentime`, `editdate`, `edittime`, `edituser`) VALUES
-	('adminis', 'admin@freewill.com', 'FWS', NULL, NULL, 'A', '$2a$10$MhzJQISuqFZSES0k00LPx.iMWUMGgp4P4oR5xlAYdzc2ydaVQgMnG', NULL, NULL, NULL, NULL, '1', '0', NULL, NULL, 0, 0, '0', 'A', NULL, '2022-08-30', '09:22:06', 464, '0', '0', '0', '0', '0', '0', 0, 0, '2021-05-16', '10:27:01', 'tso'),
+	('adminis', 'admin@freewill.com', 'FWS', NULL, NULL, 'A', '$2a$10$MhzJQISuqFZSES0k00LPx.iMWUMGgp4P4oR5xlAYdzc2ydaVQgMnG', NULL, NULL, NULL, NULL, '1', '0', NULL, NULL, 0, 0, '0', 'A', NULL, '2025-02-27', '20:24:16', 466, '0', '0', '0', '0', '0', '0', 0, 0, '2021-05-16', '10:27:01', 'tso'),
 	('centre', 'center@freewill.com', 'FWS', NULL, NULL, 'A', '$2a$10$fCARfKVL/xYrnJC6QS7c/O.u1WEKq.xS.qmlRV4sZo6PA1sJPW78C', NULL, NULL, NULL, NULL, '1', '0', NULL, NULL, 0, 0, '0', 'A', NULL, '2021-05-25', '10:45:29', 46, '1', '1', '0', '0', '0', '0', 0, 0, NULL, NULL, NULL),
 	('test1', 'test1@test.com', 'FWS', NULL, NULL, 'A', '$2a$10$g/5giEKKwQKm.9UNmL6CCOtSqN64tFi04QzCS/D.ECog88PsTAVC.', NULL, NULL, NULL, NULL, '0', '0', NULL, NULL, 0, 0, '0', 'E', NULL, '2023-09-27', '16:18:12', 46, '0', '0', '0', '0', '0', '0', 0, 0, NULL, NULL, NULL),
 	('test2', 'test2@test.com', 'FWS', NULL, NULL, 'A', '$2a$10$g/5giEKKwQKm.9UNmL6CCOtSqN64tFi04QzCS/D.ECog88PsTAVC.', NULL, NULL, NULL, NULL, '0', '0', NULL, NULL, 0, NULL, '0', 'E', NULL, NULL, NULL, 0, '0', '0', '0', '0', '0', '0', 0, NULL, NULL, NULL, NULL),
@@ -612,9 +655,10 @@ INSERT INTO `tuser` (`userid`, `username`, `site`, `startdate`, `enddate`, `stat
 	('test8', 'test8@test.com', 'FWS', NULL, NULL, 'A', '$2a$10$g/5giEKKwQKm.9UNmL6CCOtSqN64tFi04QzCS/D.ECog88PsTAVC.', NULL, NULL, NULL, NULL, '0', '0', NULL, NULL, 0, NULL, '0', 'E', NULL, NULL, NULL, 0, '0', '0', '0', '0', '0', '0', 0, NULL, NULL, NULL, NULL),
 	('test9', 'test9@testing.com', 'FWS', NULL, NULL, 'A', '$2a$10$g/5giEKKwQKm.9UNmL6CCOtSqN64tFi04QzCS/D.ECog88PsTAVC.', NULL, NULL, NULL, NULL, '0', '0', NULL, NULL, 0, NULL, '0', 'O', NULL, NULL, NULL, 0, '0', '1', '0', '0', '0', '0', 0, NULL, '2023-09-14', '16:35:54', 'tso'),
 	('tester', 'tester@freewill.com', 'FWS', NULL, NULL, 'A', '$2a$10$lDY.QbMZp./3KLS3uGpu3OHypOk4itewChD2.2jrtsgQmGaJ2BayS', NULL, NULL, NULL, NULL, NULL, '0', NULL, NULL, 0, 0, '0', 'O', NULL, '2024-09-17', '13:47:15', 12, '0', '0', '0', '0', '0', '0', 0, 0, '2021-05-16', '10:26:46', 'tso'),
-	('tso', 'tso@freewill.com', 'FWS', NULL, NULL, 'A', '$2a$10$XxaiWYBcRIglzgJ9MF3toO6ZpUh6dv/XDEFlPsPtkpS583Hiuqz/y', '2025-03-11', '2024-11-11', '10:16:03', '1', '1', '0', '', '', 0, 0, '0', 'A', '', '2024-12-15', '09:49:25', 7232, '0', '1', '1', '0', '0', '0', 0, 0, '2023-09-14', '16:57:56', 'tso'),
+	('tso', 'tso@freewill.com', 'FWS', NULL, NULL, 'A', '$2a$10$XxaiWYBcRIglzgJ9MF3toO6ZpUh6dv/XDEFlPsPtkpS583Hiuqz/y', '2025-03-11', '2024-11-11', '10:16:03', '1', '1', '0', '', '', 0, 0, '0', 'A', '', '2025-02-27', '20:18:57', 7257, '0', '1', '1', '0', '0', '0', 0, 0, '2023-09-14', '16:57:56', 'tso'),
 	('ttso', 'ttso@freewill.com', 'FWS', NULL, NULL, 'A', '$2a$10$XxaiWYBcRIglzgJ9MF3toO6ZpUh6dv/XDEFlPsPtkpS583Hiuqz/y', '2025-07-28', '2022-03-30', '09:21:19', NULL, '0', '0', NULL, NULL, 0, 0, '0', 'E', NULL, '2024-12-04', '12:56:25', 339, '0', '0', '0', '0', '0', '0', 0, 0, NULL, NULL, NULL);
 
+-- Dumping structure for table migrateauth.tuserbranch
 CREATE TABLE IF NOT EXISTS `tuserbranch` (
   `site` varchar(50) NOT NULL COMMENT 'tcomp.site',
   `branch` varchar(20) NOT NULL COMMENT 'tcompbranch.branch',
@@ -622,7 +666,9 @@ CREATE TABLE IF NOT EXISTS `tuserbranch` (
   PRIMARY KEY (`site`,`branch`,`userid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COMMENT='table keep user access comp branchs';
 
+-- Dumping data for table migrateauth.tuserbranch: ~0 rows (approximately)
 
+-- Dumping structure for table migrateauth.tuserfactor
 CREATE TABLE IF NOT EXISTS `tuserfactor` (
   `factorid` varchar(50) NOT NULL COMMENT 'UUID',
   `userid` varchar(50) NOT NULL,
@@ -645,7 +691,9 @@ CREATE TABLE IF NOT EXISTS `tuserfactor` (
   UNIQUE KEY `userid` (`userid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COMMENT='table keep user factor';
 
+-- Dumping data for table migrateauth.tuserfactor: ~0 rows (approximately)
 
+-- Dumping structure for table migrateauth.tuserfactorhistory
 CREATE TABLE IF NOT EXISTS `tuserfactorhistory` (
   `factorid` varchar(50) NOT NULL COMMENT 'UUID',
   `userid` varchar(50) NOT NULL,
@@ -666,7 +714,9 @@ CREATE TABLE IF NOT EXISTS `tuserfactorhistory` (
   `factorremark` varchar(350) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COMMENT='table keep user factor history';
 
+-- Dumping data for table migrateauth.tuserfactorhistory: ~0 rows (approximately)
 
+-- Dumping structure for table migrateauth.tusergrp
 CREATE TABLE IF NOT EXISTS `tusergrp` (
   `userid` varchar(50) NOT NULL DEFAULT '' COMMENT 'tuser.userid',
   `groupname` varchar(50) NOT NULL DEFAULT '' COMMENT 'tgroup.groupname',
@@ -674,14 +724,14 @@ CREATE TABLE IF NOT EXISTS `tusergrp` (
   PRIMARY KEY (`userid`,`groupname`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COMMENT='table keep user in group';
 
+-- Dumping data for table migrateauth.tusergrp: ~4 rows (approximately)
 INSERT INTO `tusergrp` (`userid`, `groupname`, `rolename`) VALUES
-	('325b1f73-6198-433a-a484-b67f6082d9a5', 'OPERATOR', NULL),
-	('349c7852-4b13-476f-9d2a-03693358f205', 'OPERATOR', NULL),
-	('ca113e9d-20b8-40e9-a7ae-3736c90ecd63', 'OPERATOR', NULL),
-	('e56a3df1-11b2-44f4-820c-450eb2a24d77', 'OPERATOR', NULL),
-	('tso', 'MENU', NULL),
+	('adminis', 'ADMIN', NULL),
+	('adminis', 'SETTING', NULL),
+	('tso', 'ADMIN', NULL),
 	('tso', 'SETTING', NULL);
 
+-- Dumping structure for table migrateauth.tuserinfo
 CREATE TABLE IF NOT EXISTS `tuserinfo` (
   `site` varchar(50) NOT NULL DEFAULT '' COMMENT 'tcomp.site',
   `employeeid` varchar(50) NOT NULL DEFAULT '',
@@ -712,8 +762,9 @@ CREATE TABLE IF NOT EXISTS `tuserinfo` (
   KEY `email` (`email`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COMMENT='table keep user info (employee info)';
 
+-- Dumping data for table migrateauth.tuserinfo: ~13 rows (approximately)
 INSERT INTO `tuserinfo` (`site`, `employeeid`, `userid`, `userbranch`, `usertname`, `usertsurname`, `userename`, `useresurname`, `displayname`, `accessdate`, `accesstime`, `photoimage`, `email`, `gender`, `lineid`, `mobile`, `langcode`, `birthday`, `inactive`, `editdate`, `edittime`, `edituser`, `remarks`, `usercontents`) VALUES
-	('FWS', 'adminis', 'adminis', '00', 'FWS', 'Administrator', 'FWS', 'Administrator', 'FWS_Adm', '2022-08-30', '09:22:06', 'photo_fwg_fwgadmin.jpg', 'admin@freewillsolutions.com', 'M', NULL, NULL, NULL, NULL, '0', '2021-05-16', '10:27:01', 'tso', 'sfte007', NULL),
+	('FWS', 'adminis', 'adminis', '00', 'FWS', 'Administrator', 'FWS', 'Administrator', 'FWS_Adm', '2025-02-27', '20:24:16', 'photo_fwg_fwgadmin.jpg', 'admin@freewillsolutions.com', 'M', NULL, NULL, NULL, NULL, '0', '2021-05-16', '10:27:01', 'tso', 'sfte007', NULL),
 	('FWS', 'test1', 'test1', NULL, 'Test1', 'Test', 'Test1', 'Test', 'Test1_Tes', '2023-09-27', '16:18:12', NULL, 'test1@gmail.com', NULL, NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, NULL),
 	('FWS', 'test2', 'test2', NULL, 'Test2', 'Test', 'Test2', 'Test', 'Test2_Tes', NULL, NULL, NULL, 'test2@gmail.com', NULL, NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, NULL),
 	('FWS', 'test3', 'test3', NULL, 'Test3', 'Test', 'Test3', 'Test', 'Test3_Tes', NULL, NULL, NULL, 'test3@gmail.com', NULL, NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, NULL),
@@ -724,9 +775,10 @@ INSERT INTO `tuserinfo` (`site`, `employeeid`, `userid`, `userbranch`, `usertnam
 	('FWS', 'test8', 'test8', NULL, 'Test8', 'Test', 'Test8', 'Test', 'Test8_Tes', NULL, NULL, NULL, 'test8@gmail.com', NULL, NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, NULL),
 	('FWS', 'test9', 'test9', NULL, 'Test9', 'Test', 'Test9', 'Test', 'Test9_Tes', NULL, NULL, NULL, 'test9@gmail.com', NULL, NULL, NULL, NULL, NULL, '0', '2023-09-14', '16:35:54', 'tso', 'sfte007', NULL),
 	('FWS', 'tester', 'tester', NULL, 'Tester', 'Test', 'Tester', 'Test', 'Tester_Tes', '2024-09-17', '13:47:15', NULL, 'tester@gmail.com', 'M', NULL, NULL, NULL, NULL, '0', '2021-05-16', '10:26:46', 'tso', 'sfte007', NULL),
-	('FWS', 'tso', 'tso', '00', 'Tassan', 'Oros', 'Tassan', 'Oros', 'Tassan_oro', '2024-12-15', '09:49:25', 'photo_fwg_tso.png', 'tassun_oro@hotmail.com', 'M', 'tassun_oro', '0955941678', 'EN', NULL, '0', '2024-10-02', '15:15:39', 'tso', 'sfte007', '{"companion":"qby1"}'),
+	('FWS', 'tso', 'tso', '00', 'Tassan', 'Oros', 'Tassan', 'Oros', 'Tassan_oro', '2025-02-27', '20:18:57', 'photo_fwg_tso.png', 'tassun_oro@hotmail.com', 'M', 'tassun_oro', '0955941678', 'EN', NULL, '0', '2024-10-02', '15:15:39', 'tso', 'sfte007', '{"companion":"qby1"}'),
 	('FWS', 'ttso', 'ttso', '00', 'Tassun', 'Oros', 'Tassun', 'Oros', 'Tassun_Oro', '2024-12-04', '12:56:25', NULL, 'tassunoros@gmail.com', 'M', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, '{"companion":"tama1"}');
 
+-- Dumping structure for table migrateauth.tuserinfohistory
 CREATE TABLE IF NOT EXISTS `tuserinfohistory` (
   `site` varchar(50) NOT NULL DEFAULT '' COMMENT 'tcomp.site',
   `employeeid` varchar(50) NOT NULL DEFAULT '',
@@ -755,7 +807,9 @@ CREATE TABLE IF NOT EXISTS `tuserinfohistory` (
   `usercontents` text
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COMMENT='table keep user info (employee info)';
 
+-- Dumping data for table migrateauth.tuserinfohistory: ~0 rows (approximately)
 
+-- Dumping structure for table migrateauth.tuserlog
 CREATE TABLE IF NOT EXISTS `tuserlog` (
   `seqno` bigint NOT NULL DEFAULT '0',
   `curtime` datetime NOT NULL,
@@ -774,7 +828,9 @@ CREATE TABLE IF NOT EXISTS `tuserlog` (
   `contents` text
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COMMENT='table keep user logging';
 
+-- Dumping data for table migrateauth.tuserlog: ~0 rows (approximately)
 
+-- Dumping structure for table migrateauth.tuserpwd
 CREATE TABLE IF NOT EXISTS `tuserpwd` (
   `trxid` varchar(50) NOT NULL,
   `userid` varchar(50) NOT NULL,
@@ -793,7 +849,9 @@ CREATE TABLE IF NOT EXISTS `tuserpwd` (
   KEY `userid` (`userid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COMMENT='table keep user temporary password change';
 
+-- Dumping data for table migrateauth.tuserpwd: ~0 rows (approximately)
 
+-- Dumping structure for table migrateauth.tuserpwdhistory
 CREATE TABLE IF NOT EXISTS `tuserpwdhistory` (
   `trxid` varchar(50) NOT NULL,
   `userid` varchar(50) NOT NULL,
@@ -813,14 +871,18 @@ CREATE TABLE IF NOT EXISTS `tuserpwdhistory` (
   `hisflag` varchar(1) DEFAULT '0' COMMENT '1=Confirm'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COMMENT='table keep user temporary password change history';
 
+-- Dumping data for table migrateauth.tuserpwdhistory: ~0 rows (approximately)
 
+-- Dumping structure for table migrateauth.tuserrole
 CREATE TABLE IF NOT EXISTS `tuserrole` (
   `userid` varchar(50) NOT NULL COMMENT 'tuser.userid',
   `roleid` varchar(50) NOT NULL COMMENT 'trole.roleid',
   PRIMARY KEY (`userid`,`roleid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COMMENT='table keep user in roles';
 
+-- Dumping data for table migrateauth.tuserrole: ~0 rows (approximately)
 
+-- Dumping structure for table migrateauth.tusertoken
 CREATE TABLE IF NOT EXISTS `tusertoken` (
   `useruuid` varchar(50) NOT NULL,
   `userid` varchar(50) NOT NULL,
@@ -852,10 +914,7 @@ CREATE TABLE IF NOT EXISTS `tusertoken` (
   KEY `nonce` (`nonce`,`code`,`state`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COMMENT='table keep access token';
 
-INSERT INTO `tusertoken` (`useruuid`, `userid`, `createdate`, `createtime`, `createmillis`, `expiredate`, `expiretime`, `expiretimes`, `site`, `code`, `state`, `nonce`, `authtoken`, `prime`, `generator`, `privatekey`, `publickey`, `sharedkey`, `otherkey`, `tokentype`, `tokenstatus`, `factorcode`, `outdate`, `outtime`, `accesscontents`) VALUES
-	('41dbe444-e5e4-44b9-b30b-777e6edaf24c', 'tso', '2024-12-08', '10:41:10', 1733629269518, '2024-12-09', '04:41:10', 1733694069518, 'FWS', '68dfec5d-f7f7-4502-96fd-4873f3d54064', 'a801bdc6-1fdb-422d-9107-5a2d28604bcd', 'a1885c78-8938-4354-8b63-f2268b49c592', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZGVudGlmaWVyIjoiNDFkYmU0NDQtZTVlNC00NGI5LWIzMGItNzc3ZTZlZGFmMjRjIiwic2l0ZSI6IkZXUyIsImFjY2Vzc29yIjoidHNvIiwidHlwZSI6IlMiLCJpYXQiOjE3MzM2MjkyNjksImV4cCI6MTczMzY5NDA2OX0.oRfflp8yO53wkRfZhwV0p94ujnjO30OZIYplJSOM9Bk', '97759034047840245231412065486357416042566922454149315913502585280837294877787', '4567', '25473159691578761571114818683974782418962935358723553248996383658390135941589', '30744552411944231186786355426978478366394472622932447894665970271600055198193', '1301', '7907', 'S', NULL, NULL, NULL, NULL, NULL),
-	('e534e08b-9d3a-4198-9166-87eb8f1a5089', 'tso', '2024-12-04', '16:09:12', 1733303351875, '2024-12-05', '10:09:12', 1733368151875, 'FWS', 'a65f9ffe-9c9b-4a34-86af-f6033fd27a20', '7efb88ca-de83-4182-a5b7-ba7791ac697a', '31444aef-7e87-4ab1-8ba8-bbb59ad03f2a', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZGVudGlmaWVyIjoiZTUzNGUwOGItOWQzYS00MTk4LTkxNjYtODdlYjhmMWE1MDg5Iiwic2l0ZSI6IkZXUyIsImFjY2Vzc29yIjoidHNvIiwidHlwZSI6IlMiLCJpYXQiOjE3MzMzMDMzNTEsImV4cCI6MTczMzM2ODE1MX0.fs7gAKCd5fMUZ_-6pQdRczJC45tE_rPF7k0vhhF4HP0', '86390174775697662216420500282596682946926953707016416108235158662088069278173', '3359', '25099279612724672686563569566823059162055186362291897888188328616119802569471', '11711915955666405875364349457758743413553752039267217252126022895261339930316', '5237', '8461', 'S', NULL, NULL, NULL, NULL, NULL),
-	('eab5156a-6d32-44be-aeae-882ba4cbbe04', 'tso', '2024-12-08', '10:32:34', 1733628753814, '2024-12-09', '04:32:34', 1733693553814, 'FWS', '999ea704-9fb2-44e8-adc2-b7b82c07f2ca', '682fb4fe-c86c-468f-9f08-9d418aa6cd60', 'c27773a3-8682-4b46-8a8c-9ab86d108e4f', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZGVudGlmaWVyIjoiZWFiNTE1NmEtNmQzMi00NGJlLWFlYWUtODgyYmE0Y2JiZTA0Iiwic2l0ZSI6IkZXUyIsImFjY2Vzc29yIjoidHNvIiwidHlwZSI6IlMiLCJpYXQiOjE3MzM2Mjg3NTMsImV4cCI6MTczMzY5MzU1M30.dN0wfDQSw73XvSUQCCGwYKPWWkk2nEFXIfEL-zPfZbU', '113872964488443582964502780559838224766227845172712093326867084860077762003867', '1451', '27141275627417418917442099825062759451198514523623381926587916050975185031189', '2149797091295044016386272359872533114718663515313875297701396229803139677018', '4441', '3529', 'S', NULL, NULL, NULL, NULL, NULL);
+-- Dumping data for table migrateauth.tusertoken: ~0 rows (approximately)
 
 /*!40103 SET TIME_ZONE=IFNULL(@OLD_TIME_ZONE, 'system') */;
 /*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;
