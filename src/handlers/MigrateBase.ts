@@ -3,7 +3,7 @@ import { KnModel, KnParamInfo, KnSQLUtils } from "@willsofts/will-db";
 import { KnContextInfo } from "@willsofts/will-core";
 import { KnDBConnector, KnDBFault, KnSQL, KnDBUtils, KnDBTypes } from "@willsofts/will-sql";
 import { TknOperateHandler } from "@willsofts/will-serv";
-import { PRIVATE_SECTION } from "../utils/EnvironmentVariable";
+import { PRIVATE_SECTION, ERROR_CANCELATION_CODE, ERROR_CANCELATION_KEY } from "../utils/EnvironmentVariable";
 import { PluginSetting } from "../models/MigrateAlias";
 import { FileDownloadHandler } from "./FileDownloadHandler";
 import { FileTransferHandler } from "./FileTransferHandler";
@@ -161,4 +161,23 @@ export class MigrateBase extends TknOperateHandler {
         return undefined;
     }
     
+    public async cancelError(ex: any, settings?: any) : Promise<boolean> {
+        let name = undefined;
+        if(ex.hasOwnProperty("errno")) name = "errno";
+        else if(ex.hasOwnProperty("number")) name = "number";
+        let key = settings?.errorCancelationKey || ERROR_CANCELATION_KEY || name;
+        let errno = ex[key];
+        let codeset = settings?.errorCancelationCode || ERROR_CANCELATION_CODE;
+        this.logger.debug(this.constructor.name+".cancelError: ERROR KEY =",key,", CODE =",errno,", CANCELATION CODE =",codeset);
+        if(errno && codeset && codeset.trim().length > 0) {
+            let codes = codeset.split(',');
+            for(let code of codes) {
+                if(code == ex.errno) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
 }

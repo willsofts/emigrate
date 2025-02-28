@@ -70,3 +70,8 @@
 
 2025-02-27
 + can import with filter data setting
+
+2025-02-28
++ can custom post statement error handler
++ can cancel error code
++ can custom detect error key (since error object from db throwing was depend on driver usage)

@@ -32,6 +32,8 @@ export interface MigrateRecordSet extends KnRecordSet {
     totalrecords: number;
     errorrecords: number;
     skiprecords: number;
+    posterror: boolean;
+    message?: string;
 }
 
 export interface MigrateResultSet {

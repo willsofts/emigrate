@@ -36,5 +36,7 @@ export const ATTACH_MAIL_FROM: string = config.env("ATTACH_MAIL_FROM");
 export const ATTACH_MAIL_SUBJECT: string = config.env("ATTACH_MAIL_SUBJECT");
 export const ATTACH_MAIL_FILENAME: string = config.env("ATTACH_MAIL_FILENAME");
 export const ATTACH_FILE_PATH: string = config.env("ATTACH_FILE_PATH") || os.tmpdir();
-
+export const ERROR_CANCELATION_CODE: string = config.env("ERROR_CANCELATION_CODE");
+export const ERROR_CANCELATION_KEY: string = config.env("ERROR_CANCELATION_KEY");
+export const ALWAYS_THROW_POST_ERROR: boolean = config.env("ALWAYS_THROW_POST_ERROR","false") === "true";
 export const MIN_AD_YEAR: number = parseInt(config.env("MIN_AD_YEAR","2500")) || 2500;

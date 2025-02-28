@@ -5,6 +5,7 @@ import { KnContextInfo, KnValidateInfo, VerifyError } from '@willsofts/will-core
 import { MigrateOperate } from "./MigrateOperate";
 import { TaskModel, MigrateConfig, MigrateRecordSet, MigrateResultSet, MigrateInfo, MigrateReject, MigrateModel, MigrateParams, MigrateRecords, FilterInfo } from "../models/MigrateAlias";
 import { MigrateFilter } from "../utils/MigrateFilter";
+import { ALWAYS_THROW_POST_ERROR } from "../utils/EnvironmentVariable";
 
 const task_models = require("../../config/model.json");
 
@@ -157,7 +158,7 @@ export class MigrateHandler extends MigrateOperate {
         let uuid = this.randomUUID();
         let migrateid = context.params.migrateid || uuid;
         let processid = context.params.processid || uuid;
-        let result : MigrateRecordSet = { migrateid: migrateid, processid: processid, taskid: context.params.taskid, modelname: taskmodel.name, totalrecords: rc.totalrecords, errorrecords: 0, skiprecords: 0, ...this.createRecordSet() };
+        let result : MigrateRecordSet = { migrateid: migrateid, processid: processid, taskid: context.params.taskid, modelname: taskmodel.name, totalrecords: rc.totalrecords, errorrecords: 0, skiprecords: 0, posterror: false, ...this.createRecordSet() };
         //let defaultInfo : MigrateInfo = { exception: false, errormessage: "", errorcontents: [] };
         //let defaultReject : MigrateReject = { reject: false, throwable: undefined };
         if(taskmodel.name.trim().length == 0 || context.params.stored === "NONE" || context.params.stored === "false") {
@@ -251,7 +252,11 @@ export class MigrateHandler extends MigrateOperate {
         await this.performPreTransaction(context,model,db,rc,dataset);
         let [result,info,reject] = await this.performInsertTransaction(context,model,db,rc,dataset);
         if(!reject.reject) {
-            await this.performPostTransaction(context,model,db,rc,dataset);
+            let post = await this.performPostTransaction(context,model,db,rc,dataset);            
+            if(post.throwable) {
+                result.posterror = true;
+                result.message = post.throwable?.message;
+            }
         }
         return [result,info,reject];
     }
@@ -260,7 +265,7 @@ export class MigrateHandler extends MigrateOperate {
         let uuid = this.randomUUID();
         let migrateid = context.params.migrateid || uuid;
         let processid = context.params.processid || uuid;
-        let result : MigrateRecordSet = { migrateid: migrateid, processid: processid, taskid: context.params.taskid, modelname: model.name, totalrecords: rc.totalrecords, errorrecords: 0, skiprecords: 0, ...this.createRecordSet() };
+        let result : MigrateRecordSet = { migrateid: migrateid, processid: processid, taskid: context.params.taskid, modelname: model.name, totalrecords: rc.totalrecords, errorrecords: 0, skiprecords: 0, posterror: false, ...this.createRecordSet() };
         let datalist = dataset;
         if(!Array.isArray(dataset)) {
             datalist = [dataset];
@@ -314,13 +319,27 @@ export class MigrateHandler extends MigrateOperate {
         }
     }
 
-    public async performPostTransaction(context: KnContextInfo, model: KnModel, db: KnDBConnector, rc: MigrateRecords, dataset: any): Promise<any> {
+    public async performPostTransaction(context: KnContextInfo, model: KnModel, db: KnDBConnector, rc: MigrateRecords, dataset: any): Promise<FilterInfo> {
+        let result : FilterInfo = { cancel: false };
         if(model.settings?.statement?.poststatement) {
             let knsql = this.composeQuery(context,db,model.settings?.statement?.poststatement);
             if(knsql) {
-                await knsql.executeUpdate(db,context);
+                try {
+                    await knsql.executeUpdate(db,context);
+                } catch(ex:any) {
+                    this.logger.error(ex);
+                    result.throwable = ex;
+                    result.cancel = await this.cancelError(ex,model.settings);
+                    if(result.cancel) {
+                        return result;
+                    }
+                    if(String(model.settings?.alwaysThrowable) == 'true' || ALWAYS_THROW_POST_ERROR) {
+                        throw ex;
+                    }
+                }
             }            
         }
+        return result;
     }
 
     public async getTaskModel(context: KnContextInfo, taskid: string, model: KnModel = this.model): Promise<MigrateModel | undefined> {

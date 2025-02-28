@@ -55,7 +55,7 @@ export class MigrateTextHandler extends MigrateHandler {
         let migrateid = context.params.migrateid || uuid;
         let processid = context.params.processid || uuid;
         this.logger.debug(this.constructor.name+".processInsertingModel: model",taskmodel,"filename",param.filename);
-        let result = { migrateid: migrateid, processid: processid, taskid: context.params.taskid, modelname: taskmodel.name, totalrecords: 0, errorrecords: 0, skiprecords: 0, ...this.createRecordSet() };
+        let result = { migrateid: migrateid, processid: processid, taskid: context.params.taskid, modelname: taskmodel.name, totalrecords: 0, errorrecords: 0, skiprecords: 0, posterror: false, ...this.createRecordSet() };
         let [datalist,header] = await this.performReading(context, taskmodel, param.filename);
         if(datalist) {
             if(this.isEmptyObject(datalist)) {
