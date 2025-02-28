@@ -1,7 +1,7 @@
 var os = require("os");
 
 module.exports = {
-    nodeID: "emigrate-"+os.hostname().toLowerCase() + "-" + process.pid,
+    nodeID: "migrate-"+os.hostname().toLowerCase() + "-" + process.pid,
     logger: [
         {
             type: "Console",
