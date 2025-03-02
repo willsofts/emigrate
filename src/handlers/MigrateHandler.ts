@@ -1,13 +1,11 @@
 import { HTTP } from "@willsofts/will-api";
 import { KnModel } from "@willsofts/will-db";
-import { KnDBConnector, KnSQL } from "@willsofts/will-sql";
+import { KnDBConnector } from "@willsofts/will-sql";
 import { KnContextInfo, KnValidateInfo, VerifyError } from '@willsofts/will-core';
 import { MigrateOperate } from "./MigrateOperate";
-import { TaskModel, MigrateConfig, MigrateRecordSet, MigrateResultSet, MigrateInfo, MigrateReject, MigrateModel, MigrateParams, MigrateRecords, FilterInfo } from "../models/MigrateAlias";
+import { TaskModel, MigrateRecordSet, MigrateResultSet, MigrateInfo, MigrateReject, MigrateModel, MigrateParams, MigrateRecords, FilterInfo, StatementInfo, ParameterInfo } from "../models/MigrateAlias";
 import { MigrateFilter } from "../utils/MigrateFilter";
 import { ALWAYS_THROW_POST_ERROR } from "../utils/EnvironmentVariable";
-
-const task_models = require("../../config/model.json");
 
 export class MigrateHandler extends MigrateOperate {
 
@@ -38,6 +36,7 @@ export class MigrateHandler extends MigrateOperate {
     }
 
     public async processInserting(context: KnContextInfo, migratemodel: MigrateModel, param: MigrateParams, dataset: any, datapart?: any): Promise<MigrateResultSet> {
+        await this.executeValidating(context,migratemodel,param);
         if(!context.params.processid) context.params.processid = this.randomUUID();
         let result : MigrateResultSet = { taskid: context.params.taskid, processid: context.params.processid, resultset: [] };
         let totalrecords = Array.isArray(dataset) ? dataset.length : 1;
@@ -47,6 +46,16 @@ export class MigrateHandler extends MigrateOperate {
             return result;
         }
         return await this.executeInserting(context, migratemodel, param, rc, dataset, datapart);
+    }
+
+    public async executeValidating(context: KnContextInfo, migratemodel: MigrateModel, param: MigrateParams): Promise<KnValidateInfo> {
+        for(let taskmodel of migratemodel.models) {
+            let vi = await this.validateStatementParameters(context,taskmodel);
+            if(!vi.valid) {
+                return Promise.reject(new VerifyError("Parameter not found ("+vi.info+")",HTTP.NOT_ACCEPTABLE,-16061));
+            }
+        }
+        return { valid: true };
     }
 
     public async executeInserting(context: KnContextInfo, migratemodel: MigrateModel, param: MigrateParams, rc: MigrateRecords, dataset: any, datapart?: any): Promise<MigrateResultSet> {
@@ -312,8 +321,10 @@ export class MigrateHandler extends MigrateOperate {
 
     public async performPreTransaction(context: KnContextInfo, model: KnModel, db: KnDBConnector, rc: MigrateRecords, dataset: any): Promise<any> {
         if(model.settings?.statement?.prestatement) {
-            let knsql = this.composeQuery(context,db,model.settings?.statement?.prestatement);
+            await this.performQueryStatements(context,model,db,rc,dataset,model.settings?.statement?.prestatement?.statements)
+            let knsql = this.composeQuery(context,model.settings?.statement?.prestatement,db);
             if(knsql) {
+                this.dump(knsql);
                 await knsql.executeUpdate(db,context);
             }
         }
@@ -322,8 +333,10 @@ export class MigrateHandler extends MigrateOperate {
     public async performPostTransaction(context: KnContextInfo, model: KnModel, db: KnDBConnector, rc: MigrateRecords, dataset: any): Promise<FilterInfo> {
         let result : FilterInfo = { cancel: false };
         if(model.settings?.statement?.poststatement) {
-            let knsql = this.composeQuery(context,db,model.settings?.statement?.poststatement);
+            await this.performQueryStatements(context,model,db,rc,dataset,model.settings?.statement?.poststatement?.statements)
+            let knsql = this.composeQuery(context,model.settings?.statement?.poststatement,db);
             if(knsql) {
+                this.dump(knsql);
                 try {
                     await knsql.executeUpdate(db,context);
                 } catch(ex:any) {
@@ -342,93 +355,56 @@ export class MigrateHandler extends MigrateOperate {
         return result;
     }
 
-    public async getTaskModel(context: KnContextInfo, taskid: string, model: KnModel = this.model): Promise<MigrateModel | undefined> {
-        let db = this.getPrivateConnector(model);
-        try {
-            return await this.getMigrateModel(context,model,db,taskid);
-        } catch(ex: any) {
-            this.logger.error(ex);
-            return Promise.reject(this.getDBError(ex));
-        } finally {
-            if(db) db.close();
-        }
-    }
-
-    public async getMigrateModel(context: KnContextInfo, model: KnModel, db: KnDBConnector, taskid: string): Promise<MigrateModel | undefined> {
-        let results : MigrateModel = { models: [], configs: {} };
-        let knsql = new KnSQL();
-        knsql.append("select t.taskid,t.taskname,t.connectid,t.taskconfigs,");
-        knsql.append("m.modelid,m.modelname,m.tablename,m.tablefields,m.tablesettings,tm.seqno ");
-        knsql.append("from tmigratetask t, tmigratetaskmodel tm, tmigratemodel m ");
-        knsql.append("where t.taskid = ?taskid ");
-        knsql.append("and t.taskid = tm.taskid ");
-        knsql.append("and tm.modelid = m.modelid ");
-        knsql.append("order by seqno ");
-        knsql.set("taskid",taskid);
-        let rs = await knsql.executeQuery(db,context);
-        if(rs && rs.rows?.length > 0) {
-            results.configs = this.tryParseJSON(rs.rows[0].taskconfigs);
-            for(let row of rs.rows) {
-                let privateAlias : string | MigrateConfig = model.alias.privateAlias;
-                let config = await this.getMigrateConfig(context,db,row.connectid);
-                if(config) {
-                    privateAlias = config;        
+    public async performQueryStatements(context: KnContextInfo, model: KnModel, db: KnDBConnector, rc: MigrateRecords, dataset: any, statements?: StatementInfo[]): Promise<any> {
+        if(statements && statements.length > 0) {
+            for(let stmt of statements) {
+                let knsql = this.composeQuery(context,stmt,db);
+                if(knsql) {
+                    this.dump(knsql);
+                    await knsql.executeUpdate(db,context);
                 }
-                let tablefields = this.tryParseJSON(row.tablefields);
-                let tablesettings = this.tryParseJSON(row.tablesettings);
-                let taskmodel = {
-                    name: row.tablename,
-                    alias: { privateAlias: privateAlias },
-                    fields: tablefields,
-                    settings: tablesettings,
-                }
-                results.models.push(taskmodel);
             }
         }
-        if(results.models.length > 0) return results;
-        return task_models[taskid];
     }
 
-    public async getMigrateConfig(context: KnContextInfo, db: KnDBConnector, connectid: string): Promise<MigrateConfig | undefined> {
-        let result = undefined;
-        let knsql = new KnSQL();
-        knsql.append("select c.connecttype,c.connectdialect,c.connecturl,c.connectuser,c.connectpassword,");
-        knsql.append("c.connectdatabase,c.connecthost,c.connectport,c.connectapi,c.connectsetting,c.connectbody,");
-        knsql.append("c.connecthandler,c.connectquery,c.connectfieldname,c.connectfieldvalue,c.connectmapper,");
-        knsql.append("d.dialectalias,d.dialectoptions ");
-        knsql.append("from tmigrateconnect c,tdialect d ");
-        knsql.append("where c.conectid = ?connectid ");
-        knsql.append("and c.connectdialect = d.dialectid ");
-        knsql.set("connectid",connectid);
-        let rs = await knsql.executeQuery(db,context);
-        if(rs && rs.rows?.length>0) {
-            let row = rs.rows[0];
-            let dialectoptions = this.tryParseJSON(row.dialectoptions) || {};
-            let connectsetting = this.tryParseJSON(row.connectsetting) || {};
-            let connectbody = this.tryParseJSON(row.connectbody) || {};
-            result = {
-                schema: connectid,
-                alias: row.dialectalias,
-                dialect: row.connectdialect,
-                url: row.connecturl,
-                user: row.connectuser,
-                password: row.connectpassword,
-                host: row.connecthost,
-                port: row.connectport,
-                database: row.connectdatabase,
-                options: dialectoptions,
-                type: row.connecttype,
-                fieldname: row.connectfieldname,
-                fieldvalue: row.connectfieldvalue,
-                mapper: row.connectmapper,
-                api: row.connectapi,
-                setting: connectsetting,
-                body: connectbody,
-                handler: row.connecthandler,
-                query: row.connectquery,
-            };
+    public async invalidateStatementParameters(context: KnContextInfo, model: KnModel) : Promise<ParameterInfo[]> {
+        let params : ParameterInfo[] = [];
+        await this.invalidateQueryParameters(context,model,params,model.settings?.statement?.prestatement);
+        await this.invalidateQueryParameters(context,model,params,model.settings?.statement?.poststatement);
+        return params;
+    }
+
+    public async invalidateQueryParameters(context: KnContextInfo, model: KnModel, params: ParameterInfo[], statement: StatementInfo) : Promise<ParameterInfo[]> {
+        if(statement) {
+            if(statement.parameters && statement.parameters.length > 0) {
+                let knsql = this.composeQuery(context,statement);
+                if(knsql) {
+                    for(let pr of statement.parameters) {
+                        if(typeof pr.required === "undefined" || String(pr.required) == "true") {
+                            let pv = knsql.params.get(pr.name);
+                            if(!pv || !pv.value) {
+                                params.push(pr);
+                            }
+                        }
+                    }
+                }
+            }
+            if(statement.statements && statement.statements.length > 0) {
+                for(let stmt of statement.statements) {
+                    await this.invalidateQueryParameters(context, model, params, stmt);
+                }
+            }
         }
-        return result;
+        return params;
+    }
+
+    public async validateStatementParameters(context: KnContextInfo, model: KnModel) : Promise<KnValidateInfo> {
+        let results = await this.invalidateStatementParameters(context,model);
+        if(results && results.length > 0) {
+            let prnames = results.map((item) => item.name);
+            return { valid: false, info: prnames.join(",") };
+        }
+        return { valid: true };
     }
 
     protected async performFiltering(context: KnContextInfo, model: KnModel, db: KnDBConnector, rc: MigrateRecords, data: any): Promise<FilterInfo> {

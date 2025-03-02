@@ -114,3 +114,18 @@ export interface FileInfo {
     path: string;
     info: ParsedPath;
 }
+
+export interface StatementInfo {
+    sql: string;
+    parameters?: ParameterInfo[];
+    statements?: StatementInfo[];    
+}
+
+export interface ParameterInfo {
+    name: string;
+    caption: string;
+    type?: string;
+    value?: string;
+    defaultValue?: string;
+    required?: boolean;
+}

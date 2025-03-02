@@ -75,3 +75,7 @@
 + can custom post statement error handler
 + can cancel error code
 + can custom detect error key (since error object from db throwing was depend on driver usage)
+
+2025-03-02
++ support statement elements
++ can validate statement required parameter

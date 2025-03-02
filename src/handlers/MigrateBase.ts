@@ -3,14 +3,15 @@ import { KnModel, KnParamInfo, KnSQLUtils } from "@willsofts/will-db";
 import { KnContextInfo } from "@willsofts/will-core";
 import { KnDBConnector, KnDBFault, KnSQL, KnDBUtils, KnDBTypes } from "@willsofts/will-sql";
 import { TknOperateHandler } from "@willsofts/will-serv";
-import { PRIVATE_SECTION, ERROR_CANCELATION_CODE, ERROR_CANCELATION_KEY } from "../utils/EnvironmentVariable";
-import { PluginSetting } from "../models/MigrateAlias";
+import { PRIVATE_SECTION, ERROR_CANCELATION_CODE, ERROR_CANCELATION_KEY, MIGRATE_DUMP_SQL } from "../utils/EnvironmentVariable";
+import { MigrateModel, MigrateConfig, PluginSetting, StatementInfo } from "../models/MigrateAlias";
 import { FileDownloadHandler } from "./FileDownloadHandler";
 import { FileTransferHandler } from "./FileTransferHandler";
 import { FileAttachmentHandler } from './FileAttachmentHandler';
 import { PluginHandler } from './PluginHandler';
 import { MigrateDate } from "../utils/MigrateDate";
 
+const task_models = require("../../config/model.json");
 const crypto = require('crypto');
 
 export const CHARACTER_SET = ['@','#','$','%','^','&','*','(',')','-','_','+','=','/','\\',':',';','|','[',']','{','}','<','>','?','.',',','"','\''];
@@ -19,7 +20,7 @@ export class MigrateBase extends TknOperateHandler {
     public dateparser = new MigrateDate();
     public section = PRIVATE_SECTION;
     public model : KnModel = { name: "tmigrate", alias: { privateAlias: this.section } };
-    public dumping: boolean = false;
+    public dumping: boolean = MIGRATE_DUMP_SQL;
 
     public randomUUID() : string {
         return uuid();
@@ -41,7 +42,7 @@ export class MigrateBase extends TknOperateHandler {
         return false;
     }
 
-    public parseDefaultValue(defaultValue: string) : [any,boolean] {
+    public parseDefaultValue(defaultValue: string | undefined) : [any,boolean] {
         if("#current_date"==defaultValue || "#current_time"==defaultValue || "#current_timestamp"==defaultValue || "#systemdate"==defaultValue || "#systemtime"==defaultValue || "#systemtimestamp"==defaultValue || "#kndate"==defaultValue) {
             return [new Date(),true];
         } else if("#current_uuid"==defaultValue || "#uuid"==defaultValue || "#guid"==defaultValue || "#newid"==defaultValue) {
@@ -112,7 +113,7 @@ export class MigrateBase extends TknOperateHandler {
     }
     
 
-    public createSQL(statement: any) : KnSQL | undefined {
+    public createSQL(statement: StatementInfo) : KnSQL | undefined {
         if(statement?.sql) {
             let knsql = new KnSQL(statement.sql);
             return knsql;
@@ -120,10 +121,10 @@ export class MigrateBase extends TknOperateHandler {
         return undefined;
     }
 
-    public composeQuery(context: KnContextInfo, db: KnDBConnector, statement: any) : KnSQL | undefined {
+    public composeQuery(context: KnContextInfo, statement: StatementInfo, db?: KnDBConnector) : KnSQL | undefined {
         let knsql = this.createSQL(statement);
         if(knsql) {
-            let [sql,paramnames] = knsql.getExactlySql(db.alias);
+            let [sql,paramnames] = knsql.getExactlySql(db?.alias);
             if(paramnames) {
                 for(let name of paramnames) {
                     knsql.set(name,context.params[name]);
@@ -131,7 +132,7 @@ export class MigrateBase extends TknOperateHandler {
             }
             if(statement?.parameters) {
                 for(let pr of statement.parameters) {
-                    let [value,found] = this.parseDefaultValue(pr.defaultValue);
+                    let [value,found] = this.parseDefaultValue(pr?.defaultValue);
                     if(found) {
                         knsql.set(pr.name,value);
                     }
@@ -178,6 +179,95 @@ export class MigrateBase extends TknOperateHandler {
             }
         }
         return false;
+    }
+
+    public async getTaskModel(context: KnContextInfo, taskid: string, model: KnModel = this.model): Promise<MigrateModel | undefined> {
+        let db = this.getPrivateConnector(model);
+        try {
+            return await this.getMigrateModel(context,model,db,taskid);
+        } catch(ex: any) {
+            this.logger.error(ex);
+            return Promise.reject(this.getDBError(ex));
+        } finally {
+            if(db) db.close();
+        }
+    }
+
+    public async getMigrateModel(context: KnContextInfo, model: KnModel, db: KnDBConnector, taskid: string): Promise<MigrateModel | undefined> {
+        let results : MigrateModel = { models: [], configs: {} };
+        let knsql = new KnSQL();
+        knsql.append("select t.taskid,t.taskname,t.connectid,t.taskconfigs,");
+        knsql.append("m.modelid,m.modelname,m.tablename,m.tablefields,m.tablesettings,tm.seqno ");
+        knsql.append("from tmigratetask t, tmigratetaskmodel tm, tmigratemodel m ");
+        knsql.append("where t.taskid = ?taskid ");
+        knsql.append("and t.taskid = tm.taskid ");
+        knsql.append("and tm.modelid = m.modelid ");
+        knsql.append("order by seqno ");
+        knsql.set("taskid",taskid);
+        let rs = await knsql.executeQuery(db,context);
+        if(rs && rs.rows?.length > 0) {
+            results.configs = this.tryParseJSON(rs.rows[0].taskconfigs);
+            for(let row of rs.rows) {
+                let privateAlias : string | MigrateConfig = model.alias.privateAlias;
+                let config = await this.getMigrateConfig(context,db,row.connectid);
+                if(config) {
+                    privateAlias = config;        
+                }
+                let tablefields = this.tryParseJSON(row.tablefields);
+                let tablesettings = this.tryParseJSON(row.tablesettings);
+                let taskmodel = {
+                    name: row.tablename,
+                    alias: { privateAlias: privateAlias },
+                    fields: tablefields,
+                    settings: tablesettings,
+                }
+                results.models.push(taskmodel);
+            }
+        }
+        if(results.models.length > 0) return results;
+        return task_models[taskid];
+    }
+
+    public async getMigrateConfig(context: KnContextInfo, db: KnDBConnector, connectid: string): Promise<MigrateConfig | undefined> {
+        let result = undefined;
+        let knsql = new KnSQL();
+        knsql.append("select c.connecttype,c.connectdialect,c.connecturl,c.connectuser,c.connectpassword,");
+        knsql.append("c.connectdatabase,c.connecthost,c.connectport,c.connectapi,c.connectsetting,c.connectbody,");
+        knsql.append("c.connecthandler,c.connectquery,c.connectfieldname,c.connectfieldvalue,c.connectmapper,");
+        knsql.append("d.dialectalias,d.dialectoptions ");
+        knsql.append("from tmigrateconnect c,tdialect d ");
+        knsql.append("where c.conectid = ?connectid ");
+        knsql.append("and c.connectdialect = d.dialectid ");
+        knsql.set("connectid",connectid);
+        let rs = await knsql.executeQuery(db,context);
+        if(rs && rs.rows?.length>0) {
+            let row = rs.rows[0];
+            let dialectoptions = this.tryParseJSON(row.dialectoptions) || {};
+            let connectsetting = this.tryParseJSON(row.connectsetting) || {};
+            let connectbody = this.tryParseJSON(row.connectbody) || {};
+            result = {
+                schema: connectid,
+                alias: row.dialectalias,
+                dialect: row.connectdialect,
+                url: row.connecturl,
+                user: row.connectuser,
+                password: row.connectpassword,
+                host: row.connecthost,
+                port: row.connectport,
+                database: row.connectdatabase,
+                options: dialectoptions,
+                type: row.connecttype,
+                fieldname: row.connectfieldname,
+                fieldvalue: row.connectfieldvalue,
+                mapper: row.connectmapper,
+                api: row.connectapi,
+                setting: connectsetting,
+                body: connectbody,
+                handler: row.connecthandler,
+                query: row.connectquery,
+            };
+        }
+        return result;
     }
 
 }

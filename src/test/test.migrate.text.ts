@@ -14,4 +14,7 @@ async function testMigrateText(file: string, taskid: string) {
 testMigrateText(file,taskid);
 
 //node dist/test/test.migrate.text.js
+//node dist/test/test.migrate.text.js test_file_post_statement
 //node dist/test/test.migrate.text.js test_file_post_statement_error
+//node dist/test/test.migrate.text.js test_file_statement_element
+//node dist/test/test.migrate.text.js test_file_post_statement_params

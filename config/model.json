@@ -466,7 +466,7 @@
                         "sql": "update tso set defvalue='POSTING', defdatetime=?defdatetime, message=?message where mktid='TSO' ",
                         "parameters": [
                             { "name": "defdatetime", "caption": "Date/Time", "defaultValue": "#current_timestamp" },
-                            { "name": "message", "caption": "Message" }
+                            { "name": "message", "caption": "Message", "required": false }
                         ]
                     }
                 }
@@ -497,6 +497,72 @@
                 "statement": {
                     "poststatement": {
                         "sql": "update tso set defvalues='POSTING' ", "remarks": "field defvalues does not exist"
+                    }
+                }
+            }
+        } ]
+    },
+    "test_file_statement_element": {
+        "models": [ {
+            "name": "tso_temp",
+            "alias": { "privateAlias": "PROMPTDB" },
+            "fields": {
+                "mktid": { "type": "STRING", "options": { "seqno": 1 } },
+                "share": { "type": "STRING", "options": { "seqno": 2 } },
+                "unit": { "type": "DECIMAL", "options": { "seqno": 3 } },
+                "price": { "type": "DECIMAL", "options": { "seqno": 4 } },
+                "yield": { "type": "INTEGER" },
+                "effdate": { "type": "DATE", "options": { "seqno": 5 } },
+                "efftime": { "type": "TIME", "options": { "seqno": 6 } },
+                "edittime": { "type": "DATETIME", "options": { "seqno": 7 } },
+                "sharename": { "type": "STRING", "options": { "seqno": 8 } },
+                "defvalue": { "type": "STRING" },
+                "message": { "type": "STRING" },
+                "remarks": { "type": "STRING", "defaultValue": "test_file_statement_element" }
+            },
+            "settings": { "skip": 1, "delimiter": ",", "quotable": true,
+                "statement": {
+                    "prestatement": {
+                        "statements": [
+                            {
+                                "sql": "CREATE TEMPORARY TABLE if NOT EXISTS tso_temp (mktid VARCHAR(10), share VARCHAR(10), unit DECIMAL(10,0), price DECIMAL(10,2), yield INT(10), effdate DATE, efftime TIME, edittime DATETIME, sharename VARCHAR(30), defvalue VARCHAR(50), message VARCHAR(50), remarks MEDIUMTEXT, defdatetime DATETIME)"
+                            }
+                        ],
+                        "sql": "delete from tso "
+                    },
+                    "poststatement": {
+                        "sql": "INSERT INTO tso SELECT * FROM tso_temp "
+                    }
+                }
+            }
+        } ]
+    },
+    "test_file_statement_params_validate": {
+        "models": [ {
+            "name": "tso",
+            "alias": { "privateAlias": "PROMPTDB" },
+            "fields": {
+                "mktid": { "type": "STRING", "options": { "seqno": 1 } },
+                "share": { "type": "STRING", "options": { "seqno": 2 } },
+                "unit": { "type": "DECIMAL", "options": { "seqno": 3 } },
+                "price": { "type": "DECIMAL", "options": { "seqno": 4 } },
+                "yield": { "type": "INTEGER" },
+                "effdate": { "type": "DATE", "options": { "seqno": 5 } },
+                "efftime": { "type": "TIME", "options": { "seqno": 6 } },
+                "edittime": { "type": "DATETIME", "options": { "seqno": 7 } },
+                "sharename": { "type": "STRING", "options": { "seqno": 8 } },
+                "defvalue": { "type": "STRING" },
+                "message": { "type": "STRING" },
+                "remarks": { "type": "STRING", "defaultValue": "test_file_statement_params_validate" }
+            },
+            "settings": { "skip": 1, "delimiter": ",", "quotable": true,
+                "statement": {
+                    "poststatement": {
+                        "sql": "update tso set defvalue='POSTING', defdatetime=?defdatetime, message=?message where mktid='TSO' ",
+                        "parameters": [
+                            { "name": "defdatetime", "caption": "Date/Time", "defaultValue": "#current_timestamp" },
+                            { "name": "message", "caption": "Message", "required": true }
+                        ]
                     }
                 }
             }
@@ -1464,5 +1530,4 @@
             }
         } ] 
     }
-
 }
