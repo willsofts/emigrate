@@ -1,0 +1,10 @@
+/*#(10000) programmer code begin;*/
+#searchbutton { margin-top: 10px; margin-left: 5px; }
+#insertbutton { margin-top: 10px; margin-right: 5px; }
+a.key-link { margin-bottom: 5px; }
+#addmodelbutton { float: right; width: 40px; min-width: 40px; height: 35px; margin-bottom: 5px; margin-right: 10px; }
+#entrylayerarea { padding-top: 0px; }
+#entrylayer { margin-top: 0px; }
+#fsmodeltabbar { margin-right: 10px; }
+.del-linker { padding-left: 5px; }
+/*#(10000) programmer code end;*/

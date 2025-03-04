@@ -236,7 +236,7 @@ export class MigrateBase extends TknOperateHandler {
         knsql.append("c.connecthandler,c.connectquery,c.connectfieldname,c.connectfieldvalue,c.connectmapper,");
         knsql.append("d.dialectalias,d.dialectoptions ");
         knsql.append("from tmigrateconnect c,tdialect d ");
-        knsql.append("where c.conectid = ?connectid ");
+        knsql.append("where c.connectid = ?connectid ");
         knsql.append("and c.connectdialect = d.dialectid ");
         knsql.set("connectid",connectid);
         let rs = await knsql.executeQuery(db,context);

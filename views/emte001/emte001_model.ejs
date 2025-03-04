@@ -1,0 +1,58 @@
+<%
+	let model = data.dataset?.model;
+	if(model) {
+%>
+<div id="entrymodel_<%=model.modelid%>" class="tab-pane fade entry-models" data-model="<%=model.modelid%>">
+	<input type="hidden" id="modelid_<%=model.modelid%>" class="model-id" value="<%=model.modelid%>" />
+	<div class="row row-height">
+		<div class="col-md-12 col-height">
+				<div class="table-layer-class">
+					<div class="row row-height">
+						<div class="col-height col-md-10">
+<label for="modelname_<%=model.modelid%>" id="modelname_label" class="control-label"><%=label.get('modelname_label','Model Name')%></label>
+<div class="input-group"><input type="text" id="modelname_<%=model.modelid%>" class="form-control input-md irequired alert-input model-name" class="form-control input-md irequired alert-input" maxlength="150" value="<%=model.modelname%>" /><span></span><div class="input-group-required"><label class="required">*</label></div></div><div id="modelname_<%=model.modelid%>_alert" role="alert" class="has-feedback has-error fa-hidden"><%=label.get('modelname_alert','You can not leave this empty')%></div>
+						</div>
+					</div>
+				</div>
+		</div>
+	</div>
+	<div class="row row-height">
+		<div class="col-md-12 col-height">
+				<div class="table-layer-class">
+					<div class="row row-height">
+						<div class="col-height col-md-5">
+<label for="tablename_<%=model.modelid%>" id="tablename_label" class="control-label"><%=label.get('tablename_label','Table Name')%></label>
+<div class="input-group"><input type="text" id="tablename_<%=model.modelid%>" class="form-control input-md irequired alert-input table-name" maxlength="50" value="<%=model.tablename%>" /><span></span><div class="input-group-required"><label class="required">*</label></div></div><div id="tablename_<%=model.modelid%>_alert" role="alert" class="has-feedback has-error fa-hidden"><%=label.get('tablename_alert','You can not leave this empty')%></div>
+						</div>
+					</div>
+				</div>
+		</div>
+	</div>
+	<div class="row row-height">
+		<div class="col-md-12 col-height">
+				<div class="table-layer-class">
+					<div class="row row-height">
+						<div class="col-height col-md-12">
+	<label for="tablefields_<%=model%>" id="tablefields_label_<%=model.modelid%>" class="control-label"><%=label.get('tablefields_label','Table Fields')%></label>
+	<div class="input-group"><textarea id="tablefields_<%=model.modelid%>" class="form-control input-md table-fields" rows="15"><%=model.tablefields%></textarea><div class="input-group-required"><label class="required">&#160;</label></div></div><div id="tablefields_<%=model%>_alert" role="alert" class="has-feedback has-error fa-hidden"><%=label.get('tablefields_alert','Invalid setting format')%></div>
+						</div>
+					</div>
+				</div>
+		</div>
+	</div>
+	<div class="row row-height">
+		<div class="col-md-12 col-height">
+				<div class="table-layer-class">
+					<div class="row row-height">
+						<div class="col-height col-md-12">
+	<label for="tablesettings_<%=model%>" id="tablesettings_label_<%=model.modelid%>" class="control-label"><%=label.get('tablesettings_label','Table Setting')%></label>
+	<div class="input-group"><textarea id="tablesettings_<%=model.modelid%>" class="form-control input-md table-settings" rows="5"><%=model.tablesettings%></textarea><div class="input-group-required"><label class="required">*</label></div></div><div id="tablesetting_<%=model%>_alert" role="alert" class="has-feedback has-error fa-hidden"><%=label.get('tablesettings_alert','Invalid setting format')%></div>
+						</div>
+					</div>
+				</div>
+		</div>
+	</div>	
+</div>
+<%
+	}
+%>

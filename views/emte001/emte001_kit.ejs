@@ -1,0 +1,130 @@
+<div class="row row-height">
+	<div class="col-md-12 col-height">
+			<div class="table-layer-class">
+				<div class="row row-height">
+					<div class="col-height col-md-7">
+<label for="connectid" id="connectid_label" class="control-label"><%=label.get('connectid_label','Connection')%></label>
+<div class="input-group">
+<%-page.html('select',{map: data.entity?.tmigrateconnect, value: data.dataset?.connectid, id: "connectid", name: "connectid", class: "form-control input-md", empty: true })%>
+<a href="javascript:void(0)" id="connecteditbutton" class="input-group-addon input-group-append input-group-text" title="Edit Connection" tabindex="-1"><em class="fa fa-edit" aria-hidden="true"></em></a>
+<a href="javascript:void(0)" id="connectnewbutton" class="input-group-addon input-group-append input-group-text" title="New Connection" tabindex="-1"><em class="fa fa-plus" aria-hidden="true"></em></a>
+<div class="input-group-required"><label class="required">&#160;</label></div></div><div id="connectid_alert" role="alert" class="has-feedback has-error fa-hidden"><%=label.get('connectid_alert','You can not leave this empty')%></div>
+					</div>
+				</div>
+			</div>
+	</div>
+</div>
+<div class="row row-height">
+	<div class="col-md-12 col-height">
+			<div class="table-layer-class">
+				<div class="row row-height">
+					<div class="col-height col-md-12">
+<label for="taskconfigs" id="taskconfigs_label" class="control-label"><%=label.get('taskconfigs_label','Task Configuration')%></label>
+<div class="input-group"><textarea type="text" id="taskconfigs" name="taskconfigs" class="form-control input-md irequired validate-json" rows="5"><%=data.dataset.taskconfigs%></textarea><span></span><div class="input-group-required"><label class="required">&#160;</label></div></div><div id="taskconfigs_alert" role="alert" class="has-feedback has-error fa-hidden"><%=label.get('taskconfigs_alert','Invalid setting')%></div>
+					</div>
+				</div>
+			</div>
+	</div>
+</div>						
+
+<div class="row row-height">
+	<div class="col-md-12 col-height">
+			<div class="table-layer-class">
+				<div class="row row-height">
+					<div class="col-height col-md-12">
+<label for="addmodelbutton" id="taskmodel_label" class="control-label"><%=label.get('taskmodel_label','Task Model')%></label>
+<a href="#0" id="addmodelbutton" class="btn btn-primary btn-md" title="Add Model" tabindex="-1"><i class="fa fa-plus fa-btn-icon" aria-hidden="true"></i></a>
+					</div>
+				</div>
+			</div>
+	</div>
+</div>
+<div id="fsmodeltablayer">
+	<ul id="fsmodeltabbar" class="nav nav-tabs navbar-left nav-tabbar-agent" role="tablist">
+<%	
+	let models = data.dataset?.models;
+	if(models) {
+		let firstflag = true;
+		for(let model of models) {
+			let activing = firstflag ? "active":"";
+%>
+		<li class="nav-item active" role="presentation">
+			<a id="linker_<%=model.modelid%>" class="nav-link model-link <%=activing%>" href="#entrymodel_<%=model.modelid%>" data-toggle="tab" data-target="#entrymodel_<%=model.modelid%>" role="tab" aria-controls="entrymodel_<%=model.modelid%>" aria-selected="<%=firstflag%>">
+				<label><%=model.modelname%></label>
+				<% if(!firstflag) { %>					
+				<span id="dellink_<%=model.modelid%>" class="del-linker"><i class="fa fa-times-circle"></i></span>
+				<% } %>				
+			</a>
+  		</li>
+<%
+			firstflag = false;
+		}
+	}
+%>
+	</ul>
+</div>
+<div id="entrytabmodel" class="tab-content">
+<%
+	if(models) {
+		let firstflag = true;
+		for(let model of models) {
+			let activing = firstflag ? "show active":"";
+%>
+<div id="entrymodel_<%=model.modelid%>" class="tab-pane fade entry-models <%=activing%>" data-model="<%=model.modelid%>">
+	<input type="hidden" id="modelid_<%=model.modelid%>" class="model-id" value="<%=model.modelid%>" />
+	<div class="row row-height">
+		<div class="col-md-12 col-height">
+				<div class="table-layer-class">
+					<div class="row row-height">
+						<div class="col-height col-md-10">
+<label for="modelname_<%=model.modelid%>" id="modelname_label" class="control-label"><%=label.get('modelname_label','Model Name')%></label>
+<div class="input-group"><input type="text" id="modelname_<%=model.modelid%>" class="form-control input-md irequired alert-input model-name" class="form-control input-md irequired alert-input" maxlength="150" value="<%=model.modelname%>" data-model="<%=model.modelid%>"/><span></span><div class="input-group-required"><label class="required">*</label></div></div><div id="modelname_<%=model.modelid%>_alert" role="alert" class="has-feedback has-error fa-hidden"><%=label.get('modelname_alert','You can not leave this empty')%></div>
+						</div>
+					</div>
+				</div>
+		</div>
+	</div>
+	<div class="row row-height">
+		<div class="col-md-12 col-height">
+				<div class="table-layer-class">
+					<div class="row row-height">
+						<div class="col-height col-md-5">
+<label for="tablename_<%=model.modelid%>" id="tablename_label" class="control-label"><%=label.get('tablename_label','Table Name')%></label>
+<div class="input-group"><input type="text" id="tablename_<%=model.modelid%>" class="form-control input-md irequired alert-input table-name" maxlength="50" value="<%=model.tablename%>" /><span></span><div class="input-group-required"><label class="required">*</label></div></div><div id="tablename_<%=model.modelid%>_alert" role="alert" class="has-feedback has-error fa-hidden"><%=label.get('tablename_alert','You can not leave this empty')%></div>
+						</div>
+					</div>
+				</div>
+		</div>
+	</div>
+	<div class="row row-height">
+		<div class="col-md-12 col-height">
+				<div class="table-layer-class">
+					<div class="row row-height">
+						<div class="col-height col-md-12">
+	<label for="tablefields_<%=model%>" id="tablefields_label_<%=model.modelid%>" class="control-label"><%=label.get('tablefields_label','Table Fields')%></label>
+	<div class="input-group"><textarea id="tablefields_<%=model.modelid%>" class="form-control input-md alert-input table-fields validate-json" rows="15"><%=model.tablefields%></textarea><div class="input-group-required"><label class="required">&#160;</label></div></div><div id="tablefields_<%=model.modelid%>_alert" role="alert" class="has-feedback has-error fa-hidden"><%=label.get('tablefields_alert','Invalid setting or is empty')%></div>
+						</div>
+					</div>
+				</div>
+		</div>
+	</div>
+	<div class="row row-height">
+		<div class="col-md-12 col-height">
+				<div class="table-layer-class">
+					<div class="row row-height">
+						<div class="col-height col-md-12">
+	<label for="tablesettings_<%=model%>" id="tablesettings_label_<%=model.modelid%>" class="control-label"><%=label.get('tablesettings_label','Table Setting')%></label>
+	<div class="input-group"><textarea id="tablesettings_<%=model.modelid%>" class="form-control input-md table-settings validate-json" rows="5"><%=model.tablesettings%></textarea><div class="input-group-required"><label class="required">*</label></div></div><div id="tablesetting_<%=model.modelid%>_alert" role="alert" class="has-feedback has-error fa-hidden"><%=label.get('tablesettings_alert','Invalid setting')%></div>
+						</div>
+					</div>
+				</div>
+		</div>
+	</div>	
+</div>
+<%
+			firstflag = false;
+		}
+	}
+%>
+</div>
+<input type="hidden" id="models" name="models" />

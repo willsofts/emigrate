@@ -79,3 +79,6 @@
 2025-03-02
 + support statement elements
 + can validate statement required parameter
+
+2025-03-04
++ support task setting screen (emte001)
