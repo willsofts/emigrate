@@ -87,7 +87,7 @@ CREATE TABLE IF NOT EXISTS `tmigrate` (
 
 -- Dumping structure for table migratedb.tmigrateconnect
 CREATE TABLE IF NOT EXISTS `tmigrateconnect` (
-  `conectid` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `connectid` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `connectname` varchar(150) COLLATE utf8mb4_general_ci NOT NULL,
   `connecttype` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT 'DB,API',
   `connectdialect` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
@@ -113,12 +113,12 @@ CREATE TABLE IF NOT EXISTS `tmigrateconnect` (
   `edittime` time DEFAULT NULL,
   `editmillis` bigint DEFAULT NULL,
   `edituser` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
-  PRIMARY KEY (`conectid`)
+  PRIMARY KEY (`connectid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='table keep migrate connector';
 
 -- Dumping data for table migratedb.tmigrateconnect: ~1 rows (approximately)
-INSERT INTO `tmigrateconnect` (`conectid`, `connectname`, `connecttype`, `connectdialect`, `connectapi`, `connecturl`, `connectuser`, `connectpassword`, `connectdatabase`, `connecthost`, `connectport`, `connectfieldname`, `connectfieldvalue`, `connectmapper`, `connectsetting`, `connectbody`, `connecthandler`, `connectquery`, `createdate`, `createtime`, `createmillis`, `createuser`, `editdate`, `edittime`, `editmillis`, `edituser`) VALUES
-	('PROMPDB', 'Prompt Database', 'DB', 'MYSQL', NULL, NULL, 'root', 'root', 'migratedb', 'localhost', 3306, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+INSERT INTO `tmigrateconnect` (`connectid`, `connectname`, `connecttype`, `connectdialect`, `connectapi`, `connecturl`, `connectuser`, `connectpassword`, `connectdatabase`, `connecthost`, `connectport`, `connectfieldname`, `connectfieldvalue`, `connectmapper`, `connectsetting`, `connectbody`, `connecthandler`, `connectquery`, `createdate`, `createtime`, `createmillis`, `createuser`, `editdate`, `edittime`, `editmillis`, `edituser`) VALUES
+	('PROMPTDB', 'Prompt Database', 'DB', 'MYSQL', NULL, NULL, 'root', 'root', 'migratedb', 'localhost', 3306, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
 
 -- Dumping structure for table migratedb.tmigratelog
 CREATE TABLE IF NOT EXISTS `tmigratelog` (
@@ -207,7 +207,7 @@ CREATE TABLE IF NOT EXISTS `tmigratetask` (
 
 -- Dumping data for table migratedb.tmigratetask: ~1 rows (approximately)
 INSERT INTO `tmigratetask` (`taskid`, `taskname`, `tasktype`, `connectid`, `taskconfigs`, `createdate`, `createtime`, `createmillis`, `createuser`, `editdate`, `edittime`, `editmillis`, `edituser`) VALUES
-	('tmigrate', 'Migrate Testing', 'IMPORT', 'PROMPDB', NULL, '2024-12-17', '15:35:23', NULL, NULL, '2024-12-17', '15:35:28', NULL, NULL);
+	('tmigrate', 'Migrate Testing', 'IMPORT', 'PROMPTDB', NULL, '2024-12-17', '15:35:23', NULL, NULL, '2024-12-17', '15:35:28', NULL, NULL);
 
 -- Dumping structure for table migratedb.tmigratetaskmodel
 CREATE TABLE IF NOT EXISTS `tmigratetaskmodel` (

@@ -53,7 +53,7 @@ CREATE TABLE tmigrate (
   remark varchar(100) DEFAULT NULL
 );
 CREATE TABLE tmigrateconnect (
-  conectid varchar(50) NOT NULL,
+  connectid varchar(50) NOT NULL,
   connectname varchar(150) NOT NULL,
   connecttype varchar(10) NOT NULL,
   connectdialect varchar(10) DEFAULT NULL,
@@ -79,10 +79,10 @@ CREATE TABLE tmigrateconnect (
   edittime time DEFAULT NULL,
   editmillis bigint DEFAULT NULL,
   edituser varchar(50) DEFAULT NULL,
-  PRIMARY KEY (conectid)
+  PRIMARY KEY (connectid)
 );
-INSERT INTO tmigrateconnect (conectid, connectname, connecttype, connectdialect, connectapi, connecturl, connectuser, connectpassword, connectdatabase, connecthost, connectport, connectfieldname, connectfieldvalue, connectmapper, connectsetting, connectbody, connecthandler, connectquery, createdate, createtime, createmillis, createuser, editdate, edittime, editmillis, edituser) VALUES
-	('PROMPDB', 'Prompt Database', 'DB', 'MYSQL', NULL, NULL, 'root', 'root', 'migratedb', 'localhost', 3306, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+INSERT INTO tmigrateconnect (connectid, connectname, connecttype, connectdialect, connectapi, connecturl, connectuser, connectpassword, connectdatabase, connecthost, connectport, connectfieldname, connectfieldvalue, connectmapper, connectsetting, connectbody, connecthandler, connectquery, createdate, createtime, createmillis, createuser, editdate, edittime, editmillis, edituser) VALUES
+	('PROMPTDB', 'Prompt Database', 'DB', 'MYSQL', NULL, NULL, 'root', 'root', 'migratedb', 'localhost', 3306, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
 CREATE TABLE tmigratelog (
   migrateid varchar(50) NOT NULL,
   taskid varchar(50) NOT NULL,
@@ -159,7 +159,7 @@ CREATE TABLE tmigratetask (
   PRIMARY KEY (taskid)
 );
 INSERT INTO tmigratetask (taskid, taskname, tasktype, connectid, taskconfigs, createdate, createtime, createmillis, createuser, editdate, edittime, editmillis, edituser) VALUES
-	('tmigrate', 'Migrate Testing', 'IMPORT', 'PROMPDB', NULL, '2024-12-17', '15:35:23', NULL, NULL, '2024-12-17', '15:35:28', NULL, NULL);
+	('tmigrate', 'Migrate Testing', 'IMPORT', 'PROMPTDB', NULL, '2024-12-17', '15:35:23', NULL, NULL, '2024-12-17', '15:35:28', NULL, NULL);
 CREATE TABLE tmigratetaskmodel (
   taskid varchar(50) NOT NULL,
   modelid varchar(50) NOT NULL,

@@ -84,6 +84,8 @@ CREATE TABLE IF NOT EXISTS `tcaptcha` (
   PRIMARY KEY (`capid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
+-- Dumping data for table migrateauth.tcaptcha: ~0 rows (approximately)
+
 -- Dumping structure for table migrateauth.tconfig
 CREATE TABLE IF NOT EXISTS `tconfig` (
   `category` varchar(50) NOT NULL,
@@ -390,7 +392,7 @@ CREATE TABLE IF NOT EXISTS `tppwd` (
 
 -- Dumping data for table migrateauth.tppwd: ~1 rows (approximately)
 INSERT INTO `tppwd` (`userid`, `checkreservepwd`, `checkpersonal`, `checkmatchpattern`, `checkmatchnumber`, `timenotusedoldpwd`, `alertbeforeexpire`, `pwdexpireday`, `notloginafterday`, `notchgpwduntilday`, `minpwdlength`, `alphainpwd`, `otherinpwd`, `maxsamechar`, `mindiffchar`, `maxarrangechar`, `loginfailtime`, `fromip`, `toip`, `starttime`, `endtime`, `groupflag`, `maxloginfailtime`, `checkdictpwd`, `maxpwdlength`, `digitinpwd`, `upperinpwd`, `lowerinpwd`) VALUES
-	('DEFAULT', '1', '1', '0', '1', 0, 0, 120, 0, 7, 8, 0, 1, 0, 0, 0, 0, NULL, NULL, NULL, NULL, '1', 0, 0, 0, 1, 1, 1);
+	('DEFAULT', '1', '1', '0', '1', 0, 0, 120, 0, 7, 3, 0, 1, 0, 0, 0, 0, NULL, NULL, NULL, NULL, '1', 0, 0, 0, 1, 1, 1);
 
 -- Dumping structure for table migrateauth.tprod
 CREATE TABLE IF NOT EXISTS `tprod` (
@@ -437,8 +439,9 @@ CREATE TABLE IF NOT EXISTS `tprog` (
   PRIMARY KEY (`programid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COMMENT='table keep program name';
 
--- Dumping data for table migrateauth.tprog: ~3 rows (approximately)
+-- Dumping data for table migrateauth.tprog: ~4 rows (approximately)
 INSERT INTO `tprog` (`product`, `programid`, `progname`, `prognameth`, `progtype`, `appstype`, `description`, `parameters`, `progsystem`, `iconfile`, `iconstyle`, `shortname`, `shortnameth`, `progpath`, `editdate`, `edittime`, `edituser`) VALUES
+	('PROMPT', 'emte001', 'Task Setting', 'Task Setting', 'F', 'W', 'Task Setting', NULL, 'F', '', NULL, 'Task', 'Task', NULL, NULL, NULL, NULL),
 	('PROMPT', 'sfte012', 'Configure Setting', 'Configure Setting', 'F', 'W', 'Configure Setting', NULL, 'F', 'sfte012.png', NULL, 'Configure', 'Configure', NULL, NULL, NULL, NULL),
 	('PROMPT', 'sftq001', 'Tracking', 'Tracking', 'F', 'W', 'Tracking', NULL, 'F', 'sftq001.png', NULL, 'Tracking', 'Tracking', NULL, NULL, NULL, NULL),
 	('PROMPT', 'sftu004', 'Access Token', 'Access Token', 'F', 'W', 'Access Token', NULL, 'F', 'sftu004.png', NULL, 'Token', 'Token', NULL, NULL, NULL, NULL);
@@ -452,10 +455,11 @@ CREATE TABLE IF NOT EXISTS `tproggrp` (
   PRIMARY KEY (`groupname`,`programid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COMMENT='table keep program by group';
 
--- Dumping data for table migrateauth.tproggrp: ~3 rows (approximately)
+-- Dumping data for table migrateauth.tproggrp: ~4 rows (approximately)
 INSERT INTO `tproggrp` (`groupname`, `programid`, `parameters`, `seqno`) VALUES
 	('ADMIN', 'sfte012', NULL, 1),
 	('ADMIN', 'sftq001', NULL, 2),
+	('SETTING', 'emte001', NULL, 2),
 	('SETTING', 'sftu004', NULL, 1);
 
 -- Dumping structure for table migrateauth.trpwd
@@ -650,7 +654,7 @@ INSERT INTO `tuser` (`userid`, `username`, `site`, `startdate`, `enddate`, `stat
 	('test8', 'test8@test.com', 'FWS', NULL, NULL, 'A', '$2a$10$g/5giEKKwQKm.9UNmL6CCOtSqN64tFi04QzCS/D.ECog88PsTAVC.', NULL, NULL, NULL, NULL, '0', '0', NULL, NULL, 0, NULL, '0', 'E', NULL, NULL, NULL, 0, '0', '0', '0', '0', '0', '0', 0, NULL, NULL, NULL, NULL),
 	('test9', 'test9@testing.com', 'FWS', NULL, NULL, 'A', '$2a$10$g/5giEKKwQKm.9UNmL6CCOtSqN64tFi04QzCS/D.ECog88PsTAVC.', NULL, NULL, NULL, NULL, '0', '0', NULL, NULL, 0, NULL, '0', 'O', NULL, NULL, NULL, 0, '0', '1', '0', '0', '0', '0', 0, NULL, '2023-09-14', '16:35:54', 'tso'),
 	('tester', 'tester@freewill.com', 'FWS', NULL, NULL, 'A', '$2a$10$lDY.QbMZp./3KLS3uGpu3OHypOk4itewChD2.2jrtsgQmGaJ2BayS', NULL, NULL, NULL, NULL, NULL, '0', NULL, NULL, 0, 0, '0', 'O', NULL, '2024-09-17', '13:47:15', 12, '0', '0', '0', '0', '0', '0', 0, 0, '2021-05-16', '10:26:46', 'tso'),
-	('tso', 'tso@freewill.com', 'FWS', NULL, NULL, 'A', '$2a$10$XxaiWYBcRIglzgJ9MF3toO6ZpUh6dv/XDEFlPsPtkpS583Hiuqz/y', '2025-03-11', '2024-11-11', '10:16:03', '1', '1', '0', '', '', 0, 0, '0', 'A', '', '2025-02-27', '20:18:57', 7257, '0', '1', '1', '0', '0', '0', 0, 0, '2023-09-14', '16:57:56', 'tso'),
+	('tso', 'tso@freewill.com', 'FWS', NULL, NULL, 'A', '$2a$10$XxaiWYBcRIglzgJ9MF3toO6ZpUh6dv/XDEFlPsPtkpS583Hiuqz/y', '2025-03-11', '2024-11-11', '10:16:03', '1', '1', '0', '', '', 0, 0, '0', 'A', '', '2025-03-04', '15:35:27', 7260, '0', '1', '1', '0', '0', '0', 0, 0, '2023-09-14', '16:57:56', 'tso'),
 	('ttso', 'ttso@freewill.com', 'FWS', NULL, NULL, 'A', '$2a$10$XxaiWYBcRIglzgJ9MF3toO6ZpUh6dv/XDEFlPsPtkpS583Hiuqz/y', '2025-07-28', '2022-03-30', '09:21:19', NULL, '0', '0', NULL, NULL, 0, 0, '0', 'E', NULL, '2024-12-04', '12:56:25', 339, '0', '0', '0', '0', '0', '0', 0, 0, NULL, NULL, NULL);
 
 -- Dumping structure for table migrateauth.tuserbranch
@@ -770,7 +774,7 @@ INSERT INTO `tuserinfo` (`site`, `employeeid`, `userid`, `userbranch`, `usertnam
 	('FWS', 'test8', 'test8', NULL, 'Test8', 'Test', 'Test8', 'Test', 'Test8_Tes', NULL, NULL, NULL, 'test8@gmail.com', NULL, NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, NULL),
 	('FWS', 'test9', 'test9', NULL, 'Test9', 'Test', 'Test9', 'Test', 'Test9_Tes', NULL, NULL, NULL, 'test9@gmail.com', NULL, NULL, NULL, NULL, NULL, '0', '2023-09-14', '16:35:54', 'tso', 'sfte007', NULL),
 	('FWS', 'tester', 'tester', NULL, 'Tester', 'Test', 'Tester', 'Test', 'Tester_Tes', '2024-09-17', '13:47:15', NULL, 'tester@gmail.com', 'M', NULL, NULL, NULL, NULL, '0', '2021-05-16', '10:26:46', 'tso', 'sfte007', NULL),
-	('FWS', 'tso', 'tso', '00', 'Tassan', 'Oros', 'Tassan', 'Oros', 'Tassan_oro', '2025-02-27', '20:18:57', 'photo_fwg_tso.png', 'tassun_oro@hotmail.com', 'M', 'tassun_oro', '0955941678', 'EN', NULL, '0', '2024-10-02', '15:15:39', 'tso', 'sfte007', '{"companion":"qby1"}'),
+	('FWS', 'tso', 'tso', '00', 'Tassan', 'Oros', 'Tassan', 'Oros', 'Tassan_oro', '2025-03-04', '15:35:27', 'photo_fwg_tso.png', 'tassun_oro@hotmail.com', 'M', 'tassun_oro', '0955941678', 'EN', NULL, '0', '2024-10-02', '15:15:39', 'tso', 'sfte007', '{"companion":"qby1"}'),
 	('FWS', 'ttso', 'ttso', '00', 'Tassun', 'Oros', 'Tassun', 'Oros', 'Tassun_Oro', '2024-12-04', '12:56:25', NULL, 'tassunoros@gmail.com', 'M', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, '{"companion":"tama1"}');
 
 -- Dumping structure for table migrateauth.tuserinfohistory

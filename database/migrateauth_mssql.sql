@@ -365,6 +365,7 @@ CREATE TABLE tprog (
   PRIMARY KEY (programid)
 );
 INSERT INTO tprog (product, programid, progname, prognameth, progtype, appstype, description, parameters, progsystem, iconfile, iconstyle, shortname, shortnameth, progpath, editdate, edittime, edituser) VALUES
+	('PROMPT', 'emte001', 'Task Setting', 'Task Setting', 'F', 'W', 'Task Setting', NULL, 'F', '', NULL, 'Task', 'Task', NULL, NULL, NULL, NULL),
 	('PROMPT', 'sfte012', 'Configure Setting', 'Configure Setting', 'F', 'W', 'Configure Setting', NULL, 'F', 'sfte012.png', NULL, 'Configure', 'Configure', NULL, NULL, NULL, NULL),
 	('PROMPT', 'sftq001', 'Tracking', 'Tracking', 'F', 'W', 'Tracking', NULL, 'F', 'sftq001.png', NULL, 'Tracking', 'Tracking', NULL, NULL, NULL, NULL),
 	('PROMPT', 'sftu004', 'Access Token', 'Access Token', 'F', 'W', 'Access Token', NULL, 'F', 'sftu004.png', NULL, 'Token', 'Token', NULL, NULL, NULL, NULL);
@@ -378,6 +379,7 @@ CREATE TABLE tproggrp (
 INSERT INTO tproggrp (groupname, programid, parameters, seqno) VALUES
 	('ADMIN', 'sfte012', NULL, 1),
 	('ADMIN', 'sftq001', NULL, 2),
+	('SETTING', 'emte001', NULL, 2),
 	('SETTING', 'sftu004', NULL, 1);
 CREATE TABLE trpwd (
   reservepwd varchar(50) NOT NULL DEFAULT '',
