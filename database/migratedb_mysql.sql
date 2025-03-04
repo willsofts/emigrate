@@ -118,7 +118,7 @@ CREATE TABLE IF NOT EXISTS `tmigrateconnect` (
 
 -- Dumping data for table migratedb.tmigrateconnect: ~1 rows (approximately)
 INSERT INTO `tmigrateconnect` (`conectid`, `connectname`, `connecttype`, `connectdialect`, `connectapi`, `connecturl`, `connectuser`, `connectpassword`, `connectdatabase`, `connecthost`, `connectport`, `connectfieldname`, `connectfieldvalue`, `connectmapper`, `connectsetting`, `connectbody`, `connecthandler`, `connectquery`, `createdate`, `createtime`, `createmillis`, `createuser`, `editdate`, `edittime`, `editmillis`, `edituser`) VALUES
-	('PROMPDB', '', 'DB', 'MYSQL', NULL, NULL, 'root', 'root', 'migratedb', 'localhost', 3306, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+	('PROMPDB', 'Prompt Database', 'DB', 'MYSQL', NULL, NULL, 'root', 'root', 'migratedb', 'localhost', 3306, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
 
 -- Dumping structure for table migratedb.tmigratelog
 CREATE TABLE IF NOT EXISTS `tmigratelog` (

@@ -84,11 +84,6 @@ CREATE TABLE IF NOT EXISTS `tcaptcha` (
   PRIMARY KEY (`capid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
--- Dumping data for table migrateauth.tcaptcha: ~2 rows (approximately)
-INSERT INTO `tcaptcha` (`capid`, `captext`, `capanswer`, `createdate`, `createtime`, `createmillis`, `expiretimes`, `expiredate`, `expiretime`) VALUES
-	('041aef87-489f-48f2-a81e-02329dc9f422', '43 + 31', '74', '2025-02-27', '19:57:47', 1740661067264, 1740662867264, '2025-02-27', '20:27:47'),
-	('d93c5d6d-44ab-47f6-b52e-9f231ea838e1', '84 + 97', '181', '2025-02-27', '19:56:31', 1740660990870, 1740662790870, '2025-02-27', '20:26:31');
-
 -- Dumping structure for table migrateauth.tconfig
 CREATE TABLE IF NOT EXISTS `tconfig` (
   `category` varchar(50) NOT NULL,
@@ -395,7 +390,7 @@ CREATE TABLE IF NOT EXISTS `tppwd` (
 
 -- Dumping data for table migrateauth.tppwd: ~1 rows (approximately)
 INSERT INTO `tppwd` (`userid`, `checkreservepwd`, `checkpersonal`, `checkmatchpattern`, `checkmatchnumber`, `timenotusedoldpwd`, `alertbeforeexpire`, `pwdexpireday`, `notloginafterday`, `notchgpwduntilday`, `minpwdlength`, `alphainpwd`, `otherinpwd`, `maxsamechar`, `mindiffchar`, `maxarrangechar`, `loginfailtime`, `fromip`, `toip`, `starttime`, `endtime`, `groupflag`, `maxloginfailtime`, `checkdictpwd`, `maxpwdlength`, `digitinpwd`, `upperinpwd`, `lowerinpwd`) VALUES
-	('DEFAULT', '1', '1', '0', '1', 0, 0, 120, 0, 7, 3, 0, 1, 0, 0, 0, 0, NULL, NULL, NULL, NULL, '1', 0, 0, 0, 1, 1, 1);
+	('DEFAULT', '1', '1', '0', '1', 0, 0, 120, 0, 7, 8, 0, 1, 0, 0, 0, 0, NULL, NULL, NULL, NULL, '1', 0, 0, 0, 1, 1, 1);
 
 -- Dumping structure for table migrateauth.tprod
 CREATE TABLE IF NOT EXISTS `tprod` (
