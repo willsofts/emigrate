@@ -1,3 +1,4 @@
 [
+    {"groupname": "SETTING", "nameen": "Setting", "nameth": "Setting", "groupstyle": "fa fa-cogs", "programid": "emte001", "progname": "Task Setting", "prognameth": "Task Setting", "progpath": "", "url": "", "iconstyle": "fa fa-desktop"},
     {"groupname": "SETTING", "nameen": "Setting", "nameth": "Setting", "groupstyle": "fa fa-cogs", "programid": "sftu004", "progname": "Access Token", "prognameth": "Access Token", "progpath": "", "url": "", "iconstyle": "fa fa-desktop"}
 ]
