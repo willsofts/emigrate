@@ -17,7 +17,7 @@ CREATE TABLE tactivate (
   activateremark varchar(200) DEFAULT NULL,
   activateparameter varchar(200) DEFAULT NULL,
   activatemessage varchar(200) DEFAULT NULL,
-  activatecontents varchar(200) DEFAULT NULL,
+  activatecontents text DEFAULT NULL,
   PRIMARY KEY (activatekey,activateuser)
 );
 CREATE TABLE tactivatehistory (
@@ -39,7 +39,7 @@ CREATE TABLE tactivatehistory (
   activateremark varchar(200) DEFAULT NULL,
   activateparameter varchar(200) DEFAULT NULL,
   activatemessage varchar(200) DEFAULT NULL,
-  activatecontents varchar(200) DEFAULT NULL
+  activatecontents text DEFAULT NULL
 );
 CREATE TABLE tcaptcha (
   capid varchar(50) NOT NULL,
@@ -454,7 +454,7 @@ CREATE TABLE trxres (
   action varchar(50) DEFAULT NULL,
   quotable varchar(50) DEFAULT NULL,
   grouper varchar(50) DEFAULT NULL,
-  contents varchar(200) DEFAULT NULL
+  contents text DEFAULT NULL
 );
 CREATE TABLE ttemplate (
   template varchar(50) NOT NULL,
@@ -615,6 +615,7 @@ CREATE TABLE tuserinfo (
   userename varchar(50) DEFAULT NULL,
   useresurname varchar(50) DEFAULT NULL,
   displayname varchar(50) DEFAULT NULL,
+  activeflag varchar(1) DEFAULT '0',
   accessdate date DEFAULT NULL,
   accesstime time DEFAULT NULL,
   photoimage varchar(100) DEFAULT NULL,
@@ -672,7 +673,7 @@ CREATE TABLE tuserinfohistory (
   editdate date DEFAULT NULL,
   edittime time DEFAULT NULL,
   edituser varchar(50) DEFAULT NULL,
-  remarks varchar(200) DEFAULT NULL,
+  remarks text DEFAULT NULL,
   usercontents text
 );
 CREATE TABLE tuserlog (

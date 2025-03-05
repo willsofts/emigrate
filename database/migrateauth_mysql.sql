@@ -390,7 +390,7 @@ CREATE TABLE IF NOT EXISTS `tppwd` (
   PRIMARY KEY (`userid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
--- Dumping data for table migrateauth.tppwd: ~1 rows (approximately)
+-- Dumping data for table migrateauth.tppwd: ~0 rows (approximately)
 INSERT INTO `tppwd` (`userid`, `checkreservepwd`, `checkpersonal`, `checkmatchpattern`, `checkmatchnumber`, `timenotusedoldpwd`, `alertbeforeexpire`, `pwdexpireday`, `notloginafterday`, `notchgpwduntilday`, `minpwdlength`, `alphainpwd`, `otherinpwd`, `maxsamechar`, `mindiffchar`, `maxarrangechar`, `loginfailtime`, `fromip`, `toip`, `starttime`, `endtime`, `groupflag`, `maxloginfailtime`, `checkdictpwd`, `maxpwdlength`, `digitinpwd`, `upperinpwd`, `lowerinpwd`) VALUES
 	('DEFAULT', '1', '1', '0', '1', 0, 0, 120, 0, 7, 3, 0, 1, 0, 0, 0, 0, NULL, NULL, NULL, NULL, '1', 0, 0, 0, 1, 1, 1);
 
@@ -654,8 +654,8 @@ INSERT INTO `tuser` (`userid`, `username`, `site`, `startdate`, `enddate`, `stat
 	('test8', 'test8@test.com', 'FWS', NULL, NULL, 'A', '$2a$10$g/5giEKKwQKm.9UNmL6CCOtSqN64tFi04QzCS/D.ECog88PsTAVC.', NULL, NULL, NULL, NULL, '0', '0', NULL, NULL, 0, NULL, '0', 'E', NULL, NULL, NULL, 0, '0', '0', '0', '0', '0', '0', 0, NULL, NULL, NULL, NULL),
 	('test9', 'test9@testing.com', 'FWS', NULL, NULL, 'A', '$2a$10$g/5giEKKwQKm.9UNmL6CCOtSqN64tFi04QzCS/D.ECog88PsTAVC.', NULL, NULL, NULL, NULL, '0', '0', NULL, NULL, 0, NULL, '0', 'O', NULL, NULL, NULL, 0, '0', '1', '0', '0', '0', '0', 0, NULL, '2023-09-14', '16:35:54', 'tso'),
 	('tester', 'tester@freewill.com', 'FWS', NULL, NULL, 'A', '$2a$10$lDY.QbMZp./3KLS3uGpu3OHypOk4itewChD2.2jrtsgQmGaJ2BayS', NULL, NULL, NULL, NULL, NULL, '0', NULL, NULL, 0, 0, '0', 'O', NULL, '2024-09-17', '13:47:15', 12, '0', '0', '0', '0', '0', '0', 0, 0, '2021-05-16', '10:26:46', 'tso'),
-	('tso', 'tso@freewill.com', 'FWS', NULL, NULL, 'A', '$2a$10$XxaiWYBcRIglzgJ9MF3toO6ZpUh6dv/XDEFlPsPtkpS583Hiuqz/y', '2025-03-11', '2024-11-11', '10:16:03', '1', '1', '0', '', '', 0, 0, '0', 'A', '', '2025-03-04', '15:35:27', 7260, '0', '1', '1', '0', '0', '0', 0, 0, '2023-09-14', '16:57:56', 'tso'),
-	('ttso', 'ttso@freewill.com', 'FWS', NULL, NULL, 'A', '$2a$10$XxaiWYBcRIglzgJ9MF3toO6ZpUh6dv/XDEFlPsPtkpS583Hiuqz/y', '2025-07-28', '2022-03-30', '09:21:19', NULL, '0', '0', NULL, NULL, 0, 0, '0', 'E', NULL, '2024-12-04', '12:56:25', 339, '0', '0', '0', '0', '0', '0', 0, 0, NULL, NULL, NULL);
+	('tso', 'tso@freewill.com', 'FWS', NULL, NULL, 'A', '$2a$10$XxaiWYBcRIglzgJ9MF3toO6ZpUh6dv/XDEFlPsPtkpS583Hiuqz/y', '2025-03-11', '2024-11-11', '10:16:03', '1', '1', '0', '', '', 0, 0, '0', 'A', '', '2025-03-05', '12:03:56', 7264, '0', '1', '1', '0', '0', '0', 0, 0, '2023-09-14', '16:57:56', 'tso'),
+	('ttso', 'ttso@freewill.com', 'FWS', NULL, NULL, 'A', '$2a$10$XxaiWYBcRIglzgJ9MF3toO6ZpUh6dv/XDEFlPsPtkpS583Hiuqz/y', '2025-07-28', '2022-03-30', '09:21:19', NULL, '0', '0', NULL, NULL, 0, 0, '0', 'E', NULL, '2025-03-04', '15:41:12', 341, '0', '0', '0', '0', '0', '0', 0, 0, NULL, NULL, NULL);
 
 -- Dumping structure for table migrateauth.tuserbranch
 CREATE TABLE IF NOT EXISTS `tuserbranch` (
@@ -741,6 +741,7 @@ CREATE TABLE IF NOT EXISTS `tuserinfo` (
   `userename` varchar(50) DEFAULT NULL,
   `useresurname` varchar(50) DEFAULT NULL,
   `displayname` varchar(50) DEFAULT NULL,
+  `activeflag` varchar(1) DEFAULT '0',
   `accessdate` date DEFAULT NULL,
   `accesstime` time DEFAULT NULL,
   `photoimage` varchar(100) DEFAULT NULL,
@@ -762,20 +763,20 @@ CREATE TABLE IF NOT EXISTS `tuserinfo` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COMMENT='table keep user info (employee info)';
 
 -- Dumping data for table migrateauth.tuserinfo: ~13 rows (approximately)
-INSERT INTO `tuserinfo` (`site`, `employeeid`, `userid`, `userbranch`, `usertname`, `usertsurname`, `userename`, `useresurname`, `displayname`, `accessdate`, `accesstime`, `photoimage`, `email`, `gender`, `lineid`, `mobile`, `langcode`, `birthday`, `inactive`, `editdate`, `edittime`, `edituser`, `remarks`, `usercontents`) VALUES
-	('FWS', 'adminis', 'adminis', '00', 'FWS', 'Administrator', 'FWS', 'Administrator', 'FWS_Adm', '2025-02-27', '20:24:16', 'photo_fwg_fwgadmin.jpg', 'admin@freewillsolutions.com', 'M', NULL, NULL, NULL, NULL, '0', '2021-05-16', '10:27:01', 'tso', 'sfte007', NULL),
-	('FWS', 'test1', 'test1', NULL, 'Test1', 'Test', 'Test1', 'Test', 'Test1_Tes', '2023-09-27', '16:18:12', NULL, 'test1@gmail.com', NULL, NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, NULL),
-	('FWS', 'test2', 'test2', NULL, 'Test2', 'Test', 'Test2', 'Test', 'Test2_Tes', NULL, NULL, NULL, 'test2@gmail.com', NULL, NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, NULL),
-	('FWS', 'test3', 'test3', NULL, 'Test3', 'Test', 'Test3', 'Test', 'Test3_Tes', NULL, NULL, NULL, 'test3@gmail.com', NULL, NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, NULL),
-	('FWS', 'test4', 'test4', NULL, 'Test4', 'Test', 'Test4', 'Test', 'Test4_Tes', NULL, NULL, NULL, 'test4@gmail.com', NULL, NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, NULL),
-	('FWS', 'test5', 'test5', NULL, 'Test5', 'Test', 'Test5', 'Test', 'Test5_Tes', NULL, NULL, NULL, 'test5@gmail.com', NULL, NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, NULL),
-	('FWS', 'test6', 'test6', NULL, 'Test6', 'Test', 'Test6', 'Test', 'Test6_Tes', NULL, NULL, NULL, 'test6@gmail.com', NULL, NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, NULL),
-	('FWS', 'test7', 'test7', NULL, 'Test7', 'Test', 'Test7', 'Test', 'Test7_Tes', NULL, NULL, NULL, 'test7@gmail.com', NULL, NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, NULL),
-	('FWS', 'test8', 'test8', NULL, 'Test8', 'Test', 'Test8', 'Test', 'Test8_Tes', NULL, NULL, NULL, 'test8@gmail.com', NULL, NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, NULL),
-	('FWS', 'test9', 'test9', NULL, 'Test9', 'Test', 'Test9', 'Test', 'Test9_Tes', NULL, NULL, NULL, 'test9@gmail.com', NULL, NULL, NULL, NULL, NULL, '0', '2023-09-14', '16:35:54', 'tso', 'sfte007', NULL),
-	('FWS', 'tester', 'tester', NULL, 'Tester', 'Test', 'Tester', 'Test', 'Tester_Tes', '2024-09-17', '13:47:15', NULL, 'tester@gmail.com', 'M', NULL, NULL, NULL, NULL, '0', '2021-05-16', '10:26:46', 'tso', 'sfte007', NULL),
-	('FWS', 'tso', 'tso', '00', 'Tassan', 'Oros', 'Tassan', 'Oros', 'Tassan_oro', '2025-03-04', '15:35:27', 'photo_fwg_tso.png', 'tassun_oro@hotmail.com', 'M', 'tassun_oro', '0955941678', 'EN', NULL, '0', '2024-10-02', '15:15:39', 'tso', 'sfte007', '{"companion":"qby1"}'),
-	('FWS', 'ttso', 'ttso', '00', 'Tassun', 'Oros', 'Tassun', 'Oros', 'Tassun_Oro', '2024-12-04', '12:56:25', NULL, 'tassunoros@gmail.com', 'M', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, '{"companion":"tama1"}');
+INSERT INTO `tuserinfo` (`site`, `employeeid`, `userid`, `userbranch`, `usertname`, `usertsurname`, `userename`, `useresurname`, `displayname`, `activeflag`, `accessdate`, `accesstime`, `photoimage`, `email`, `gender`, `lineid`, `mobile`, `langcode`, `birthday`, `inactive`, `editdate`, `edittime`, `edituser`, `remarks`, `usercontents`) VALUES
+	('FWS', 'adminis', 'adminis', '00', 'FWS', 'Administrator', 'FWS', 'Administrator', 'FWS_Adm', '0', '2025-02-27', '20:24:16', 'photo_fwg_fwgadmin.jpg', 'admin@freewillsolutions.com', 'M', NULL, NULL, NULL, NULL, '0', '2021-05-16', '10:27:01', 'tso', 'sfte007', NULL),
+	('FWS', 'test1', 'test1', NULL, 'Test1', 'Test', 'Test1', 'Test', 'Test1_Tes', '0', '2023-09-27', '16:18:12', NULL, 'test1@gmail.com', NULL, NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, NULL),
+	('FWS', 'test2', 'test2', NULL, 'Test2', 'Test', 'Test2', 'Test', 'Test2_Tes', '0', NULL, NULL, NULL, 'test2@gmail.com', NULL, NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, NULL),
+	('FWS', 'test3', 'test3', NULL, 'Test3', 'Test', 'Test3', 'Test', 'Test3_Tes', '0', NULL, NULL, NULL, 'test3@gmail.com', NULL, NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, NULL),
+	('FWS', 'test4', 'test4', NULL, 'Test4', 'Test', 'Test4', 'Test', 'Test4_Tes', '0', NULL, NULL, NULL, 'test4@gmail.com', NULL, NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, NULL),
+	('FWS', 'test5', 'test5', NULL, 'Test5', 'Test', 'Test5', 'Test', 'Test5_Tes', '0', NULL, NULL, NULL, 'test5@gmail.com', NULL, NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, NULL),
+	('FWS', 'test6', 'test6', NULL, 'Test6', 'Test', 'Test6', 'Test', 'Test6_Tes', '0', NULL, NULL, NULL, 'test6@gmail.com', NULL, NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, NULL),
+	('FWS', 'test7', 'test7', NULL, 'Test7', 'Test', 'Test7', 'Test', 'Test7_Tes', '0', NULL, NULL, NULL, 'test7@gmail.com', NULL, NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, NULL),
+	('FWS', 'test8', 'test8', NULL, 'Test8', 'Test', 'Test8', 'Test', 'Test8_Tes', '0', NULL, NULL, NULL, 'test8@gmail.com', NULL, NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, NULL),
+	('FWS', 'test9', 'test9', NULL, 'Test9', 'Test', 'Test9', 'Test', 'Test9_Tes', '0', NULL, NULL, NULL, 'test9@gmail.com', NULL, NULL, NULL, NULL, NULL, '0', '2023-09-14', '16:35:54', 'tso', 'sfte007', NULL),
+	('FWS', 'tester', 'tester', NULL, 'Tester', 'Test', 'Tester', 'Test', 'Tester_Tes', '0', '2024-09-17', '13:47:15', NULL, 'tester@gmail.com', 'M', NULL, NULL, NULL, NULL, '0', '2021-05-16', '10:26:46', 'tso', 'sfte007', NULL),
+	('FWS', 'tso', 'tso', '00', 'Tassan', 'Oros', 'Tassan', 'Oros', 'Tassan_oro', '0', '2025-03-05', '12:03:56', 'photo_fwg_tso.png', 'tassun_oro@hotmail.com', 'M', 'tassun_oro', '0955941678', 'EN', NULL, '0', '2024-10-02', '15:15:39', 'tso', 'sfte007', '{"companion":"qby1"}'),
+	('FWS', 'ttso', 'ttso', '00', 'Tassun', 'Oros', 'Tassun', 'Oros', 'Tassun_Oro', '0', '2025-03-04', '15:41:12', NULL, 'tassunoros@gmail.com', 'M', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, '{"companion":"tama1"}');
 
 -- Dumping structure for table migrateauth.tuserinfohistory
 CREATE TABLE IF NOT EXISTS `tuserinfohistory` (
@@ -802,7 +803,7 @@ CREATE TABLE IF NOT EXISTS `tuserinfohistory` (
   `editdate` date DEFAULT NULL,
   `edittime` time DEFAULT NULL,
   `edituser` varchar(50) DEFAULT NULL,
-  `remarks` varchar(200) DEFAULT NULL,
+  `remarks` text CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci,
   `usercontents` text
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COMMENT='table keep user info (employee info)';
 
@@ -827,7 +828,7 @@ CREATE TABLE IF NOT EXISTS `tuserlog` (
   `contents` text
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COMMENT='table keep user logging';
 
--- Dumping data for table migrateauth.tuserlog: ~0 rows (approximately)
+-- Dumping data for table migrateauth.tuserlog: ~19 rows (approximately)
 
 -- Dumping structure for table migrateauth.tuserpwd
 CREATE TABLE IF NOT EXISTS `tuserpwd` (

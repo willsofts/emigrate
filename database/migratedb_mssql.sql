@@ -14,7 +14,7 @@ CREATE TABLE tattachfile (
   attachpath varchar(350) DEFAULT NULL,
   attachurl varchar(250) DEFAULT NULL,
   attachsize bigint DEFAULT NULL,
-  attachstream varchar(200) DEFAULT NULL,
+  attachstream text DEFAULT NULL,
   PRIMARY KEY (attachid)
 );
 CREATE INDEX attachno ON tattachfile (attachno);
@@ -67,10 +67,10 @@ CREATE TABLE tmigrateconnect (
   connectfieldname varchar(50) DEFAULT NULL,
   connectfieldvalue varchar(50) DEFAULT NULL,
   connectmapper varchar(100) DEFAULT NULL,
-  connectsetting varchar(200) DEFAULT NULL,
-  connectbody varchar(200) DEFAULT NULL,
-  connecthandler varchar(200) DEFAULT NULL,
-  connectquery varchar(200) DEFAULT NULL,
+  connectsetting text DEFAULT NULL,
+  connectbody text DEFAULT NULL,
+  connecthandler text DEFAULT NULL,
+  connectquery text DEFAULT NULL,
   createdate date DEFAULT NULL,
   createtime time DEFAULT NULL,
   createmillis bigint DEFAULT NULL,
@@ -118,9 +118,9 @@ CREATE TABLE tmigratelog (
   useruuid varchar(50) DEFAULT NULL,
   authtoken varchar(350) DEFAULT NULL,
   tokentype varchar(10) DEFAULT NULL,
-  errormessage varchar(200) DEFAULT NULL,
-  errorcontents varchar(200) DEFAULT NULL,
-  remarks varchar(200) DEFAULT NULL,
+  errormessage text DEFAULT NULL,
+  errorcontents text DEFAULT NULL,
+  remarks text DEFAULT NULL,
   PRIMARY KEY (migrateid)
 );
 CREATE INDEX processid ON tmigratelog (processid);
@@ -128,8 +128,8 @@ CREATE TABLE tmigratemodel (
   modelid varchar(50) NOT NULL,
   modelname varchar(150) NOT NULL,
   tablename varchar(50) NOT NULL,
-  tablefields varchar(MAX) DEFAULT NULL,
-  tablesettings varchar(MAX) DEFAULT NULL,
+  tablefields text DEFAULT NULL,
+  tablesettings text DEFAULT NULL,
   createdate date DEFAULT NULL,
   createtime time DEFAULT NULL,
   createmillis bigint DEFAULT NULL,
@@ -147,7 +147,7 @@ CREATE TABLE tmigratetask (
   taskname varchar(150) NOT NULL,
   tasktype varchar(10) NOT NULL DEFAULT 'IMPORT',
   connectid varchar(50) DEFAULT NULL,
-  taskconfigs varchar(200) DEFAULT NULL,
+  taskconfigs text DEFAULT NULL,
   createdate date DEFAULT NULL,
   createtime time DEFAULT NULL,
   createmillis bigint DEFAULT NULL,
