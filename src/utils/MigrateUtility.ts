@@ -4,7 +4,7 @@ import mime from "mime-types";
 import { KnParamInfo, KnSQLUtils } from "@willsofts/will-db";
 import { KnDBUtils, KnDBTypes } from "@willsofts/will-sql";
 import { Utilities } from "@willsofts/will-util";
-import { FileInfo } from "../models/MigrateAlias";
+import { FileInfo, FileType } from "../models/MigrateAlias";
 import { MigrateDate } from "../utils/MigrateDate";
 
 const dateparser = new MigrateDate();
@@ -75,6 +75,23 @@ export class MigrateUtility {
             }
         }
         return undefined;
+    }
+
+
+    public static parseFileType(filename?: string) : FileType {
+        let result = { isText: false, isJson: false, isXlsx: false, isXml: false };
+        if(filename) {
+            const textfiletypes = new RegExp("text|txt|csv","i");
+            const jsonfiletypes = new RegExp("json","i");
+            const xlsxfiletypes = new RegExp("xlsx|xls","i");
+            const xmlfiletypes = new RegExp("xml","i");
+            const extname = path.extname(filename).toLowerCase();
+            result.isText = textfiletypes.test(extname);
+            result.isJson = jsonfiletypes.test(extname);
+            result.isXlsx = xlsxfiletypes.test(extname);
+            result.isXml = xmlfiletypes.test(extname);
+        }
+        return result;
     }
 
 }

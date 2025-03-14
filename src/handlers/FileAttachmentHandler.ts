@@ -99,16 +99,19 @@ export class FileAttachmentHandler extends PluginHandler {
         let setting = plugin.property;
         //setting.source = from email , setting.target = attach filename filter
         if(setting?.source && setting?.source.trim().length > 0) {
+            let source = setting.source;
+            let reconcile = setting?.reconcile;
+            if(reconcile && reconcile.trim().length > 0) source = reconcile;
             setting.file = undefined;
             let filepath = setting?.path || ATTACH_FILE_PATH;
             if(!fs.existsSync(filepath)) {
                 fs.mkdirSync(filepath, { recursive: true });
             }
-            this.logger.debug(this.constructor.name+".performDownload: try fetch mail:",setting.source);
+            this.logger.debug(this.constructor.name+".performDownload: try fetch mail:",source,"("+setting.source+")");
             try {
                 let config = await this.getConfig(setting);
                 let options : FetchOptions = { 
-                    from: setting?.from || ATTACH_MAIL_FROM || setting.source,
+                    from: setting?.from || ATTACH_MAIL_FROM || source,
                     subject: setting?.subject || ATTACH_MAIL_SUBJECT,
                     filenameFilter: setting?.target || ATTACH_MAIL_FILENAME,
                     naming: setting?.naming

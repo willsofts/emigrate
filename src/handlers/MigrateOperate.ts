@@ -59,14 +59,15 @@ export class MigrateOperate extends MigrateBase {
             //find out data set from xpath
             dataset = this.scrapeData(model.settings.xpath,datasource,datasource);
         }
-        dataset = await this.performDataMapper(context,model,datasource,dataset);
         if(Array.isArray(dataset)) {
             dataset = await this.performReformation(context,model,dataset);
+            dataset = await this.performDataMapper(context,model,datasource,dataset);
             for(let data of dataset) {
                 await this.performDefaultValues(context,model,data,datasource,datapart);
                 await this.performConversion(context,model,data,datasource);
             }     
         } else {
+            dataset = await this.performDataMapper(context,model,datasource,dataset);
             await this.performDefaultValues(context,model,dataset,datasource,datapart);
             await this.performConversion(context,model,dataset,datasource);
         }
@@ -248,12 +249,11 @@ export class MigrateOperate extends MigrateBase {
                     this.logger.debug(this.constructor.name+".performConversion: fetch data",response);
                     if(response) {
                         let conmapper = connection?.mapper;
-                        this.logger.debug(this.constructor.name+".performConversion: mapper="+conmapper+", data:",data);
                         let values = response;
                         if(conmapper) {
                             values = this.scrapeData(conmapper,response,response);
                         }
-                        this.logger.debug(this.constructor.name+".performConversion: scrapeData=",values);
+                        this.logger.debug(this.constructor.name+".performConversion: mapper="+conmapper,", scrapeData=",values);
                         if(values) {
                             if(Array.isArray(values)) {
                                 let confieldname = connection?.fieldname;
@@ -299,25 +299,49 @@ export class MigrateOperate extends MigrateBase {
         if(connection) {
             let type = connection?.type;
             if(type=="API") {
-                return await this.performRequestAPI(context,connection);
+                return await this.performRequestAPI(context,connection,data);
             } else if(type=="DB") {
-                return await this.performRequestDB(context,connection);
+                return await this.performRequestDB(context,connection,data);
             }
         }
         return undefined;
     }
 
-    public async performRequestDB(context: KnContextInfo, config: MigrateConfig) : Promise<KnRecordSet | undefined> {
+    public async performRequestDB(context: KnContextInfo, config: MigrateConfig, data: any) : Promise<KnRecordSet | undefined> {
         if(config.query) {
             //try to get from cache
             if(!context.options) context.options = {};
             let hash = this.toHashString(config.schema+config.query);
             let response = context.options[hash];
             if(response) return response;
+            let values = [];
+            let knsql = new KnSQL();
+            knsql.append(config.query);
+            let [sql,paramnames] = knsql.getExactlySql(config?.alias);
+            if(paramnames && paramnames.length > 0) {
+                for(let name of paramnames) {
+                    let value = context.params[name];
+                    if(typeof value === 'undefined') value = data[name];
+                    knsql.set(name,value);
+                    values.push(value);
+                }
+            }    
+            if(config?.parameters && config?.parameters.length > 0) {
+                for(let pr of config.parameters) {
+                    let [value,found] = this.parseDefaultValue(pr?.defaultValue);
+                    if(found) {
+                        knsql.set(pr.name,value);
+                        values.push(value);
+                    }
+                }
+            }
+            if(values.length > 0) {
+                hash = this.toHashString(config.schema+config.query+values.join(''));
+                response = context.options[hash];
+                if(response) return response;
+            }
             let db = this.getConnector(config);
             try {
-                let knsql = new KnSQL();
-                knsql.append(config.query);
                 let rs = await knsql.executeQuery(db,context);
                 let records = this.createRecordSet(rs);
                 this.logger.debug(this.constructor.name+".performRequestDB: resultset:",records);
@@ -334,16 +358,36 @@ export class MigrateOperate extends MigrateBase {
         return undefined;
     }
 
-    public async performRequestAPI(context: KnContextInfo, config: MigrateConfig) : Promise<any> {
+    public async performRequestAPI(context: KnContextInfo, config: MigrateConfig, data: any) : Promise<any> {
         let api = config?.api;
         if(!context.options) context.options = {};
         //try to get from cache
-        let body = config?.body || {}
+        let values = [];
+        let databody = config?.body || {};
+        let body = { ... databody };
+        for(let key in body) {
+            let value = body[key];
+            if(value && value.charAt(0) == '?') {
+                value = value.substring(1);
+                body[key] = data[value];
+                values.push(data[value]);
+            }
+        }
+        if(config?.parameters && config?.parameters.length > 0) {
+            for(let pr of config.parameters) {
+                let [value,found] = this.parseDefaultValue(pr?.defaultValue);
+                if(found) {
+                    body[pr.name] = value;
+                    values.push(value);
+                }
+            }
+        }
         let hash = this.toHashString(api+JSON.stringify(body));
         let response = context.options[hash];
         if(!response && api) {
             //when not found from cache, try to make request
-            response = await this.requestAPI(api,config?.setting,config?.body);
+            let headers = config?.setting || {};
+            response = await this.requestAPI(api,{...headers},body);
             this.logger.debug(this.constructor.name+".performRequestAPI: response:",response);
             if(response) {
                 //try to set cache by context options

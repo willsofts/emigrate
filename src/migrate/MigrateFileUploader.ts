@@ -10,6 +10,7 @@ import { MigrateJsonHandler } from "../handlers/MigrateJsonHandler";
 import { MigrateExcelHandler } from "../handlers/MigrateExcelHandler";
 import { MigrateXlsxHandler } from "../handlers/MigrateXlsxHandler";
 import { MigrateXmlHandler } from "../handlers/MigrateXmlHandler";
+import { MigrateUtility } from "../utils/MigrateUtility";
 
 export class MigrateFileUploader extends TknUploadRouter {
 
@@ -28,20 +29,9 @@ export class MigrateFileUploader extends TknUploadRouter {
 
 	protected override async doUploadFile(req: Request, res: Response) : Promise<void> {
 		res.contentType('application/json');
-		let isText = false;
-		let isJson = false;
-		let isXlsx = false;
-		let isXml = false;
-		if(req.file) {
-			const textfiletypes = new RegExp("text|txt|csv","i");
-			const jsonfiletypes = new RegExp("json","i");
-			const xlsxfiletypes = new RegExp("xlsx|xls","i");
-			const xmlfiletypes = new RegExp("xml","i");
-			const extname = path.extname(req.file.originalname).toLowerCase();
-			isText = textfiletypes.test(extname);
-			isJson = jsonfiletypes.test(extname);
-			isXlsx = xlsxfiletypes.test(extname);
-			isXml = xmlfiletypes.test(extname);
+		let filetype = MigrateUtility.parseFileType(req.file?.originalname);
+		this.logger.debug(this.constructor.name+".doUploadFile: filetype",filetype);
+		if(req.file?.originalname) {
 			req.file.originalname = Buffer.from(req.file.originalname, 'latin1').toString('utf8');
 		}
 		console.log(this.constructor.name+".doUploadFile: body",JSON.stringify(req.body));
@@ -53,7 +43,7 @@ export class MigrateFileUploader extends TknUploadRouter {
             let ctx = await this.createContext(req);
 			ctx.params.file = req.file;
 			let type = ctx.params.type;
-			if(isText) {
+			if(filetype.isText) {
 				if("json"==type) {
 					let handler = new MigrateJsonHandler();
 					handler.obtain(this.service?.broker,this.logger);
@@ -65,17 +55,17 @@ export class MigrateFileUploader extends TknUploadRouter {
 					let rs = await handler.insert(ctx);
 					response.body = rs;
 				}
-			} else if(isJson || "json"==type) {
+			} else if(filetype.isJson || "json"==type) {
 				let handler = new MigrateJsonHandler();
 				handler.obtain(this.service?.broker,this.logger);
 				let rs = await handler.insert(ctx);
 				response.body = rs;
-			} else if(isXml || "xml"==type) {
+			} else if(filetype.isXml || "xml"==type) {
 				let handler = new MigrateXmlHandler();
 				handler.obtain(this.service?.broker,this.logger);
 				let rs = await handler.insert(ctx);
 				response.body = rs;
-			} else if(isXlsx) {
+			} else if(filetype.isXlsx) {
 				if("excel"==type) {
 					let handler = new MigrateExcelHandler();
 					handler.obtain(this.service?.broker,this.logger);

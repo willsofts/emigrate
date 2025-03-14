@@ -12,6 +12,7 @@ import { DEFAULT_CALLING_SERVICE } from "../utils/EnvironmentVariable";
 import { TknOperateHandler } from "@willsofts/will-serv";
 import path from 'path';
 import fs from "fs";
+import { MigrateUtility } from "../utils/MigrateUtility";
 
 export class MigrateFileHandler extends MigrateTextHandler {
 
@@ -114,6 +115,7 @@ export class MigrateFileHandler extends MigrateTextHandler {
 
     protected async processFile(context: KnContextInfo, model: KnModel = this.model, calling: boolean = DEFAULT_CALLING_SERVICE, fortype?: string) : Promise<MigrateResultSet> {
         await this.validateRequireFields(context,model);
+        await this.doDataFile(context,model);
         let file = context.params.file;
         let filename = file;
         if(typeof file === "object") {
@@ -207,6 +209,7 @@ export class MigrateFileHandler extends MigrateTextHandler {
         let reconcile = taskmodel.configs?.reconcile as PluginSetting;
         let reconcile_model = taskmodel.configs?.reconcile?.model as KnModel;
         if(reconcile && reconcile_model) {
+            reconcile.property.reconcile = context.params?.reconcile;
             this.logger.debug(this.constructor.name+".doRecocile: reconcile setting",reconcile,", model:",reconcile_model);
             let reconcile_handler = await this.getPluginHandler(reconcile);
             if(reconcile_handler) {
@@ -220,7 +223,7 @@ export class MigrateFileHandler extends MigrateTextHandler {
                         if(datakeys.length > 0) {
                             let counter_data = dataitem[reconcile_model.name || datakeys[0]];
                             if(counter_data) {
-                                context.params.reconcile = parseInt(counter_data);
+                                context.params.reconcileCounter = parseInt(counter_data);
                             }
                         }                        
                     }
@@ -281,33 +284,20 @@ export class MigrateFileHandler extends MigrateTextHandler {
                 return this.processXlsxReading(context,model,filename);
             }
         }   
-        let isText = false;
-        let isJson = false;
-        let isXlsx = false;
-        let isXml = false;
-        if(filename) {
-            const textfiletypes = new RegExp("text|txt|csv","i");
-            const jsonfiletypes = new RegExp("json","i");
-            const xlsxfiletypes = new RegExp("xlsx|xls","i");
-            const xmlfiletypes = new RegExp("xml","i");
-            const extname = path.extname(filename).toLowerCase();
-            isText = textfiletypes.test(extname);
-            isJson = jsonfiletypes.test(extname);
-            isXlsx = xlsxfiletypes.test(extname);
-            isXml = xmlfiletypes.test(extname);
-        }
+        let filetype = MigrateUtility.parseFileType(filename);
+        this.logger.debug(this.constructor.name+".processFileReading: filetype",filetype);
         let type = context.params.type;
-        if(isText) {
+        if(filetype.isText) {
             if("json"==type) {
                 return this.processJsonReading(context,model,filename);
             } else {
                 return this.processTextReading(context,model,filename);
             }
-        } else if(isJson || "json"==type) {
+        } else if(filetype.isJson || "json"==type) {
             return this.processJsonReading(context,model,filename);
-        } else if(isXml || "xml"==type) {
+        } else if(filetype.isXml || "xml"==type) {
             return this.processXmlReading(context,model,filename);
-        } else if(isXlsx) {
+        } else if(filetype.isXlsx) {
             if("excel"==type) {
                 return this.processExcelReading(context,model,filename);
             } else {

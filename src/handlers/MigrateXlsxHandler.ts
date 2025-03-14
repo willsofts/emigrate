@@ -14,7 +14,7 @@ export class MigrateXlsxHandler extends MigrateTextHandler {
         }
         const readWorkbook = XLSX.readFile(filename,{cellDates: true});
         let sheetname = taskmodel.settings?.sheetname;
-        if(taskmodel.settings?.sheetno) {
+        if(typeof taskmodel.settings?.sheetno !== 'undefined') {
             sheetname = readWorkbook.SheetNames[taskmodel.settings?.sheetno];
         }
         let readSheet = readWorkbook.Sheets[sheetname];        

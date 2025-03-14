@@ -130,13 +130,13 @@ curl -X POST http://localhost:8080/upload/migrate/xml -F filename=@D:\exim\asset
 
 
 test center api:
-1. api/migratefile/file
+1. api/migratefile/file (file existing on server)
 curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/migratefile/file -d "{\"taskid\":\"test_file_text\", \"file\": \"./assets/tso.txt\"}"
 curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/migratefile/file -d "{\"taskid\":\"test_file_json\", \"file\": \"./assets/tso_json.txt\", \"type\":\"json\"}"
 curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/migratefile/file -d "{\"taskid\":\"test_file_xlsx\", \"file\": \"./assets/tso.xlsx\" }"
 curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/migratefile/file -d "{\"taskid\":\"test_file_xml\", \"file\": \"./assets/tso.xml\" }"
 
-2. upload/migrate/file
+2. upload/migrate/file (file come from client)
 curl -X POST http://localhost:8080/upload/migrate/file -F filename=@D:\exim\assets\tso.txt -F taskid=test_file_text
 curl -X POST http://localhost:8080/upload/migrate/file -F filename=@D:\exim\assets\tso_json.txt -F taskid=test_file_json -F type=json
 curl -X POST http://localhost:8080/upload/migrate/file -F filename=@D:\exim\assets\tso.xml -F taskid=test_file_xml
@@ -257,6 +257,22 @@ test filter data:
 curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/migratefile/file -d "{\"taskid\":\"test_file_text_filter\", \"file\": \"./assets/tso.txt\"}"
 curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/migratefile/file -d "{\"taskid\":\"test_file_text_filter_range\", \"file\": \"./assets/tso.txt\"}"
 
+test call db with parameter defined in sql:
+curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/migrate/task -d @test_simple_call_db_param.json
+
+test call api with parameter defined in body:
+curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/migrate/task -d @test_simple_call_api_param.json
+
+test reconcile file specified by parameter:
+curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/migratefile/file -d "{\"taskid\":\"test_file_text_download_reconcile\", \"reconcile\": \"http://localhost:8080/assets/tso_counter.txt\"}"
+curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/migratefile/file -d "{\"taskid\":\"test_file_text_download_reconcile\", \"reconcile\": \"http://localhost:8080/assets/tso_count.txt\"}"
+
+test text file with base64:
+curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/migratetext/insert -d @test_simple_text_base64.json
+curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/migratefile/file -d @test_simple_text_base64.json
+curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/migratefile/file -d @test_simple_xlsx_base64.json
+curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/migratexlsx/insert -d @test_simple_xlsx_base64.json
+
 
 setting up sftp server on windows:
 1. add OpenSSH Server 
@@ -267,7 +283,4 @@ setting up sftp server on windows:
     - net user [username] [password] /add /comment:"SFTP User Account" /home:"C:\SFTP\[username]"
     - net localgroup sftpusers [username] /add
 3. test sftp [username]@localhost
-
-
-
 

@@ -11,11 +11,12 @@ export interface MigrateSetting {
     setting?: any;
     body?: any;
     handler?: string;
+    handlerType?: string;
     query?: string;
 }
 
 export interface MigrateConfig extends KnDBConfig, MigrateSetting {
-
+    parameters?: ParameterInfo[];
 }
 
 export interface MigrateRecords {
@@ -128,4 +129,11 @@ export interface ParameterInfo {
     value?: string;
     defaultValue?: string;
     required?: boolean;
+}
+
+export interface FileType {    
+    isText: boolean,
+    isJson: boolean,
+    isXlsx: boolean,
+    isXml: boolean;
 }

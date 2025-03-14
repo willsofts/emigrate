@@ -82,3 +82,11 @@
 
 2025-03-04
 + support task setting screen (emte001)
+
+2025-03-14
++ fixed xlsx reading data array reform into object (test_file_api)
++ support reconcile parameter when invoke api
++ support parameter setting when call api & db by connection setting 
+(test_simple_call_api_param & test_simple_call_db_param)
++ support base64 data submit (specifiedy by parameter datafile)
+(test_simple_text_base64 & test_simple_xlsx_base64)

@@ -51,6 +51,9 @@ export class FileTransferHandler extends PluginHandler {
         this.logger.debug(this.constructor.name+".performDownload: plugin",MigrateUtility.maskAttributes(plugin));        
         let setting = plugin.property;
         if(setting?.source && setting?.source.trim().length > 0 && setting?.target && setting?.target.trim().length > 0) {
+            let source = setting.source;
+            let reconcile = setting?.reconcile;
+            if(reconcile && reconcile.trim().length > 0) source = reconcile;
             setting.file = undefined;
             let info = path.parse(setting.target);
             let filename = setting.target;
@@ -73,8 +76,8 @@ export class FileTransferHandler extends PluginHandler {
                 let config = await this.getConfig(setting);
                 sftp = await this.getClient();
                 await sftp.connect(config);
-                await sftp.get(setting.source,fullfilename);
-                this.logger.debug("get:",setting.source," as:",fullfilename);
+                await sftp.get(source,fullfilename);
+                this.logger.debug(this.constructor.name+".performDownload: get:",source,"("+setting.source+") as:",fullfilename);
                 setting.file = fullfilename;
                 return setting;
             } catch (err: any) {
@@ -111,7 +114,7 @@ export class FileTransferHandler extends PluginHandler {
                 sftp = await this.getClient();
                 await sftp.connect(config);
                 await sftp.put(setting.source,fullfilename);
-                this.logger.debug("put: ",setting.source," as:",fullfilename);
+                this.logger.debug(this.constructor.name+".performDownload: put:",setting.source," as:",fullfilename);
                 setting.file = fullfilename;
                 return setting;
             } catch (err: any) {

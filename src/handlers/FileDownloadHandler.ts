@@ -18,6 +18,9 @@ export class FileDownloadHandler extends PluginHandler {
         this.logger.debug(this.constructor.name+".performDownload: plugin",MigrateUtility.maskAttributes(plugin));        
         let setting = plugin.property;
         if(setting?.source && setting?.source.trim().length > 0 && setting?.target && setting?.target.trim().length > 0) {
+            let source = setting.source;
+            let reconcile = setting?.reconcile;
+            if(reconcile && reconcile.trim().length > 0) source = reconcile;
             setting.file = undefined;
             let info = path.parse(setting.target);
             let filename = info.base; //setting.target;
@@ -42,13 +45,13 @@ export class FileDownloadHandler extends PluginHandler {
                 let body = JSON.stringify(data);
                 init = Object.assign(params, { method: method, headers: headers, body });
             }
-            this.logger.debug("try fetch:",setting.source);
+            this.logger.debug(this.constructor.name+".performDownload: try fetch:",source,"("+setting.source+")");
             try {
-                const res = await fetch(setting.source, init);
+                const res = await fetch(source, init);
                 if (!res.ok) return Promise.reject(new Error(`Fail to download file: ${res.statusText}`));
                 if (res.ok && res.body) {
                     let writeError = undefined;
-                    this.logger.debug("saving as :",fullfilename);
+                    this.logger.debug(this.constructor.name+".performDownload: saving as :",fullfilename);
                     const writer = fs.createWriteStream(fullfilename, { autoClose: true });
                     writer.on("error",(err) => { 
                         writeError = err;

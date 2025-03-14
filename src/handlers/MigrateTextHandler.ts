@@ -6,9 +6,10 @@ import { KnDBConnector } from "@willsofts/will-sql";
 import { MigrateHandler } from "./MigrateHandler";
 import { MigrateUtility } from "../utils/MigrateUtility";
 import { TaskModel, MigrateRecordSet, MigrateResultSet, MigrateParams, MigrateRecords } from "../models/MigrateAlias";
-import { DEFAULT_CALLING_SERVICE } from "../utils/EnvironmentVariable";
+import { DEFAULT_CALLING_SERVICE, DOWNLOAD_FILE_PATH } from "../utils/EnvironmentVariable";
 import LineByLine from "n-readlines";
 import fs from 'fs';
+import path from "path";
 
 export class MigrateTextHandler extends MigrateHandler {
     
@@ -20,7 +21,43 @@ export class MigrateTextHandler extends MigrateHandler {
         return Promise.resolve(vi);
     }
 
+    protected async doDataFile(context: KnContextInfo, model: KnModel = this.model) : Promise<void> {
+        //check client submit data file with base64?
+        if(context.params?.datafile) {
+            let file = context.params?.file;
+            let type = context.params?.type;
+            if(!file && !type) {
+                return Promise.reject(new VerifyError("File or type is undefined",HTTP.NOT_ACCEPTABLE,-16062));
+            }
+            let filename = this.randomUUID()+(type?"."+type:""); 
+            if(file) {
+                let info = path.parse(file);
+                filename = info.base;
+                if("auto"===context.params?.naming || "true"===context.params?.naming) {
+                    let fileid = this.randomUUID();
+                    filename = fileid + info.ext;        
+                }
+            }
+            let filepath = model.settings?.path || DOWNLOAD_FILE_PATH;
+            let fullfilename = path.join(filepath, filename);            
+            if(!fs.existsSync(filepath)) {
+                fs.mkdirSync(filepath, { recursive: true });
+            }
+            this.logger.debug(this.constructor.name+".doDataFile: saving as :",fullfilename);
+            let buffer = Buffer.from(context.params.datafile,"base64");
+            const writer = fs.createWriteStream(fullfilename, { autoClose: true });
+            writer.write(buffer);
+            writer.end();
+            await new Promise<void>((resolve, reject) => {
+                writer.on('finish', resolve);
+                writer.on('error', reject);
+            });
+            context.params.file = fullfilename;
+        }
+    }
+
     public override async doInserting(context: KnContextInfo, model: KnModel = this.model, calling: boolean = DEFAULT_CALLING_SERVICE): Promise<MigrateResultSet> {
+        await this.doDataFile(context,model);
         let file = context.params.file;
         this.logger.debug(this.constructor.name+".doInserting: file",file);
         let filename = file;
@@ -62,10 +99,10 @@ export class MigrateTextHandler extends MigrateHandler {
                 return result;
             }
             let totalrecords = Array.isArray(datalist) ? datalist.length : 1;
-            let reconcile = context.params.reconcile;
-            this.logger.debug(this.constructor.name+".processInsertModel: total",totalrecords,"reconcile",reconcile);
-            if(typeof reconcile !== 'undefined' && reconcile != totalrecords) {
-                return Promise.reject(new VerifyError("Reconcile error ("+totalrecords+":"+reconcile+")",HTTP.NOT_ACCEPTABLE,-16072));
+            let reconcileCounter = context.params.reconcileCounter;
+            this.logger.debug(this.constructor.name+".processInsertModel: total",totalrecords,"reconcileCounter",reconcileCounter);
+            if(typeof reconcileCounter !== 'undefined' && reconcileCounter != totalrecords) {
+                return Promise.reject(new VerifyError("Reconcile error ("+totalrecords+":"+reconcileCounter+")",HTTP.NOT_ACCEPTABLE,-16072));
             }
             let rc : MigrateRecords = { totalrecords: totalrecords, errorrecords: 0, skiprecords: 0 };
             let handler = new MigrateHandler();
