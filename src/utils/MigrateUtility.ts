@@ -6,6 +6,7 @@ import { KnDBUtils, KnDBTypes } from "@willsofts/will-sql";
 import { Utilities } from "@willsofts/will-util";
 import { FileInfo, FileType } from "../models/MigrateAlias";
 import { MigrateDate } from "../utils/MigrateDate";
+import { XMLParser } from 'fast-xml-parser';
 
 const dateparser = new MigrateDate();
 
@@ -92,6 +93,70 @@ export class MigrateUtility {
             result.isXml = xmlfiletypes.test(extname);
         }
         return result;
+    }
+
+    public static formatDate(date?: Date, format: string = "DD/MM/YYYY", locale: string = "en", era: string = "BC") : string {
+        return dateparser.formatDate(date,format,locale,era);
+    }
+
+    public static formatTime(date?: Date, format: string = "HH:mm:ss", locale: string = "en", era: string = "BC") : string {
+        return dateparser.formatDate(date,format,locale,era);
+    }
+
+    public static formatDateTime(date?: Date, format: string = "DD/MM/YYYY HH:mm:ss", locale: string = "en", era: string = "BC") : string {
+        return dateparser.formatDate(date,format,locale,era);
+    }
+
+    public static formatDecimal(value?: number, format: string = "#,##0.00", locale: string = "en-US") : string {
+        if(!value) return "";
+        const decimalPlaces = (format.split('.')[1] || "").length;
+        return new Intl.NumberFormat(locale, {
+            minimumFractionDigits: decimalPlaces,
+            maximumFractionDigits: decimalPlaces,
+            useGrouping: format.includes(','), 
+        }).format(value);
+    }
+
+    public static formatInteger(value?: number, format: string = "#,##0", locale: string = "en-US") : string {
+        return this.formatDecimal(value,format,locale);
+    }
+
+    public static paddingText(text: string, length: number, direction: string = "right", padder: string = " ") {
+        if (text.length > length) {
+            return text.slice(0, length);
+        }    
+        if (direction === "right") {
+            return text.padEnd(length, padder); 
+        } else if (direction === "left") {
+            return text.padStart(length, padder);
+        }
+        return text;
+    }
+
+    public static escapeXML(str?: any) : string | undefined {
+        if(str === undefined || str === null) return "";
+        return (""+str).replace(/&/g, "&amp;")
+                  .replace(/</g, "&lt;")
+                  .replace(/>/g, "&gt;")
+                  .replace(/"/g, "&quot;")
+                  .replace(/'/g, "&apos;");
+    }
+
+    public static tryParseXmlToJSON(xml?: string) : any {
+        if(xml && xml.length > 0) {
+            const options = {
+                ignoreDeclaration: true,  // Do not parse declaration
+                ignorePiTags: true,       // Do not process instruction tags   
+                ignoreAttributes: false,  // Don't ignore attributes, so they will be parsed
+                textNodeName: "#text",    // Default name for text nodes
+                attributeNamePrefix: "",  // Do not add prefix to attributes
+                parseNodeValue: true,     // Parse the value of nodes
+                parseAttributeValue: true // Parse attributes as well    
+            };        
+            let parser = new XMLParser(options);
+            return parser.parse(xml,true);
+        }
+        return undefined;
     }
 
 }

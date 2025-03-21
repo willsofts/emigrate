@@ -1,5 +1,5 @@
-import { KnDBConfig, KnRecordSet } from "@willsofts/will-sql";
-import { KnModel, KnGenericObject } from "@willsofts/will-db";
+import { KnDBConfig, KnRecordSet, KnResultSet } from "@willsofts/will-sql";
+import { KnModel, KnGenericObject, KnFieldSetting, KnCellSetting } from "@willsofts/will-db";
 import { ParsedPath } from "path";
 
 export interface MigrateSetting {
@@ -77,6 +77,8 @@ export interface MigrateParams {
     calling: boolean;    
     async: boolean;
     dominated?: boolean;
+    notename?: string;
+    notefile?: string;
 }
 
 export interface FilterInfo {
@@ -136,4 +138,19 @@ export interface FileType {
     isJson: boolean,
     isXlsx: boolean,
     isXml: boolean;
+}
+
+export enum MigrateState {
+    START = "START",
+    RUN = "RUN",
+    FINISH = "FINISH"
+}
+
+export interface MigrateDataRow {
+    state: MigrateState; 
+    index: number;
+    datarow: any;
+    rs: KnResultSet;
+    fields: KnFieldSetting | KnCellSetting[] | undefined;
+    options: any;
 }

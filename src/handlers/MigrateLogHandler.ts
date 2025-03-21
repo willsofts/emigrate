@@ -8,8 +8,8 @@ import { PRIVATE_SECTION } from "../utils/EnvironmentVariable";
 import { Request, Response } from 'express';
 import path from 'path';
 
-export class MigrateLogHandler extends TknOperateHandler {
-    public dumping: boolean = false;
+export class MigrateLogHandler extends TknOperateHandler {    
+    public dumping: boolean = false; //force disable dump log sql statement
     public section = PRIVATE_SECTION;
     public model : KnModel = { 
         name: "tmigratelog", 
@@ -111,7 +111,7 @@ export class MigrateLogHandler extends TknOperateHandler {
         knsql.append(selstr);
         knsql.append(" from tmigratelog where migrateid = ?migrateid ");
         knsql.set("migrateid",context.params.migrateid);
-        let rs = await knsql.executeQuery(db);
+        let rs = await knsql.executeQuery(db,context);
         return this.createRecordSet(rs);
     }
 
@@ -144,7 +144,7 @@ export class MigrateLogHandler extends TknOperateHandler {
         knsql.append(selstr);
         knsql.append(" from tmigratelog where processid = ?processid ");
         knsql.set("processid",context.params.processid);
-        let rs = await knsql.executeQuery(db);
+        let rs = await knsql.executeQuery(db,context);
         return this.createRecordSet(rs);
     }
 
@@ -207,8 +207,66 @@ export class MigrateLogHandler extends TknOperateHandler {
                 knsql.set("processstatus",context.params.processstatus);
                 filter = " and ";
             }
-            let rs = await knsql.executeQuery(db);
+            let rs = await knsql.executeQuery(db,context);
             return this.createRecordSet(rs);
+        } catch(ex: any) {
+            this.logger.error(this.constructor.name,ex);
+            return Promise.reject(this.getDBError(ex));
+		} finally {
+			if(db) db.close();
+        }
+    }
+
+    protected async performUpdateStream(context: KnContextInfo, db: KnDBConnector, stream: any): Promise<KnRecordSet> {
+        let migrateid = context.params.migrateid;
+        if(!migrateid || migrateid.trim().length==0) return this.createRecordSet();
+        await this.performUpdateNote(context,db,migrateid,context.params.notename,context.params.notefile);
+        return await this.performInsertStream(context,db,migrateid,context.params.processid,context.params.notename,stream);
+    }
+
+    protected async performInsertStream(context: KnContextInfo, db: KnDBConnector, migrateid: string, processid: string, notename: string, stream: any): Promise<KnRecordSet> {
+        if(!migrateid || migrateid.trim().length==0) return this.createRecordSet();
+        let datafile = stream;
+        if(Buffer.isBuffer(stream)) {
+            datafile = stream.toString("base64")
+        } else {        
+            if(typeof stream === 'object') {
+                datafile = Buffer.from(JSON.stringify(stream,null,2)).toString("base64");
+            } else if(typeof stream === 'string') {
+                datafile = Buffer.from(stream).toString("base64");
+            }
+        }
+        let knsql = new KnSQL();
+        knsql.append("insert into tmigratefile(migrateid,processid,notename,datafile) values(?migrateid,?processid,?notename,?datafile) ");
+        knsql.set("migrateid",migrateid);
+        knsql.set("processid",processid);
+        knsql.set("notename",notename);
+        knsql.set("datafile",datafile);
+        let rs = await knsql.executeUpdate(db,context);
+        return this.createRecordSet(rs);
+    }
+
+    protected async performUpdateNote(context: KnContextInfo, db: KnDBConnector, migrateid: string, notename: string, notefile: string): Promise<KnRecordSet> {
+        if(!migrateid || migrateid.trim().length==0) return this.createRecordSet();
+        if(!notefile || notefile.trim().length==0) return this.createRecordSet();
+        let knsql = new KnSQL();
+        knsql.append("update tmigratelog set ");
+        if(notename && notename.trim().length > 0) {
+            knsql.append("notename = ?notename, ");
+            knsql.set("notename",notename);
+        }
+        knsql.append("notefile = ?notefile ");
+        knsql.append("where migrateid = ?migrateid ");
+        knsql.set("migrateid",migrateid);
+        knsql.set("notefile",notefile);
+        let rs = await knsql.executeUpdate(db,context);
+        return this.createRecordSet(rs);
+    }
+
+    public async updateStream(context: KnContextInfo, stream: any, model: KnModel = this.model) : Promise<KnRecordSet> {
+        let db = this.getPrivateConnector(model);
+        try {
+            return await this.performUpdateStream(context, db, stream);
         } catch(ex: any) {
             this.logger.error(this.constructor.name,ex);
             return Promise.reject(this.getDBError(ex));

@@ -83,6 +83,15 @@ CREATE TABLE tmigrateconnect (
 );
 INSERT INTO tmigrateconnect (connectid, connectname, connecttype, connectdialect, connectapi, connecturl, connectuser, connectpassword, connectdatabase, connecthost, connectport, connectfieldname, connectfieldvalue, connectmapper, connectsetting, connectbody, connecthandler, connectquery, createdate, createtime, createmillis, createuser, editdate, edittime, editmillis, edituser) VALUES
 	('PROMPTDB', 'Prompt Database', 'DB', 'MYSQL', NULL, NULL, 'root', 'root', 'migratedb', 'localhost', 3306, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+
+CREATE TABLE tmigratefile (
+  migrateid varchar(50) NOT NULL,
+  processid varchar(50) NOT NULL,
+  notename varchar(200) NOT NULL,
+  datafile text DEFAULT NULL,
+  PRIMARY KEY (migrateid)
+);
+
 CREATE TABLE tmigratelog (
   migrateid varchar(50) NOT NULL,
   taskid varchar(50) NOT NULL,

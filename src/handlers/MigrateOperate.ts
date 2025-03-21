@@ -9,8 +9,9 @@ import config from "@willsofts/will-util";
 
 export class MigrateOperate extends MigrateBase {
     
-    protected insertLogging(context: KnContextInfo, taskmodel: KnModel, param: MigrateParams, rs: MigrateRecordSet) {
-        let params = {authtoken: param.authtoken, ...rs, tablename: taskmodel.name, processfile: param.fileinfo?.path, sourcefile: param.fileinfo?.originalname || param.filename, filesize: param.fileinfo?.size };
+    protected insertLogging(context: KnContextInfo, taskmodel: KnModel, param: MigrateParams, rs: MigrateRecordSet, processtype: string = "IMGRATE") {
+        let { rows, columns, ...mrs} = rs;
+        let params = {authtoken: param.authtoken, ...mrs, tablename: taskmodel.name, processtype: processtype, processfile: param.fileinfo?.path, sourcefile: param.fileinfo?.originalname || param.filename, filesize: param.fileinfo?.size, notename: param.notename, notefile: param.notefile };
         if(param.calling) {
             this.call("migratelog.insert",params).catch(ex => this.logger.error(ex));
         } else {
@@ -28,7 +29,8 @@ export class MigrateOperate extends MigrateBase {
             processstatus = "ERROR";
             errormessage = this.getDBError(reject.throwable).message;
         }
-        let params = {authtoken: param.authtoken, ...rs, ...info, processstatus: processstatus, errormessage: errormessage };
+        let { rows, columns, ...mrs} = rs;
+        let params = {authtoken: param.authtoken, ...mrs, ...info, processstatus: processstatus, errormessage: errormessage };
         if(param.calling) {
             this.call("migratelog.update",params).catch(ex => this.logger.error(ex));
         } else {
@@ -39,10 +41,11 @@ export class MigrateOperate extends MigrateBase {
         }
     }
 
-    protected errorLogging(context: KnContextInfo, param: MigrateParams, result: MigrateRecordSet, ex: any) {
+    protected errorLogging(context: KnContextInfo, param: MigrateParams, rs: MigrateRecordSet, ex: any) {
         this.logger.error(ex); 
         let err = this.getDBError(ex);
-        let params = {authtoken: param.authtoken, ...result, processstatus: "ERROR", errormessage: err.message };
+        let { rows, columns, ...mrs} = rs;
+        let params = {authtoken: param.authtoken, ...mrs, processstatus: "ERROR", errormessage: err.message };
         if(param.calling) {
             this.call("migratelog.update",params).catch(ex => this.logger.error(ex));
         } else {
@@ -358,59 +361,81 @@ export class MigrateOperate extends MigrateBase {
         return undefined;
     }
 
-    public async performRequestAPI(context: KnContextInfo, config: MigrateConfig, data: any) : Promise<any> {
-        let api = config?.api;
-        if(!context.options) context.options = {};
-        //try to get from cache
-        let values = [];
-        let databody = config?.body || {};
-        let body = { ... databody };
+    protected assignRequestBody(body: any, data: any, values: any[]) {
         for(let key in body) {
             let value = body[key];
-            if(value && value.charAt(0) == '?') {
-                value = value.substring(1);
-                body[key] = data[value];
-                values.push(data[value]);
+            if(typeof value === 'string') {
+                if(value.length > 0 && value.charAt(0) == '?') {
+                    value = value.substring(1);
+                    body[key] = data[value];
+                    values.push(data[value]);
+                }    
+            } else if(typeof value === 'object') {
+                this.assignRequestBody(value,data,values);
             }
         }
-        if(config?.parameters && config?.parameters.length > 0) {
-            for(let pr of config.parameters) {
-                let [value,found] = this.parseDefaultValue(pr?.defaultValue);
-                if(found) {
-                    body[pr.name] = value;
-                    values.push(value);
+    }
+
+    public async performRequestAPI(context: KnContextInfo, config: MigrateConfig, data: any) : Promise<any> {
+        if(config?.api) {
+            if(!context.options) context.options = {};
+            //try to get from cache
+            let databody = config?.body || {};
+            let body = { ... databody };
+            let hash = this.toHashString(config.api+JSON.stringify(body));
+            let response = context.options[hash];
+            if(response) return response;
+            let values : any[] = [];
+            this.assignRequestBody(body,data,values);
+            if(config?.parameters && config?.parameters.length > 0) {
+                for(let pr of config.parameters) {
+                    let [value,found] = this.parseDefaultValue(pr?.defaultValue);
+                    if(found) {
+                        body[pr.name] = value;
+                        values.push(value);
+                    }
                 }
             }
-        }
-        let hash = this.toHashString(api+JSON.stringify(body));
-        let response = context.options[hash];
-        if(!response && api) {
+            if(values.length > 0) {
+                hash = this.toHashString(config.api+JSON.stringify(body)+values.join(''));
+                response = context.options[hash];
+                if(response) return response;
+            }
             //when not found from cache, try to make request
             let headers = config?.setting || {};
-            response = await this.requestAPI(api,{...headers},body);
+            response = await this.requestAPI(config.api,{...headers},body,config);
             this.logger.debug(this.constructor.name+".performRequestAPI: response:",response);
             if(response) {
                 //try to set cache by context options
                 context.options[hash] = response;
             }
+            return response;
         }
-        return response;
+        return undefined;
     }
 
-    public async requestAPI(url: string, headers: any = {}, data: any = {}) : Promise<any> {
+    public async requestAPI(url: string, headers: any = {}, data: any = {},config: any) : Promise<any> {
         let body = JSON.stringify(data);
         let params = {};
         this.logger.debug(this.constructor.name+".requestAPI: fetch : url=",url," body=",body," headers=",headers);
         try {
             let method = headers?.method || "POST";
             if(headers?.method) delete headers.method;
-            let response = await fetch(url, Object.assign(Object.assign({}, params), { method: method, headers: {
-                    "Content-Type": "application/json", ...headers
-                }, body }));
+            let request = "GET" == method ? { method: method, headers: { "Content-Type": "application/json", ...headers } } : { method: method, headers: { "Content-Type": "application/json", ...headers }, body };
+            let response = await fetch(url, Object.assign(Object.assign({}, params), request));
             if (!response.ok) {
                 let msg = "Response error";
                 this.logger.debug(this.constructor.name+".requestAPI: response not ok:",msg);
                 throw new Error(`[${response.status}] ${msg}`);
+            }
+            const contenttype = response.headers.get("content-type");
+            if(contenttype) {
+                if(contenttype.includes("application/json")) {
+                    return await response.json();
+                } else if (contenttype.includes("application/xml") || contenttype.includes("text/xml") || config?.options?.acceptType == 'text/xml') {
+                    let xml = await response.text();
+                    return this.tryParseXmlToJSON(xml);
+                }
             }
             return await response.json();
         } catch (ex: any) {

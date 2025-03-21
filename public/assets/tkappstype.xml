@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+    <head>
+        <model>api</model>
+        <method>category.groups</method>
+        <errorcode>0</errorcode>
+        <errorflag>N</errorflag>
+        <errordesc></errordesc>
+    </head>
+    <body>
+        <tkappstype>
+            <W>Web</W>
+            <M>Mobile</M>
+        </tkappstype>
+    </body>
+</root>

@@ -318,6 +318,38 @@
             "settings": { "skip": 1, "quotable": true, "sheetname": "tso" }
         } ]
     },
+    "test_file_api_response_xml": {
+        "models": [ {
+            "name": "tso",
+            "alias": { "privateAlias": "PROMPTDB" },
+            "fields": {
+                "mktid": { "type": "STRING", "options": { "seqno": 1 } },
+                "share": { "type": "STRING", "options": { "seqno": 2 } },
+                "unit": { "type": "DECIMAL", "options": { "seqno": 3 } },
+                "price": { "type": "DECIMAL", "options": { "seqno": 4 } },
+                "yield": { "type": "INTEGER" },
+                "effdate": { "type": "DATE", "options": { "seqno": 5 } },
+                "efftime": { "type": "TIME", "options": { "seqno": 6 } },
+                "edittime": { "type": "DATETIME", "options": { "seqno": 7 } },
+                "sharename": { "type": "STRING",  
+                    "options": { "seqno": 8, 
+                        "mapper": "share",
+                        "connection": {
+                            "type": "API",
+                            "api": "http://localhost:8080/assets/tkappstype.xml", 
+                            "setting": { "method": "GET" },
+                            "body": {},
+                            "mapper": "@root.body.tkappstype"
+                        }
+                    }                    
+                },
+                "defvalue": { "type": "STRING" },
+                "message": { "type": "STRING" },
+                "remarks": { "type": "STRING", "defaultValue": "test_file_api_response_xml" }
+            },
+            "settings": { "skip": 1, "quotable": true, "sheetname": "tso" }
+        } ]
+    },
     "test_file_xml": {
         "models": [ {
             "name": "tso",
@@ -940,6 +972,38 @@
                 "curtime": { "type": "DATETIME", "defaultValue": "#current_timestamp" },
                 "remark": { "type": "STRING", "defaultValue": "test_simple_call_api_param" }
             }
+        } ]
+    },
+    "test_simple_call_api_response_xml": {
+        "models": [ {
+            "name": "tmigratetest",
+            "alias": { "privateAlias": "PROMPTDB" },
+            "fields": {
+                "field1": { "type": "STRING", "key": true },
+                "field2": { "type": "DECIMAL" },
+                "field3": { "type": "INTEGER" },
+                "field4": { "type": "DATE" },
+                "field5": { "type": "TIME" },
+                "field6": { "type": "DATETIME" },
+                "field7": { "type": "STRING" },
+                "field8": { "type": "STRING" },
+                "field9": { "type": "STRING" },
+                "field10": { "type": "STRING" },
+                "field11": { "type": "STRING" },
+                "field12": { "type": "STRING", "options": {
+                        "mapper": "field11",
+                        "connection": {
+                            "type": "API",
+                            "api": "http://localhost:8080/assets/tkappstype.xml", 
+                            "setting": { "method": "GET" },
+                            "body": {},
+                            "mapper": "@root.body.tkappstype"
+                        }
+                    }
+                },
+                "curtime": { "type": "DATETIME", "defaultValue": "#current_timestamp" },
+                "remark": { "type": "STRING", "defaultValue": "test_simple_call_api_response_xml" }
+            }            
         } ]
     },
     "test_simple_call_db": {
@@ -1669,5 +1733,329 @@
             },
             "settings": { "skip": 1, "quotable": true, "sheetname": "tso" }
         } ] 
+    },
+    "test_xlsx_base64": { 
+        "models": [ {
+            "name": "tso",
+            "alias": { "privateAlias": "PROMPTDB" },
+            "fields": {
+                "mktid": { "type": "STRING", "options": { "seqno": 1 } },
+                "share": { "type": "STRING", "options": { "seqno": 2 } },
+                "unit": { "type": "DECIMAL", "options": { "seqno": 3 } },
+                "price": { "type": "DECIMAL", "options": { "seqno": 4 } },
+                "yield": { "type": "INTEGER" },
+                "effdate": { "type": "DATE", "options": { "seqno": 5 } },
+                "efftime": { "type": "TIME", "options": { "seqno": 6 } },
+                "edittime": { "type": "DATETIME", "options": { "seqno": 7 } },
+                "sharename": { "type": "STRING", "options": { "seqno": 8 } },
+                "defvalue": { "type": "STRING" },
+                "message": { "type": "STRING" },
+                "remarks": { "type": "STRING", "defaultValue": "test_xlsx_base64" }
+            },
+            "settings": { "skip": 1, "quotable": true, "sheetname": "tso" }
+        } ] 
+    },
+
+    "extract_simple_text": { 
+        "models": [ {
+            "name": "tso",
+            "alias": { "privateAlias": "PROMPTDB" },
+            "fields": {
+                "mktid": { "type": "STRING" },
+                "share": { "type": "STRING" },
+                "unit": { "type": "DECIMAL" },
+                "price": { "type": "DECIMAL" },
+                "yield": { "type": "INTEGER" },
+                "effdate": { "type": "DATE" },
+                "efftime": { "type": "TIME" },
+                "edittime": { "type": "DATETIME" },
+                "sharename": { "type": "STRING" },
+                "defvalue": { "type": "STRING", "defaultValue": "#current_timestamp" },
+                "message": { "type": "STRING" },
+                "remarks": { "type": "STRING", "defaultValue": "extract_simple_text" }
+            },
+            "settings": { "header": true, "delimiter": "," }
+        } ] 
+    },
+    "extract_simple_text_format": { 
+        "models": [ {
+            "name": "tso",
+            "alias": { "privateAlias": "PROMPTDB" },
+            "fields": {
+                "mktid": { "type": "STRING", "options": { "seqno": 1 } },
+                "share": { "type": "STRING", "options": { "seqno": 2 } },
+                "unit": { "type": "DECIMAL", "options": { "seqno": 3, "format": "#,##0" } },
+                "price": { "type": "DECIMAL", "options": { "seqno": 4, "format": "#,##0.00" } },
+                "yield": { "type": "INTEGER" },
+                "effdate": { "type": "DATE", "options": { "seqno": 5, "format": "DD/MM/YYYY" } },
+                "efftime": { "type": "TIME", "options": { "seqno": 6, "format": "HH:mm:ss" } },
+                "edittime": { "type": "DATETIME", "options": { "seqno": 7, "format": "DD/MM/YYYY HH:mm:ss" } },
+                "sharename": { "type": "STRING", "options": { "seqno": 8 } },
+                "defvalue": { "type": "STRING" },
+                "message": { "type": "STRING" },
+                "remarks": { "type": "STRING", "defaultValue": "extract_simple_text_format" }
+            },
+            "settings": { "header": true, "delimiter": "," }
+        } ] 
+    },
+    "extract_simple_text_format_locale": { 
+        "models": [ {
+            "name": "tso",
+            "alias": { "privateAlias": "PROMPTDB" },
+            "fields": {
+                "mktid": { "type": "STRING", "options": { "seqno": 1 } },
+                "share": { "type": "STRING", "options": { "seqno": 2 } },
+                "unit": { "type": "DECIMAL", "options": { "seqno": 3, "format": "#,##0" } },
+                "price": { "type": "DECIMAL", "options": { "seqno": 4, "format": "#,##0.00" } },
+                "yield": { "type": "INTEGER" },
+                "effdate": { "type": "DATE", "options": { "seqno": 5, "format": "DD MMMM YYYY", "locale":"th" } },
+                "efftime": { "type": "TIME", "options": { "seqno": 6, "format": "HH:mm:ss" } },
+                "edittime": { "type": "DATETIME", "options": { "seqno": 7, "format": "DD/MM/YYYY HH:mm:ss", "locale":"th", "era": "AD", "remark": "defined era in order to get year as AD" } },
+                "sharename": { "type": "STRING", "options": { "seqno": 8 } },
+                "defvalue": { "type": "STRING" },
+                "message": { "type": "STRING" },
+                "remarks": { "type": "STRING", "defaultValue": "extract_simple_text_format_locale" }
+            },
+            "settings": { "header": true, "delimiter": "," },
+            "description": "this example demo to format date in thai locale"
+        } ] 
+    },
+    "extract_simple_text_format_disable": { 
+        "models": [ {
+            "name": "tso",
+            "alias": { "privateAlias": "PROMPTDB" },
+            "fields": {
+                "mktid": { "type": "STRING", "options": { "seqno": 1 } },
+                "share": { "type": "STRING", "options": { "seqno": 2 } },
+                "unit": { "type": "DECIMAL", "options": { "seqno": 3, "disabledFormat": true } },
+                "price": { "type": "DECIMAL", "options": { "seqno": 4, "disabledFormat": true } },
+                "yield": { "type": "INTEGER" },
+                "effdate": { "type": "DATE", "options": { "seqno": 5, "disabledFormat": true } },
+                "efftime": { "type": "TIME", "options": { "seqno": 6, "disabledFormat": true } },
+                "edittime": { "type": "DATETIME", "options": { "seqno": 7, "disabledFormat": true } },
+                "sharename": { "type": "STRING", "options": { "seqno": 8 } },
+                "defvalue": { "type": "STRING" },
+                "message": { "type": "STRING" },
+                "remarks": { "type": "STRING", "defaultValue": "extract_simple_text_format_disable" }
+            },
+            "settings": { "header": true, "delimiter": "," }
+        } ] 
+    },
+    "extract_simple_text_fieldscell": { 
+        "models": [ {
+            "name": "tso",
+            "alias": { "privateAlias": "PROMPTDB" },
+            "fields": {
+                "mktshare": { "type": "STRING", "options": { "seqno": 1, "delimiter": "-",
+                        "fieldscell": {
+                            "mktid": { "type": "STRING" },
+                            "share": { "type": "STRING" }
+                        }
+                    } 
+                },
+                "unit": { "type": "DECIMAL", "options": { "seqno": 2 } },
+                "price": { "type": "DECIMAL", "options": { "seqno": 3 } },
+                "effdate": { "type": "DATE", "options": { "seqno": 4 } },
+                "efftime": { "type": "TIME", "options": { "seqno": 5 } },
+                "edittime": { "type": "DATETIME", "options": { "seqno": 6 } },
+                "sharename": { "type": "STRING", "options": { "seqno": 7 } }
+            },
+            "settings": { "header": true, "delimiter": ",", "quotable": true },
+            "description": "this example using fieldscell to combine multiple fields"
+        } ] 
+    },
+    "extract_simple_text_cells": { 
+        "models": [ {
+            "name": "tso",
+            "alias": { "privateAlias": "PROMPTDB" },
+            "cells": [
+                { "name": "mktshare", "caption": "Market Share", "options": { "delimiter": "-" }, 
+                    "fields": {
+                        "mktid": { "type": "STRING" },
+                        "share": { "type": "STRING" }
+                    } 
+                },
+                { "name": "unit", "caption": "Unit", "fields": { "unit": { "type": "DECIMAL" } } },
+                { "name": "price", "caption": "Price", "fields": { "price": { "type": "DECIMAL" } } },
+                { "name": "effdate", "caption": "Effect Date", "fields": { "effdate": { "type": "DATE" } } },
+                { "name": "efftime", "caption": "Effect Time", "fields": { "efftime": { "type": "TIME" } } },
+                { "name": "edittime", "caption": "Edit Time", "fields": { "edittime": { "type": "DATETIME" } } },
+                { "name": "sharename", "caption": "Share Name", "fields": { "efftime": { "type": "STRING" } } }
+            ],
+            "settings": { "header": true, "delimiter": "," },
+            "description": "this example using cells array as definition"
+        } ] 
+    },
+    "extract_simple_text_statement": { 
+        "models": [ {
+            "name": "tso",
+            "alias": { "privateAlias": "PROMPTDB" },
+            "fields": {
+                "mktid": { "type": "STRING" },
+                "share": { "type": "STRING" },
+                "unit": { "type": "DECIMAL" },
+                "price": { "type": "DECIMAL" },
+                "yield": { "type": "INTEGER" },
+                "effdate": { "type": "DATE" },
+                "efftime": { "type": "TIME" },
+                "edittime": { "type": "DATETIME" },
+                "sharename": { "type": "STRING" },
+                "defvalue": { "type": "STRING", "defaultValue": "#current_timestamp" },
+                "message": { "type": "STRING" },
+                "remarks": { "type": "STRING", "defaultValue": "extract_simple_text_statement" }
+            },
+            "settings": { "header": true, "delimiter": ",", 
+                "statement": {
+                    "sql": "select * from tso where mktid = 'TSO' "
+                }
+            }
+        } ] 
+    },
+    "extract_simple_text_statement_params": { 
+        "models": [ {
+            "name": "tso",
+            "alias": { "privateAlias": "PROMPTDB" },
+            "fields": {
+                "mktid": { "type": "STRING" },
+                "share": { "type": "STRING" },
+                "unit": { "type": "DECIMAL" },
+                "price": { "type": "DECIMAL" },
+                "yield": { "type": "INTEGER" },
+                "effdate": { "type": "DATE" },
+                "efftime": { "type": "TIME" },
+                "edittime": { "type": "DATETIME" },
+                "sharename": { "type": "STRING" },
+                "defvalue": { "type": "STRING", "defaultValue": "#current_timestamp" },
+                "message": { "type": "STRING" },
+                "remarks": { "type": "STRING", "defaultValue": "extract_simple_text_statement_params" }
+            },
+            "settings": { "header": true, "delimiter": ",", 
+                "statement": {
+                    "sql": "select * from tso where mktid = ?mktid ",
+                    "parameters": [
+                        { "name": "mktid", "caption": "Marketing" }
+                    ]
+                }
+            }
+        } ] 
+    },
+    "extract_data_file_text": { 
+        "models": [ {
+            "name": "tso",
+            "alias": { "privateAlias": "PROMPTDB" },
+            "fields": {
+                "mktid": { "type": "STRING", "options": { "caption": "Marketing" } },
+                "share": { "type": "STRING", "options": { "caption": "Share" }  },
+                "unit": { "type": "DECIMAL", "options": { "caption": "Unit" }  },
+                "price": { "type": "DECIMAL", "options": { "caption": "Price" }  },
+                "yield": { "type": "INTEGER", "options": { "caption": "Yield" }  },
+                "effdate": { "type": "DATE", "options": { "caption": "Effect Date" }  },
+                "efftime": { "type": "TIME", "options": { "caption": "Effect Time" }  },
+                "edittime": { "type": "DATETIME", "options": { "caption": "Date/Time" }  },
+                "sharename": { "type": "STRING", "options": { "caption": "Share Name" }  },
+                "defvalue": { "type": "STRING", "options": { "caption": "Default" } , "defaultValue": "#current_timestamp" },
+                "message": { "type": "STRING", "options": { "caption": "Message" }  },
+                "remarks": { "type": "STRING", "options": { "caption": "Remarks" } , "defaultValue": "extract_data_file_text" }
+            },
+            "settings": { "extract": "text", "header": true, "delimiter": ",", "naming": "auto" }
+        } ] 
+    },
+    "extract_data_file_text_quote": { 
+        "models": [ {
+            "name": "tso",
+            "alias": { "privateAlias": "PROMPTDB" },
+            "fields": {
+                "mktid": { "type": "STRING", "options": { "caption": "Marketing" } },
+                "share": { "type": "STRING", "options": { "caption": "Share" }  },
+                "unit": { "type": "DECIMAL", "options": { "caption": "Unit" }  },
+                "price": { "type": "DECIMAL", "options": { "caption": "Price" }  },
+                "yield": { "type": "INTEGER", "options": { "caption": "Yield" }  },
+                "effdate": { "type": "DATE", "options": { "caption": "Effect Date" }  },
+                "efftime": { "type": "TIME", "options": { "caption": "Effect Time" }  },
+                "edittime": { "type": "DATETIME", "options": { "caption": "Date/Time" }  },
+                "sharename": { "type": "STRING", "options": { "caption": "Share Name" }  },
+                "defvalue": { "type": "STRING", "options": { "caption": "Default" } , "defaultValue": "#current_timestamp" },
+                "message": { "type": "STRING", "options": { "caption": "Message" }  },
+                "remarks": { "type": "STRING", "options": { "caption": "Remarks" } , "defaultValue": "extract_data_file_text_quote" }
+            },
+            "settings": { "extract": "text", "header": true, "delimiter": ",", "quotable": true, "naming": "auto" }
+        } ] 
+    },
+    "extract_data_file_text_tab": { 
+        "models": [ {
+            "name": "tso",
+            "alias": { "privateAlias": "PROMPTDB" },
+            "fields": {
+                "mktid": { "type": "STRING", "options": { "caption": "Marketing" } },
+                "share": { "type": "STRING", "options": { "caption": "Share" }  },
+                "unit": { "type": "DECIMAL", "options": { "caption": "Unit" }  },
+                "price": { "type": "DECIMAL", "options": { "caption": "Price" }  },
+                "yield": { "type": "INTEGER", "options": { "caption": "Yield" }  },
+                "effdate": { "type": "DATE", "options": { "caption": "Effect Date" }  },
+                "efftime": { "type": "TIME", "options": { "caption": "Effect Time" }  },
+                "edittime": { "type": "DATETIME", "options": { "caption": "Date/Time" }  },
+                "sharename": { "type": "STRING", "options": { "caption": "Share Name" }  },
+                "defvalue": { "type": "STRING", "options": { "caption": "Default" } , "defaultValue": "#current_timestamp" },
+                "message": { "type": "STRING", "options": { "caption": "Message" }  },
+                "remarks": { "type": "STRING", "options": { "caption": "Remarks" } , "defaultValue": "extract_data_file_text_tab" }
+            },
+            "settings": { "extract": "text", "header": true, "delimiter": "TAB", "naming": "auto" }
+        } ] 
+    },
+    "extract_data_file_text_fix_length": {
+        "models": [ {
+            "name": "tso",
+            "alias": { "privateAlias": "PROMPTDB" },
+            "fields": {
+                "mktid": { "type": "STRING", "options": { "seqno": 1, "length": 10, "align": "right" } },
+                "share": { "type": "STRING", "options": { "seqno": 2, "length": 10, "align": "right" } },
+                "unit": { "type": "DECIMAL", "options": { "seqno": 3, "length": 10, "align": "left", "disabledFormat": true } },
+                "price": { "type": "DECIMAL", "options": { "seqno": 4, "length": 8, "align": "left", "disabledFormat": true } },
+                "effdate": { "type": "DATE", "options": { "seqno": 5, "length": 10, "align": "right" } },
+                "efftime": { "type": "TIME", "options": { "seqno": 6, "length": 9, "align": "right" } },
+                "edittime": { "type": "DATETIME", "options": { "seqno": 7, "length": 20, "align": "right" } },
+                "sharename": { "type": "STRING", "options": { "seqno": 8, "length": 30 } }
+            },
+            "settings": { "extract": "fix", "header": true, "delimiter": "TAB", "naming": "auto" }
+        } ]
+    },
+    "extract_data_file_excel": { 
+        "models": [ {
+            "name": "tso",
+            "alias": { "privateAlias": "PROMPTDB" },
+            "fields": {
+                "mktid": { "type": "STRING", "options": { "caption": "Marketing", "width": 10, "halign": { "horizontal": "center" } } },
+                "share": { "type": "STRING", "options": { "caption": "Share", "width": 10, "halign": { "horizontal": "center" } }  },
+                "unit": { "type": "DECIMAL", "options": { "caption": "Unit", "width": 10, "halign": { "horizontal": "center" }, "alignment": { "horizontal": "right" } }  },
+                "price": { "type": "DECIMAL", "options": { "caption": "Price", "width": 10, "halign": { "horizontal": "center" }, "alignment": { "horizontal": "right" } }  },
+                "yield": { "type": "INTEGER", "options": { "caption": "Yield", "width": 10, "halign": { "horizontal": "center" } }  },
+                "effdate": { "type": "DATE", "options": { "caption": "Effect Date", "width": 15, "halign": { "horizontal": "center" }, "alignment": { "horizontal": "center" } }  },
+                "efftime": { "type": "TIME", "options": { "caption": "Effect Time", "width": 10, "halign": { "horizontal": "center" }, "alignment": { "horizontal": "center" } }  },
+                "edittime": { "type": "DATETIME", "options": { "caption": "Date/Time", "width": 20, "halign": { "horizontal": "center" }, "alignment": { "horizontal": "center" } }  },
+                "sharename": { "type": "STRING", "options": { "caption": "Share Name", "width": 15, "halign": { "horizontal": "center" } }  },
+                "defvalue": { "type": "STRING", "options": { "caption": "Default", "width": 15, "halign": { "horizontal": "center" } } , "defaultValue": "#current_timestamp" },
+                "message": { "type": "STRING", "options": { "caption": "Message", "width": 10, "halign": { "horizontal": "center" } }  },
+                "remarks": { "type": "STRING", "options": { "caption": "Remarks", "width": 20, "halign": { "horizontal": "center" } } , "defaultValue": "extract_data_file_excel" }
+            },
+            "settings": { "extract": "excel", "header": true, "sheetname": "Extract Data", "naming": "auto" }
+        } ] 
+    },
+    "extract_data_file_pdf": { 
+        "models": [ {
+            "name": "tso",
+            "alias": { "privateAlias": "PROMPTDB" },
+            "fields": {
+                "mktid": { "type": "STRING", "options": { "caption": "Marketing", "width": 10 } },
+                "share": { "type": "STRING", "options": { "caption": "Share", "width": 10 }  },
+                "unit": { "type": "DECIMAL", "options": { "caption": "Unit", "width": 10, "alignment": { "horizontal": "right" } }  },
+                "price": { "type": "DECIMAL", "options": { "caption": "Price", "width": 10, "alignment": { "horizontal": "right" } }  },
+                "effdate": { "type": "DATE", "options": { "caption": "Effect Date", "width": 15, "alignment": { "horizontal": "center" } }  },
+                "efftime": { "type": "TIME", "options": { "caption": "Effect Time", "width": 10, "alignment": { "horizontal": "center" } }  },
+                "edittime": { "type": "DATETIME", "options": { "caption": "Date/Time", "width": 20, "alignment": { "horizontal": "center" } }  },
+                "sharename": { "type": "STRING", "options": { "caption": "Share Name", "width": 15 }  }
+            },
+            "settings": { "extract": "pdf", "header": true, "naming": "auto"}
+        } ] 
     }
+
 }

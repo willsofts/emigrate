@@ -120,6 +120,16 @@ CREATE TABLE IF NOT EXISTS `tmigrateconnect` (
 INSERT INTO `tmigrateconnect` (`connectid`, `connectname`, `connecttype`, `connectdialect`, `connectapi`, `connecturl`, `connectuser`, `connectpassword`, `connectdatabase`, `connecthost`, `connectport`, `connectfieldname`, `connectfieldvalue`, `connectmapper`, `connectsetting`, `connectbody`, `connecthandler`, `connectquery`, `createdate`, `createtime`, `createmillis`, `createuser`, `editdate`, `edittime`, `editmillis`, `edituser`) VALUES
 	('PROMPTDB', 'Prompt Database', 'DB', 'MYSQL', NULL, NULL, 'root', 'root', 'migratedb', 'localhost', 3306, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
 
+-- Dumping structure for table migratedb.tmigratefile
+CREATE TABLE IF NOT EXISTS `tmigratefile` (
+  `migrateid` varchar(50) COLLATE utf8mb4_general_ci NOT NULL,
+  `processid` varchar(50) COLLATE utf8mb4_general_ci NOT NULL,
+  `notename` varchar(200) COLLATE utf8mb4_general_ci NOT NULL,
+  `datafile` longtext COLLATE utf8mb4_general_ci,
+  PRIMARY KEY (`migrateid`),
+  KEY `processid` (`processid`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='table keep extract data file';
+
 -- Dumping structure for table migratedb.tmigratelog
 CREATE TABLE IF NOT EXISTS `tmigratelog` (
   `migrateid` varchar(50) NOT NULL,

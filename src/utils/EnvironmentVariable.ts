@@ -41,3 +41,5 @@ export const ERROR_CANCELATION_CODE: string = config.env("ERROR_CANCELATION_CODE
 export const ERROR_CANCELATION_KEY: string = config.env("ERROR_CANCELATION_KEY");
 export const ALWAYS_THROW_POST_ERROR: boolean = config.env("ALWAYS_THROW_POST_ERROR","false") === "true";
 export const MIN_AD_YEAR: number = parseInt(config.env("MIN_AD_YEAR","2500")) || 2500;
+export const ALWAYS_ERASE_DATA_STREAM: boolean = config.env("ALWAYS_ERASE_DATA_STREAM","false") === "true";
+export const EXTRACT_FILE_PATH: string = config.env("EXTRACT_FILE_PATH") || os.tmpdir();

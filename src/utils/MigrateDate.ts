@@ -59,4 +59,11 @@ export class MigrateDate {
         return date;
     }
     
+    public formatDate(date?: Date, format: string = "DD/MM/YYYY", locale: string = "en", era: string = "BC") : string {
+        if(!date) return "";
+        let mom = moment(date);
+        if("AD"==era) mom.year(mom.year()+543);
+        return mom.locale(locale).format(format);
+    }
+    
 }

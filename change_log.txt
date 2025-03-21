@@ -90,3 +90,10 @@
 (test_simple_call_api_param & test_simple_call_db_param)
 + support base64 data submit (specifiedy by parameter datafile)
 (test_simple_text_base64 & test_simple_xlsx_base64)
+
+2025-03-21
++ support complex request api parameters
++ support api response xml (detect from header content-type or config.options.acceptType == 'text/xml')
++ support extract data 
++ support export file (csv,fix-length,xml,json,excel,pdf)
++ add new table schema tmigratefile to keep export data file (see database/migratedb_mysql.sql)

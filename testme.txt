@@ -272,6 +272,10 @@ curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/migra
 curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/migratefile/file -d @test_simple_text_base64.json
 curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/migratefile/file -d @test_simple_xlsx_base64.json
 curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/migratexlsx/insert -d @test_simple_xlsx_base64.json
+curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/migratefile/file -d @test_xlsx_base64.json
+
+test call api response xml
+curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/migrate/insert -d @test_simple_call_api_response_xml.json
 
 
 setting up sftp server on windows:
@@ -283,4 +287,72 @@ setting up sftp server on windows:
     - net user [username] [password] /add /comment:"SFTP User Account" /home:"C:\SFTP\[username]"
     - net localgroup sftpusers [username] /add
 3. test sftp [username]@localhost
+
+---------------------------------------------------------------------------------------------------
+
+test export:
+1. test export text
+curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/extract/collect -d "{\"taskid\":\"extract_simple_text\"}"
+
+2. export with async
+curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/extract/collect -d "{\"taskid\":\"extract_simple_text\", \"async\": true }"
+
+3. request extract log by process id (in case of async=true)  
+curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/extractlog/get -d "{\"processid\":\"6278c4d6-6565-4393-bb0e-0f25c085a4aa\"}"
+- request with stream too
+curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/extractlog/get -d "{\"processid\":\"6278c4d6-6565-4393-bb0e-0f25c085a4aa\",\"stream\":true}"
+
+4. download extract data
+- by process id
+curl -X POST http://localhost:8080/export/extract/data -d "processid=6278c4d6-6565-4393-bb0e-0f25c085a4aa" -o d:\ex1.txt
+- by migrate id
+curl -X POST http://localhost:8080/export/extract/data -d "migrateid=1d058a63-03bf-4ebd-9a65-55fa86c89e35" -o d:\ex2.txt
+
+5. download extract data and erase stream (this can force by setting system environment variable ALWAYS_ERASE_DATA_STREAM=true)
+- by process id
+curl -X POST http://localhost:8080/export/extract/data -d "processid=6278c4d6-6565-4393-bb0e-0f25c085a4aa&erase=true" -o d:\ex2.txt
+- by migrate id
+curl -X POST http://localhost:8080/export/extract/data -d "migrateid=1d058a63-03bf-4ebd-9a65-55fa86c89e35&erase=true" -o d:\ex2.txt
+
+6. test download from export file
+- by process id
+curl -X POST http://localhost:8080/export/extract/data -d "processid=30bdb854-91cc-4960-9146-8b0499667486" -o d:\fi1.txt
+- force erase too
+curl -X POST http://localhost:8080/export/extract/data -d "processid=30bdb854-91cc-4960-9146-8b0499667486&erase=true" -o d:\fi1.txt
+- by migrate id
+curl -X POST http://localhost:8080/export/extract/data -d "migrateid=faab32f3-1801-4fc3-86d0-dbc5c897674b" -o d:\fi2.txt
+- force erase too
+curl -X POST http://localhost:8080/export/extract/data -d "migrateid=faab32f3-1801-4fc3-86d0-dbc5c897674b&erase=true" -o d:\fi2.txt
+
+7. test direct export file
+- export file csv
+curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/extracttext/collect -d "{\"taskid\":\"extract_data_file_text\"}"
+- export file with TAB delimiter
+curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/extracttext/collect -d "{\"taskid\":\"extract_data_file_text_tab\"}"
+- export file with quote
+curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/extracttext/collect -d "{\"taskid\":\"extract_data_file_text_quote\"}"
+- export file fix length
+curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/extractfix/collect -d "{\"taskid\":\"extract_data_file_text_fix_length\"}"
+- export file json
+curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/extractjson/collect -d "{\"taskid\":\"extract_data_file_text\"}"
+- export file xml
+curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/extractxml/collect -d "{\"taskid\":\"extract_data_file_text\"}"
+- export file excel
+curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/extractexcel/collect -d "{\"taskid\":\"extract_data_file_excel\"}"
+- export file pdf
+curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/extractpdf/collect -d "{\"taskid\":\"extract_data_file_pdf\"}"
+
+8. test center export file (specified by parameter extract or default with model.settings.extract)
+- export file csv
+curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/extractfile/collect -d "{\"taskid\":\"extract_data_file_text\", \"extract\": \"text\"}"
+- export file fix length
+curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/extractfile/collect -d "{\"taskid\":\"extract_data_file_text_fix_length\"}"
+- export file json
+curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/extractfile/collect -d "{\"taskid\":\"extract_data_file_text\", \"extract\": \"json\"}"
+- export file xml
+curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/extractfile/collect -d "{\"taskid\":\"extract_data_file_text\", \"extract\": \"xml\"}"
+- export file excel
+curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/extractfile/collect -d "{\"taskid\":\"extract_data_file_excel\"}"
+- export file pdf
+curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/extractfile/collect -d "{\"taskid\":\"extract_data_file_pdf\"}"
 

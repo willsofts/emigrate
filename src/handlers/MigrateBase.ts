@@ -1,15 +1,16 @@
 import { v4 as uuid } from 'uuid';
 import { KnModel, KnParamInfo, KnSQLUtils } from "@willsofts/will-db";
-import { KnContextInfo } from "@willsofts/will-core";
+import { KnContextInfo, KnValidateInfo, VerifyError } from "@willsofts/will-core";
 import { KnDBConnector, KnDBFault, KnSQL, KnDBUtils, KnDBTypes } from "@willsofts/will-sql";
 import { TknOperateHandler } from "@willsofts/will-serv";
-import { PRIVATE_SECTION, ERROR_CANCELATION_CODE, ERROR_CANCELATION_KEY, MIGRATE_DUMP_SQL } from "../utils/EnvironmentVariable";
-import { MigrateModel, MigrateConfig, PluginSetting, StatementInfo } from "../models/MigrateAlias";
+import { PRIVATE_SECTION, ERROR_CANCELATION_CODE, ERROR_CANCELATION_KEY, MIGRATE_DUMP_SQL, ALWAYS_THROW_POST_ERROR } from "../utils/EnvironmentVariable";
+import { MigrateModel, MigrateConfig, PluginSetting, StatementInfo, MigrateRecordSet, MigrateInfo, MigrateReject, MigrateParams, ParameterInfo, MigrateRecords, FilterInfo } from "../models/MigrateAlias";
 import { FileDownloadHandler } from "./FileDownloadHandler";
 import { FileTransferHandler } from "./FileTransferHandler";
 import { FileAttachmentHandler } from './FileAttachmentHandler';
 import { PluginHandler } from './PluginHandler';
 import { MigrateDate } from "../utils/MigrateDate";
+import { MigrateUtility } from '../utils/MigrateUtility';
 
 const task_models = require("../../config/model.json");
 const crypto = require('crypto');
@@ -21,12 +22,14 @@ export class MigrateBase extends TknOperateHandler {
     public section = PRIVATE_SECTION;
     public model : KnModel = { name: "tmigrate", alias: { privateAlias: this.section } };
     public dumping: boolean = MIGRATE_DUMP_SQL;
-
+    public progid: string = "migrate";
+    
     public randomUUID() : string {
         return uuid();
     }
     
-    public getDBFault(err: any, state: string, code: number = -32000) : KnDBFault {
+    public getDBFault(err: any, state: string = "", code: number = -32000) : KnDBFault | VerifyError {
+        if(err instanceof VerifyError) return err;
         return new KnDBFault(this.getSQLError(err),code,state);
     }
 
@@ -268,6 +271,99 @@ export class MigrateBase extends TknOperateHandler {
             };
         }
         return result;
+    }
+
+    public async invalidateStatementParameters(context: KnContextInfo, model: KnModel) : Promise<ParameterInfo[]> {
+        let params : ParameterInfo[] = [];
+        await this.invalidateQueryParameters(context,model,params,model.settings?.statement);
+        await this.invalidateQueryParameters(context,model,params,model.settings?.statement?.prestatement);
+        await this.invalidateQueryParameters(context,model,params,model.settings?.statement?.poststatement);
+        return params;
+    }
+
+    public async invalidateQueryParameters(context: KnContextInfo, model: KnModel, params: ParameterInfo[], statement: StatementInfo) : Promise<ParameterInfo[]> {
+        if(statement) {
+            if(statement.parameters && statement.parameters.length > 0) {
+                let knsql = this.composeQuery(context,statement);
+                if(knsql) {
+                    for(let pr of statement.parameters) {
+                        if(typeof pr.required === "undefined" || String(pr.required) == "true") {
+                            let pv = knsql.params.get(pr.name);
+                            if(!pv || !pv.value) {
+                                params.push(pr);
+                            }
+                        }
+                    }
+                }
+            }
+            if(statement.statements && statement.statements.length > 0) {
+                for(let stmt of statement.statements) {
+                    await this.invalidateQueryParameters(context, model, params, stmt);
+                }
+            }
+        }
+        return params;
+    }
+
+    public async validateStatementParameters(context: KnContextInfo, model: KnModel) : Promise<KnValidateInfo> {
+        let results = await this.invalidateStatementParameters(context,model);
+        if(results && results.length > 0) {
+            let prnames = results.map((item) => item.name);
+            return { valid: false, info: prnames.join(",") };
+        }
+        return { valid: true };
+    }
+
+    public async performQueryStatements(context: KnContextInfo, model: KnModel, db: KnDBConnector, rc: MigrateRecords, dataset: any, statements?: StatementInfo[]): Promise<any> {
+        if(statements && statements.length > 0) {
+            for(let stmt of statements) {
+                let knsql = this.composeQuery(context,stmt,db);
+                if(knsql) {
+                    this.logger.info(this.constructor.name+".performQueryStatements:",knsql);
+                    await knsql.executeUpdate(db,context);
+                }
+            }
+        }
+    }
+
+    public async performPreTransaction(context: KnContextInfo, model: KnModel, db: KnDBConnector, rc: MigrateRecords, dataset: any): Promise<any> {
+        if(model.settings?.statement?.prestatement) {
+            await this.performQueryStatements(context,model,db,rc,dataset,model.settings?.statement?.prestatement?.statements)
+            let knsql = this.composeQuery(context,model.settings?.statement?.prestatement,db);
+            if(knsql) {
+                this.logger.info(this.constructor.name+".performPreTransaction:",knsql);
+                await knsql.executeUpdate(db,context);
+            }
+        }
+    }
+
+    public async performPostTransaction(context: KnContextInfo, model: KnModel, db: KnDBConnector, rc: MigrateRecords, dataset: any): Promise<FilterInfo> {
+        let result : FilterInfo = { cancel: false };
+        if(model.settings?.statement?.poststatement) {
+            await this.performQueryStatements(context,model,db,rc,dataset,model.settings?.statement?.poststatement?.statements)
+            let knsql = this.composeQuery(context,model.settings?.statement?.poststatement,db);
+            if(knsql) {
+                this.logger.info(this.constructor.name+".performPostTransaction:",knsql);
+                try {
+                    await knsql.executeUpdate(db,context);
+                } catch(ex:any) {
+                    this.logger.error(ex);
+                    result.throwable = ex;
+                    result.cancel = await this.cancelError(ex,model.settings);
+                    if(result.cancel) {
+                        return result;
+                    }
+                    if(String(model.settings?.alwaysThrowable) == 'true' || ALWAYS_THROW_POST_ERROR) {
+                        throw ex;
+                    }
+                }
+            }            
+        }
+        return result;
+    }
+
+    public tryParseXmlToJSON(xml?: string) : any {
+        return MigrateUtility.tryParseXmlToJSON(xml);
     }
 
 }
