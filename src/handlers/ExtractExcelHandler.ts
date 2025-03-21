@@ -60,7 +60,7 @@ export class ExtractExcelHandler extends ExtractControlHandler {
     }
 
     protected override printHeader(model: KnModel, data: MigrateDataRow) {
-        if(String(model.settings?.header || "true")=="true") {
+        if(String(model.settings?.header ?? "true") == "true") {
             let worksheet = data.options?.worksheet;
             if(worksheet) {
                 let captions = [];

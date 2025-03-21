@@ -20,7 +20,7 @@ export class ExtractPDFHandler extends ExtractControlHandler {
         let datafields = this.scrapeDataFields(model?.fields);
         let data : MigrateDataRow = {state: MigrateState.START, index: 0, datarow: undefined, rs, fields: datafields || model.cells, options: options};
         data.options.notefile = fullfilename;
-        let [captions, column_styles] = this.getDocumentStyles(data);
+        let [captions, column_styles] = this.getDocumentStyles(model,data);
         await super.performDataSet(context,model,rc,record,param,rs,options);
         const doc = new jsPDF(model.settings?.orientation || "portrait", "pt", model.settings?.paper || "a4");
         let fontname = this.settingDocument(model,doc);
@@ -46,13 +46,18 @@ export class ExtractPDFHandler extends ExtractControlHandler {
         return record;
     }
     
-    protected getDocumentStyles(data : MigrateDataRow) : [any[],any]{
+    protected getDocumentStyles(model: KnModel, data : MigrateDataRow) : [any[],any] {
+        let heading = String(model.settings?.header ?? "true") == "true";
         let captions = [];
         let column_styles : any = {};
         if(Array.isArray(data.fields)) {
             let cells = data.fields;
             for(let cell of cells) {
-                captions.push({ header: cell.caption || cell.name, dataKey: cell.name });
+                if(heading) {
+                    captions.push({ header: cell.caption || cell.name, dataKey: cell.name });
+                } else {
+                    captions.push({ dataKey: cell.name });
+                }
                 let alignment = cell?.options?.alignment;
                 if(typeof alignment === 'object') {
                     alignment = alignment?.horizontal || 'left';
@@ -62,7 +67,11 @@ export class ExtractPDFHandler extends ExtractControlHandler {
         } else {
             for(let key in data.fields) {
                 let dbf = data.fields[key];
-                captions.push({ header: dbf?.options?.caption || key, dataKey: key });
+                if(heading) {
+                    captions.push({ header: dbf?.options?.caption || key, dataKey: key });
+                } else {
+                    captions.push({ dataKey: key });
+                }
                 let alignment = dbf?.options?.alignment;
                 if(typeof alignment === 'object') {
                     alignment = alignment?.horizontal || 'left';

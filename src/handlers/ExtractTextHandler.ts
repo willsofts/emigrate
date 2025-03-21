@@ -61,7 +61,7 @@ export class ExtractTextHandler extends ExtractControlHandler {
     }
 
     protected override printHeader(model: KnModel, data: MigrateDataRow) {
-         if(String(model.settings?.header || "true")=="true") {
+         if(String(model.settings?.header ?? "true") == "true") {
             let writer = data.options?.writer;
             if(writer) {
                 let delimiter = this.getDelimiter(model);
