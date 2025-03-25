@@ -1,10 +1,11 @@
 import { v4 as uuid } from 'uuid';
-import { KnModel, KnParamInfo, KnSQLUtils } from "@willsofts/will-db";
+import { HTTP } from "@willsofts/will-api";
+import { KnModel, KnParamInfo, KnSQLUtils, KnOperation } from "@willsofts/will-db";
 import { KnContextInfo, KnValidateInfo, VerifyError } from "@willsofts/will-core";
 import { KnDBConnector, KnDBFault, KnSQL, KnDBUtils, KnDBTypes } from "@willsofts/will-sql";
-import { TknOperateHandler } from "@willsofts/will-serv";
+import { TknOperateHandler, OPERATE_HANDLERS } from "@willsofts/will-serv";
 import { PRIVATE_SECTION, ERROR_CANCELATION_CODE, ERROR_CANCELATION_KEY, MIGRATE_DUMP_SQL, ALWAYS_THROW_POST_ERROR } from "../utils/EnvironmentVariable";
-import { MigrateModel, MigrateConfig, PluginSetting, StatementInfo, MigrateRecordSet, MigrateInfo, MigrateReject, MigrateParams, ParameterInfo, MigrateRecords, FilterInfo } from "../models/MigrateAlias";
+import { MigrateModel, MigrateConfig, PluginSetting, StatementInfo, ParameterInfo, MigrateRecords, FilterInfo } from "../models/MigrateAlias";
 import { FileDownloadHandler } from "./FileDownloadHandler";
 import { FileTransferHandler } from "./FileTransferHandler";
 import { FileAttachmentHandler } from './FileAttachmentHandler';
@@ -24,6 +25,24 @@ export class MigrateBase extends TknOperateHandler {
     public dumping: boolean = MIGRATE_DUMP_SQL;
     public progid: string = "migrate";
     
+    public handlers = OPERATE_HANDLERS.concat([ {name: "config"} ]);
+
+    public async config(context: KnContextInfo) : Promise<MigrateModel> {
+        return this.callFunctional(context, {operate: "config", raw: false}, this.doConfig);
+    }
+
+    public async doConfig(context: KnContextInfo, model: KnModel) : Promise<MigrateModel> {
+        await this.validateRequireFields(context, model, KnOperation.GET);
+        let rs = await this.doConfiguring(context, model, KnOperation.GET);
+        return await this.createCipherData(context, KnOperation.GET, rs);
+    }
+
+    protected async doConfiguring(context: KnContextInfo, model: KnModel, action: string = KnOperation.GET) : Promise<MigrateModel> {
+        let result = await this.getTaskModel(context,context.params.taskid,model);
+        if(result) return result;
+        return Promise.reject(new VerifyError("Task not found",HTTP.NOT_FOUND,-16077));
+    }
+
     public randomUUID() : string {
         return uuid();
     }

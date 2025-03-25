@@ -101,4 +101,4 @@
 2025-03-25
 + fixed verify export with header setting false
 + support api response with manual check error (test_simple_call_api_response_error_checker)
-
++ support api get task config (api/migrate/config & api/extract/config)

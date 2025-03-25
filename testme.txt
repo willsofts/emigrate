@@ -279,6 +279,15 @@ curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/migra
 curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/migrate/insert -d @test_simple_call_api_response_xml_multiplex.json
 curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/migrate/insert -d @test_simple_call_api_response_error_checker.json
 
+test get task config:
+- migrate
+curl -X POST http://localhost:8080/api/migrate/config?taskid=test_file_text
+curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/migrate/config -d "{\"taskid\":\"test_file_text\"}"
+- extract
+curl -X POST http://localhost:8080/api/extract/config?taskid=extract_simple_text
+curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/extract/config -d "{\"taskid\":\"extract_simple_text\"}"
+
+
 setting up sftp server on windows:
 1. add OpenSSH Server 
     - Go to Settings > System > Optional features and click on View features.
