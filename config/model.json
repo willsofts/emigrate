@@ -337,6 +337,7 @@
                         "connection": {
                             "type": "API",
                             "api": "http://localhost:8080/assets/tkappstype.xml", 
+                            "//api": "http://localhost:8080/example/xml/tkappstype.xml", 
                             "setting": { "method": "GET" },
                             "body": {},
                             "mapper": "@root.body.tkappstype"
@@ -995,6 +996,7 @@
                         "connection": {
                             "type": "API",
                             "api": "http://localhost:8080/assets/tkappstype.xml", 
+                            "//api": "http://localhost:8080/example/xml/tkappstype.xml", 
                             "setting": { "method": "GET" },
                             "body": {},
                             "mapper": "@root.body.tkappstype"
@@ -1003,6 +1005,81 @@
                 },
                 "curtime": { "type": "DATETIME", "defaultValue": "#current_timestamp" },
                 "remark": { "type": "STRING", "defaultValue": "test_simple_call_api_response_xml" }
+            }            
+        } ]
+    },
+    "test_simple_call_api_response_xml_multiplex": {
+        "models": [ {
+            "name": "tmigratetest",
+            "alias": { "privateAlias": "PROMPTDB" },
+            "fields": {
+                "field1": { "type": "STRING", "key": true },
+                "field2": { "type": "DECIMAL" },
+                "field3": { "type": "INTEGER" },
+                "field4": { "type": "DATE" },
+                "field5": { "type": "TIME" },
+                "field6": { "type": "DATETIME" },
+                "field7": { "type": "STRING" },
+                "field8": { "type": "STRING" },
+                "field9": { "type": "STRING" },
+                "field10": { "type": "STRING" },
+                "field11": { "type": "STRING", "defaultValue": "fskey", "options": {
+                        "mapper": "field11",
+                        "connection": {
+                            "type": "API",
+                            "api": "http://localhost:8080/example/xml/tkkey.xml", 
+                            "setting": { "method": "POST" },
+                            "body": { },
+                            "mapper": "@root"
+                        }
+                    }
+                },
+                "field12": { "type": "STRING", "defaultValue": "ReturnResult", "options": {
+                        "mapper": "field12",
+                        "connection": {
+                            "type": "API",
+                            "api": "http://localhost:8080/example/xml/tkresultset.xml", 
+                            "setting": { "method": "POST" },
+                            "body": { "sessionid": "?field11", "username": "admin", "options": { "field1":"?field1", "field2": "?field2"} },
+                            "mapper": "@ResultSet"
+                        }
+                    }
+                },
+                "curtime": { "type": "DATETIME", "defaultValue": "#current_timestamp" },
+                "remark": { "type": "STRING", "defaultValue": "test_simple_call_api_response_xml_multiplex" }
+            }            
+        } ]
+    },
+    "test_simple_call_api_response_error_checker": {
+        "models": [ {
+            "name": "tmigratetest",
+            "alias": { "privateAlias": "PROMPTDB" },
+            "fields": {
+                "field1": { "type": "STRING", "key": true },
+                "field2": { "type": "DECIMAL" },
+                "field3": { "type": "INTEGER" },
+                "field4": { "type": "DATE" },
+                "field5": { "type": "TIME" },
+                "field6": { "type": "DATETIME" },
+                "field7": { "type": "STRING" },
+                "field8": { "type": "STRING" },
+                "field9": { "type": "STRING" },
+                "field10": { "type": "STRING" },
+                "field11": { "type": "STRING" },
+                "field12": { "type": "STRING", "defaultValue": "ReturnResult", "options": {
+                        "mapper": "field11",
+                        "connection": {
+                            "type": "API",
+                            "api": "http://localhost:8080/example/xml/tkerrorset.xml", 
+                            "setting": { "method": "POST" },
+                            "body": { },
+                            "mapper": "@ResultSet",
+                            "options": { "errorChecker": "root.type", "errorCheckerValue": "root.error", "errorCheckerMessage": "root.body" }
+                        }
+                    }
+                },
+                "curtime": { "type": "DATETIME", "defaultValue": "#current_timestamp" },
+                "remark": { "type": "STRING", "defaultValue": "test_simple_call_api_response_error_checker" }
             }            
         } ]
     },

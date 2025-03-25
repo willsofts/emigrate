@@ -3,7 +3,7 @@ import { KnDBField, KnModel } from "@willsofts/will-db";
 import { KnRecordSet, KnSQL } from "@willsofts/will-sql";
 import { KnContextInfo, VerifyError } from '@willsofts/will-core';
 import { MigrateBase } from "./MigrateBase";
-import { RefConfig, MigrateConfig, MigrateRecordSet, MigrateInfo, MigrateReject, MigrateParams } from "../models/MigrateAlias";
+import { RefConfig, MigrateConfig, MigrateRecordSet, MigrateInfo, MigrateReject, MigrateParams, MigrateField } from "../models/MigrateAlias";
 import { MigrateLogHandler } from "./MigrateLogHandler";
 import config from "@willsofts/will-util";
 
@@ -248,7 +248,7 @@ export class MigrateOperate extends MigrateBase {
                 let connection = field?.options?.connection;
                 if(connection) {
                     this.logger.debug(this.constructor.name+".performConversion: connection",connection);
-                    let response = await this.performFetchData(context,model,data,dataset,field);
+                    let response = await this.performFetchData(context,model,{name: attrname,field},data,dataset);
                     this.logger.debug(this.constructor.name+".performConversion: fetch data",response);
                     if(response) {
                         let conmapper = connection?.mapper;
@@ -297,20 +297,20 @@ export class MigrateOperate extends MigrateBase {
         return dataset;
     }
     
-    public async performFetchData(context: KnContextInfo, model: KnModel, data: any, dataset: any, field: KnDBField) : Promise<any> {
-        let connection = field?.options?.connection as MigrateConfig;
+    public async performFetchData(context: KnContextInfo, model: KnModel, field: MigrateField, data: any, dataset: any) : Promise<any> {
+        let connection = field.field?.options?.connection as MigrateConfig;
         if(connection) {
             let type = connection?.type;
             if(type=="API") {
-                return await this.performRequestAPI(context,connection,data);
+                return await this.performRequestAPI(context,field,connection,data);
             } else if(type=="DB") {
-                return await this.performRequestDB(context,connection,data);
+                return await this.performRequestDB(context,field,connection,data);
             }
         }
         return undefined;
     }
 
-    public async performRequestDB(context: KnContextInfo, config: MigrateConfig, data: any) : Promise<KnRecordSet | undefined> {
+    public async performRequestDB(context: KnContextInfo, field: MigrateField, config: MigrateConfig, data: any) : Promise<KnRecordSet | undefined> {
         if(config.query) {
             //try to get from cache
             if(!context.options) context.options = {};
@@ -347,7 +347,7 @@ export class MigrateOperate extends MigrateBase {
             try {
                 let rs = await knsql.executeQuery(db,context);
                 let records = this.createRecordSet(rs);
-                this.logger.debug(this.constructor.name+".performRequestDB: resultset:",records);
+                this.logger.debug(this.constructor.name+".performRequestDB: field:",field.name,", resultset:",records);
                 //try to set cache by context options
                 context.options[hash] = records;
                 return records;
@@ -376,7 +376,7 @@ export class MigrateOperate extends MigrateBase {
         }
     }
 
-    public async performRequestAPI(context: KnContextInfo, config: MigrateConfig, data: any) : Promise<any> {
+    public async performRequestAPI(context: KnContextInfo, field: MigrateField, config: MigrateConfig, data: any) : Promise<any> {
         if(config?.api) {
             if(!context.options) context.options = {};
             //try to get from cache
@@ -404,7 +404,7 @@ export class MigrateOperate extends MigrateBase {
             //when not found from cache, try to make request
             let headers = config?.setting || {};
             response = await this.requestAPI(config.api,{...headers},body,config);
-            this.logger.debug(this.constructor.name+".performRequestAPI: response:",response);
+            this.logger.debug(this.constructor.name+".performRequestAPI: field:",field.name,", response:",response);
             if(response) {
                 //try to set cache by context options
                 context.options[hash] = response;
@@ -414,14 +414,14 @@ export class MigrateOperate extends MigrateBase {
         return undefined;
     }
 
-    public async requestAPI(url: string, headers: any = {}, data: any = {},config: any) : Promise<any> {
+    public async requestAPI(url: string, headers: any = {}, data: any = {}, config: any) : Promise<any> {
         let body = JSON.stringify(data);
         let params = {};
-        this.logger.debug(this.constructor.name+".requestAPI: fetch : url=",url," body=",body," headers=",headers);
+        this.logger.debug(this.constructor.name+".requestAPI: fetch : url=",url,", body=",body,", headers=",headers);
         try {
             let method = headers?.method || "POST";
             if(headers?.method) delete headers.method;
-            let request = "GET" == method ? { method: method, headers: { "Content-Type": "application/json", ...headers } } : { method: method, headers: { "Content-Type": "application/json", ...headers }, body };
+            let request = "GET" == method || "HEAD" == method ? { method: method, headers: { "Content-Type": "application/json", ...headers } } : { method: method, headers: { "Content-Type": "application/json", ...headers }, body };
             let response = await fetch(url, Object.assign(Object.assign({}, params), request));
             if (!response.ok) {
                 let msg = "Response error";
@@ -429,12 +429,29 @@ export class MigrateOperate extends MigrateBase {
                 throw new Error(`[${response.status}] ${msg}`);
             }
             const contenttype = response.headers.get("content-type");
+            this.logger.debug(this.constructor.name+".requestAPI: content-type",contenttype);
             if(contenttype) {
                 if(contenttype.includes("application/json")) {
                     return await response.json();
                 } else if (contenttype.includes("application/xml") || contenttype.includes("text/xml") || config?.options?.acceptType == 'text/xml') {
                     let xml = await response.text();
-                    return this.tryParseXmlToJSON(xml);
+                    let data = this.tryParseXmlToJSON(xml);
+                    //in case of manual check error (api always response ok)
+                    if(config?.options?.errorChecker && config?.options?.errorCheckerValue) {
+                        let checkerValue = this.scrapeData(config.options.errorChecker,data,data);
+                        if(checkerValue) {
+                            if(config.options.errorCheckerValue.includes(checkerValue)) {
+                                let msg = "Request error";
+                                if(config?.options?.errorCheckerMessage) {
+                                    let checkerMessage = this.scrapeData(config?.options?.errorCheckerMessage,data,data);
+                                    if(checkerMessage) msg = checkerMessage;
+                                }
+                                this.logger.debug(this.constructor.name+".requestAPI: request error:",msg);
+                                throw new Error(msg);
+                            }
+                        }
+                    }
+                    return data;
                 }
             }
             return await response.json();

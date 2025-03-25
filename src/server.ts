@@ -6,6 +6,7 @@ import { TknRouteManager } from '@willsofts/will-serv';
 import { TknUploadFileManager } from "@willsofts/will-serv";
 import { TknReportManager } from "@willsofts/will-serv";
 import { TknExportManager } from "@willsofts/will-serv";
+import { ExampleManager } from "./example/ExampleManager";
 
 const ExpressService : ServiceSchema = {
     name: "api",
@@ -43,6 +44,7 @@ runner.start(process.argv).then(() => {
         new TknUploadFileManager(runner.service, __dirname).route(app);
         new TknReportManager(runner.service, __dirname).route(app);
         new TknExportManager(runner.service, __dirname).route(app);
+        new ExampleManager(runner.service,__dirname).route(app);
     }
     if(runner.broker) {
         runner.broker.call("$node.services").then((services: any) => {

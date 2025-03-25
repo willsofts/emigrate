@@ -97,3 +97,8 @@
 + support extract data 
 + support export file (csv,fix-length,xml,json,excel,pdf)
 + add new table schema tmigratefile to keep export data file (see database/migratedb_mysql.sql)
+
+2025-03-25
++ fixed verify export with header setting false
++ support api response with manual check error (test_simple_call_api_response_error_checker)
+

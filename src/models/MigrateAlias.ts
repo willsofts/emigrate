@@ -1,5 +1,5 @@
 import { KnDBConfig, KnRecordSet, KnResultSet } from "@willsofts/will-sql";
-import { KnModel, KnGenericObject, KnFieldSetting, KnCellSetting } from "@willsofts/will-db";
+import { KnModel, KnGenericObject, KnFieldSetting, KnCellSetting, KnDBField } from "@willsofts/will-db";
 import { ParsedPath } from "path";
 
 export interface MigrateSetting {
@@ -153,4 +153,9 @@ export interface MigrateDataRow {
     rs: KnResultSet;
     fields: KnFieldSetting | KnCellSetting[] | undefined;
     options: any;
+}
+
+export interface MigrateField {
+    name: string;
+    field: KnDBField;
 }

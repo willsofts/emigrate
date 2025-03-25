@@ -276,7 +276,8 @@ curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/migra
 
 test call api response xml
 curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/migrate/insert -d @test_simple_call_api_response_xml.json
-
+curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/migrate/insert -d @test_simple_call_api_response_xml_multiplex.json
+curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/migrate/insert -d @test_simple_call_api_response_error_checker.json
 
 setting up sftp server on windows:
 1. add OpenSSH Server 
