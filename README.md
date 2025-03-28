@@ -54,6 +54,7 @@ or
 
 This project contains examples API that it can invoke by [curl](https://curl.se/download.html):
 
+* curl http://localhost:8080/api/health/check
 * curl http://localhost:8080/api/fetch/hello 
 * curl http://localhost:8080/api/fetch/hello?name=test  (query parameter)
 * curl -X POST http://localhost:8080/api/fetch/hello -d name=test  (post parameter)
@@ -67,22 +68,55 @@ This project contains examples API that it can invoke by [curl](https://curl.se/
 #### Migrate Data
 
 1. Direct entry.
-This is a simple data entry.
+- This is a simple data entry. this can invoke as trigger event from other services.
 
 2. Mapper fields.
-This is a customize and complex data entry.
+- This is a customize field setting mapper for complex data entry.
 
 3. Handler function.
-This is a custom function handler.
+- This is a custom function handler. this support for java script function to manual data handling.
 
 4. Default values.
-This is a reserved entities for default values.
+- This is a reserved entities for default values.
 
 5. Support API fetching.
-This is an external data from calling API.
+- This is an external data from calling API.
 
 6. Support Database gathering.
-This is a external data from execute query via data base connection.
+- This is a external data from execute query via data base connection.
+
+7. Support various file type.
+- This can import file csv, fix-length, json, xml, xlsx.
+
+8. Support external file 
+- This is a plugin to fetch mail attachment, sftp file and download file.
+
+9. Support pre-statement, post-statement and statement elements
+- This is a custom query statement as before and after execution.
+
+10. Support async process
+- This is a asynchronous for long time running. default as synchronous.
+
+11. Support persist and un-persist data table
+- This is a simple data conversion from file input. this is easy to obtain json data from file when un-persist.
+
+12. Support auto commit
+- As default import with transaction but can set auto commit too.
+
+13. Support vary date format
+- This can import with vary date format and can mix date format with TH/EN locale.
+
+14. Support filter data
+- This can filter data by customize setting.
+
+15. Support reconcile file
+- This can import with reconcile file by cross check between data file & reconcile file.
+(reconcile file contain number of total records)
+
+#### Extract Data
+
+1. Support export file
+- This support extract data and export file (csv,fix-length,xml,json,excel,pdf)
 
 
 ## Database Connection String
