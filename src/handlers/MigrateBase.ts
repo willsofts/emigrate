@@ -255,11 +255,11 @@ export class MigrateBase extends TknOperateHandler {
         return task_models[taskid];
     }
 
-    public async getConnectionConfig(context: KnContextInfo, connectid: string | undefined, model: KnModel = this.model): Promise<MigrateConfig | undefined> {
+    public async getConnectionConfig(context: KnContextInfo, connectid: string | undefined, checkExist: boolean = true, model: KnModel = this.model): Promise<MigrateConfig | undefined> {
         if(!connectid || connectid.trim().length==0) return undefined;
         let db = this.getPrivateConnector(model);
         try {
-            return await this.getMigrateConfig(context,db,connectid);
+            return await this.getMigrateConfig(context,db,connectid,checkExist);
         } catch(ex: any) {
             this.logger.error(ex);
             return Promise.reject(this.getDBError(ex));
@@ -268,7 +268,7 @@ export class MigrateBase extends TknOperateHandler {
         }
     }
 
-    public async getMigrateConfig(context: KnContextInfo, db: KnDBConnector, connectid: string): Promise<MigrateConfig | undefined> {
+    public async getMigrateConfig(context: KnContextInfo, db: KnDBConnector, connectid: string, checkExist: boolean = false): Promise<MigrateConfig | undefined> {
         if(!connectid || connectid.trim().length==0) return undefined;
         let result = undefined;
         let knsql = new KnSQL();
@@ -307,6 +307,10 @@ export class MigrateBase extends TknOperateHandler {
                 handler: row.connecthandler,
                 query: row.connectquery,
             };
+        } else {
+            if(checkExist) {
+                return Promise.reject(new VerifyError("Connection setting not found ("+connectid+")",HTTP.NOT_FOUND,-16076)); 
+            }
         }
         return result;
     }
