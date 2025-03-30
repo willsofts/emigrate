@@ -1,5 +1,16 @@
-<input type="hidden" id="dialogconnectid" name="connectid" value="<%=data.dataset?.connectid%>" />
 <input type="hidden" id="connecttype" name="connecttype" value="DB" />
+<div class="row row-height">
+	<div class="col-md-12 col-height">
+			<div class="table-layer-class">
+				<div class="row row-height">
+					<div class="col-height col-md-7">
+<label for="connectid" id="connectid_label" class="control-label"><%=label.get('connectid_label','Connection ID')%></label>
+<div class="input-group"><input type="text" id="dialogconnectid" name="connectid" class="form-control input-md irequired alert-input" maxlength="150" value="<%=data.dataset?.connectid%>" readonly /><span></span><div class="input-group-required"><label class="required">*</label></div></div><div id="connectname_alert" role="alert" class="has-feedback has-error fa-hidden"><%=label.get('connectid_alert','You can not leave this empty')%></div>
+					</div>
+				</div>
+			</div>
+	</div>
+</div>
 <div class="row row-height">
 	<div class="col-md-12 col-height">
 			<div class="table-layer-class">

@@ -1,5 +1,5 @@
 import { HTTP } from "@willsofts/will-api";
-import { KnDBField, KnModel } from "@willsofts/will-db";
+import { KnModel } from "@willsofts/will-db";
 import { KnRecordSet, KnSQL } from "@willsofts/will-sql";
 import { KnContextInfo, VerifyError } from '@willsofts/will-core';
 import { MigrateBase } from "./MigrateBase";
@@ -343,7 +343,8 @@ export class MigrateOperate extends MigrateBase {
                 response = context.options[hash];
                 if(response) return response;
             }
-            let db = this.getConnector(config);
+            let cfg = await this.getConnectionConfig(context,config?.connectid);
+            let db = cfg ? this.getConnector(cfg) : this.getConnector(config);
             try {
                 let rs = await knsql.executeQuery(db,context);
                 let records = this.createRecordSet(rs);

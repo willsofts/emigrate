@@ -170,7 +170,7 @@ export class MigrateHandler extends MigrateOperate {
         let result : MigrateRecordSet = { migrateid: migrateid, processid: processid, taskid: context.params.taskid, modelname: taskmodel.name, totalrecords: rc.totalrecords, errorrecords: 0, skiprecords: 0, posterror: false, ...this.createRecordSet() };
         //let defaultInfo : MigrateInfo = { exception: false, errormessage: "", errorcontents: [] };
         //let defaultReject : MigrateReject = { reject: false, throwable: undefined };
-        if(taskmodel.name.trim().length == 0 || context.params.stored === "NONE" || context.params.stored === "false") {
+        if(taskmodel.name.trim().length == 0 || context.params.stored == "NONE" || String(context.params.stored) == "false") {
             result.rows = dataset;
             result.records = result.rows?.length || 0;
             return result;

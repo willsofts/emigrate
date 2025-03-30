@@ -8,6 +8,7 @@ import { MigrateJsonHandler } from "./MigrateJsonHandler";
 import { MigrateExcelHandler } from "./MigrateExcelHandler";
 import { MigrateXlsxHandler } from "./MigrateXlsxHandler";
 import { MigrateXmlHandler } from "./MigrateXmlHandler";
+import { MigrateHandler } from "./MigrateHandler";
 import { DEFAULT_CALLING_SERVICE } from "../utils/EnvironmentVariable";
 import { TknOperateHandler } from "@willsofts/will-serv";
 import path from 'path';
@@ -113,6 +114,12 @@ export class MigrateFileHandler extends MigrateTextHandler {
         return await handler.doInserting(context,undefined,calling);
     }
 
+    protected async processData(context: KnContextInfo, model: KnModel = this.model, calling: boolean = DEFAULT_CALLING_SERVICE) : Promise<MigrateResultSet> {
+        let handler = new MigrateHandler();
+        this.assignHandler(handler);
+        return await handler.doInserting(context,undefined,calling);        
+    }
+
     protected async processFile(context: KnContextInfo, model: KnModel = this.model, calling: boolean = DEFAULT_CALLING_SERVICE, fortype?: string) : Promise<MigrateResultSet> {
         await this.validateRequireFields(context,model);
         await this.doDataFile(context,model);
@@ -196,6 +203,10 @@ export class MigrateFileHandler extends MigrateTextHandler {
             if(handler) {
                 let fileinfo = await handler.perform(plugin,context,model);                
                 if(fileinfo) {
+                    if(plugin.name=="database") {
+                        context.params.dataset = fileinfo.body;
+                        return await this.processData(context,model,calling);
+                    }
                     context.params.file = fileinfo;
                     await this.doReconcile(context,taskmodel,model);
                     return await this.processFile(context,model,calling,fortype || plugin?.filetype);

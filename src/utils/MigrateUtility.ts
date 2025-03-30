@@ -33,21 +33,21 @@ export class MigrateUtility {
         return text;
     }
 
-    public static async getFileInfo(file: string) : Promise<FileInfo> {
+    public static async getFileInfo(file: string, stat: boolean = true) : Promise<FileInfo> {
         let info = path.parse(file);
         let extension = info.ext;
         let index = extension.indexOf('.');
         if(index>=0) extension = extension.substring(index+1);
         let mimetype = mime.lookup(file);
-        const stats = await fs.promises.stat(file);
+        const stats = stat ? await fs.promises.stat(file) : null;
         let result : FileInfo = {
             type: extension,
             originalname: info.base,
-            created: stats.birthtime,
-            modified: stats.mtime,
-            size: stats.size,
-            isDirectory: stats.isDirectory(),
-            isFile: stats.isFile(),
+            created: stats ? stats.birthtime : new Date(),
+            modified: stats ? stats.mtime : new Date(),
+            size: stats ? stats.size : 0,
+            isDirectory: stats ? stats.isDirectory() : false,
+            isFile: stats ? stats.isFile() : false,
             mimetype: mimetype?mimetype:undefined,
             destination: info.dir,
             path: path.join(info.dir,info.base),

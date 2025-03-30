@@ -136,6 +136,9 @@ curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/migra
 curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/migratefile/file -d "{\"taskid\":\"test_file_xlsx\", \"file\": \"./assets/tso.xlsx\" }"
 curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/migratefile/file -d "{\"taskid\":\"test_file_xml\", \"file\": \"./assets/tso.xml\" }"
 
+curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/migratefile/file -d "{\"taskid\":\"test_file_text\", \"file\": \"./assets/tso.txt\", \"stored\": \"false\" }"
+curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/migratefile/file -d "{\"taskid\":\"test_file_excel_download\", \"stored\": \"false\" }"
+
 2. upload/migrate/file (file come from client)
 curl -X POST http://localhost:8080/upload/migrate/file -F filename=@D:\exim\assets\tso.txt -F taskid=test_file_text
 curl -X POST http://localhost:8080/upload/migrate/file -F filename=@D:\exim\assets\tso_json.txt -F taskid=test_file_json -F type=json
@@ -286,6 +289,9 @@ curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/migra
 - extract
 curl -X POST http://localhost:8080/api/extract/config?taskid=extract_simple_text
 curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/extract/config -d "{\"taskid\":\"extract_simple_text\"}"
+
+test connection setting with connect id (from table tmigrateconnect)
+curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/migrate/task -d @test_simple_call_db_connection.json
 
 
 setting up sftp server on windows:

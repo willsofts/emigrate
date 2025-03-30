@@ -2133,6 +2133,142 @@
             },
             "settings": { "extract": "pdf", "header": true, "naming": "auto"}
         } ] 
+    },
+    "test_file_excel_download": { 
+        "configs": { 
+            "plugin": { 
+                "name": "download", 
+                "property": { "source": "http://localhost:8080/assets/tso.xlsx", "target": "tso.xlsx", "naming": "auto" } 
+            } 
+        },
+        "models": [ {
+            "name": "tso",
+            "alias": { "privateAlias": "PROMPTDB" },
+            "fields": {
+                "mktid": { "type": "STRING", "options": { "seqno": 1 } },
+                "share": { "type": "STRING", "options": { "seqno": 2 } },
+                "unit": { "type": "DECIMAL", "options": { "seqno": 3 } },
+                "price": { "type": "DECIMAL", "options": { "seqno": 4 } },
+                "yield": { "type": "INTEGER" },
+                "effdate": { "type": "DATE", "options": { "seqno": 5 } },
+                "efftime": { "type": "TIME", "options": { "seqno": 6 } },
+                "edittime": { "type": "DATETIME", "options": { "seqno": 7 } },
+                "sharename": { "type": "STRING",  
+                    "options": { "seqno": 8, 
+                        "mapper": "share",
+                        "connection": {
+                            "type": "API",
+                            "api": "http://localhost:8080/api/category/groups?names=tksharename", 
+                            "setting": {},
+                            "body": {},
+                            "mapper": "@body.tksharename"
+                        }
+                    }                    
+                },
+                "defvalue": { "type": "STRING" },
+                "message": { "type": "STRING" },
+                "remarks": { "type": "STRING", "defaultValue": "test_file_excel_download" }
+            },
+            "settings": { "skip": 1, "delimiter": ",", "quotable": true, "sheetname": "tso" }
+        } ] 
+    },
+    "test_simple_text_plugin_database": { 
+        "configs": { 
+            "plugin": { 
+                "name": "database", 
+                "property": { "source": "ttso", "target": "ttso.json" },
+                "connection": {
+                    "type": "DB",
+                    "query": "select * from ttso where mktid='TSO'",
+                    "schema": "test_simple_text_plugin_database",
+                    "alias": "mysql2", "dialect": "mysql", "url":"", "user": "root", "password": "root", "host": "localhost", "port": 3306, "database": "migratedb", "options": { "charset": "utf8", "connectionLimit": 1000 }
+                }
+            } 
+        },
+        "models": [ {
+            "name": "tso",
+            "alias": { "privateAlias": "PROMPTDB" },
+            "fields": {
+                "mktid": { "type": "STRING", "options": { "seqno": 1 } },
+                "share": { "type": "STRING", "options": { "seqno": 2 } },
+                "unit": { "type": "DECIMAL", "options": { "seqno": 3 } },
+                "price": { "type": "DECIMAL", "options": { "seqno": 4 } },
+                "yield": { "type": "INTEGER" },
+                "effdate": { "type": "DATE", "options": { "seqno": 5 } },
+                "efftime": { "type": "TIME", "options": { "seqno": 6 } },
+                "edittime": { "type": "DATETIME", "options": { "seqno": 7 } },
+                "sharename": { "type": "STRING", "options": { "seqno": 8 } },
+                "defvalue": { "type": "STRING" },
+                "message": { "type": "STRING" },
+                "remarks": { "type": "STRING", "defaultValue": "test_file_text_plugin_database" }
+            }
+        } ] 
+    },
+    "test_simple_text_plugin_connection": { 
+        "configs": { 
+            "plugin": { 
+                "name": "database", 
+                "property": { "source": "ttso", "target": "ttso.json" },
+                "connection": {
+                    "type": "DB",
+                    "query": "select * from ttso where mktid='TSO'",
+                    "connectid": "101b1c39-8c3c-4974-9838-dd1d2ec07110",
+                    "remarks": "this connectid come from table tmigrateconnect setting"
+                }
+            } 
+        },
+        "models": [ {
+            "name": "tso",
+            "alias": { "privateAlias": "PROMPTDB" },
+            "fields": {
+                "mktid": { "type": "STRING", "options": { "seqno": 1 } },
+                "share": { "type": "STRING", "options": { "seqno": 2 } },
+                "unit": { "type": "DECIMAL", "options": { "seqno": 3 } },
+                "price": { "type": "DECIMAL", "options": { "seqno": 4 } },
+                "yield": { "type": "INTEGER" },
+                "effdate": { "type": "DATE", "options": { "seqno": 5 } },
+                "efftime": { "type": "TIME", "options": { "seqno": 6 } },
+                "edittime": { "type": "DATETIME", "options": { "seqno": 7 } },
+                "sharename": { "type": "STRING", "options": { "seqno": 8 } },
+                "defvalue": { "type": "STRING" },
+                "message": { "type": "STRING" },
+                "remarks": { "type": "STRING", "defaultValue": "test_file_text_plugin_database" }
+            }
+        } ] 
+    },
+    "test_simple_call_db_connection": {
+        "models": [ {
+            "name": "tmigratetest",
+            "alias": { "privateAlias": "PROMPTDB" },
+            "fields": {
+                "field1": { "type": "STRING", "key": true },
+                "field2": { "type": "DECIMAL" },
+                "field3": { "type": "INTEGER" },
+                "field4": { "type": "DATE" },
+                "field5": { "type": "TIME" },
+                "field6": { "type": "DATETIME" },
+                "field7": { "type": "STRING" },
+                "field8": { "type": "STRING" },
+                "field9": { "type": "STRING" },
+                "field10": { "type": "STRING" },
+                "field11": { "type": "STRING" },
+                "field12": { "type": "STRING", "options": {
+                        "mapper": "field11",
+                        "connection": {
+                            "type": "DB",
+                            "query": "select * from tconstant where typename='tappstype'",
+                            "mapper": "rows",
+                            "fieldname": "typeid",
+                            "fieldvalue": "nameen",
+                            "connectid": "b553d640-0d43-11f0-9a18-00155d8f9de9",
+                            "remarks": "this connectid come from table tmigrateconnect setting"
+                        }
+                    }
+                },
+                "curtime": { "type": "DATETIME", "defaultValue": "#current_timestamp" },
+                "remark": { "type": "STRING", "defaultValue": "test_simple_call_db_connection" }
+            }
+        } ]
     }
 
 }

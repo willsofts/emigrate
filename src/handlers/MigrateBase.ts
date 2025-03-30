@@ -9,6 +9,7 @@ import { MigrateModel, MigrateConfig, PluginSetting, StatementInfo, ParameterInf
 import { FileDownloadHandler } from "./FileDownloadHandler";
 import { FileTransferHandler } from "./FileTransferHandler";
 import { FileAttachmentHandler } from './FileAttachmentHandler';
+import { FileDatabaseHandler } from "./FileDatabaseHandler";
 import { PluginHandler } from './PluginHandler';
 import { MigrateDate } from "../utils/MigrateDate";
 import { MigrateUtility } from '../utils/MigrateUtility';
@@ -179,6 +180,10 @@ export class MigrateBase extends TknOperateHandler {
                 let handler = new FileAttachmentHandler();
                 handler.obtain(this.broker,this.logger);
                 return handler;
+            } else if("database"==plugin.name) {
+                let handler = new FileDatabaseHandler();
+                handler.obtain(this.broker,this.logger);
+                return handler;
             }
         }
         return undefined;
@@ -250,7 +255,21 @@ export class MigrateBase extends TknOperateHandler {
         return task_models[taskid];
     }
 
+    public async getConnectionConfig(context: KnContextInfo, connectid: string | undefined, model: KnModel = this.model): Promise<MigrateConfig | undefined> {
+        if(!connectid || connectid.trim().length==0) return undefined;
+        let db = this.getPrivateConnector(model);
+        try {
+            return await this.getMigrateConfig(context,db,connectid);
+        } catch(ex: any) {
+            this.logger.error(ex);
+            return Promise.reject(this.getDBError(ex));
+        } finally {
+            if(db) db.close();
+        }
+    }
+
     public async getMigrateConfig(context: KnContextInfo, db: KnDBConnector, connectid: string): Promise<MigrateConfig | undefined> {
+        if(!connectid || connectid.trim().length==0) return undefined;
         let result = undefined;
         let knsql = new KnSQL();
         knsql.append("select c.connecttype,c.connectdialect,c.connecturl,c.connectuser,c.connectpassword,");

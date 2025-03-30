@@ -105,3 +105,9 @@
 
 2025-03-27
 + update will-run to support payload limit setting
+
+2025-03-30
++ support migrate plugin database query dataset (import data from query table)
+(see ex. config/model.json: test_simple_text_plugin_database)
++ support connection setting with connectid defined in table tmigrateconnect
+(see ex. config/model.json: test_simple_call_db_connection)
