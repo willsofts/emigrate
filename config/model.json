@@ -2200,7 +2200,7 @@
                 "sharename": { "type": "STRING", "options": { "seqno": 8 } },
                 "defvalue": { "type": "STRING" },
                 "message": { "type": "STRING" },
-                "remarks": { "type": "STRING", "defaultValue": "test_file_text_plugin_database" }
+                "remarks": { "type": "STRING", "defaultValue": "test_simple_text_plugin_database" }
             }
         } ] 
     },
@@ -2232,7 +2232,7 @@
                 "sharename": { "type": "STRING", "options": { "seqno": 8 } },
                 "defvalue": { "type": "STRING" },
                 "message": { "type": "STRING" },
-                "remarks": { "type": "STRING", "defaultValue": "test_file_text_plugin_database" }
+                "remarks": { "type": "STRING", "defaultValue": "test_simple_text_plugin_connection" }
             }
         } ] 
     },
