@@ -88,6 +88,10 @@ CREATE TABLE tmigratefile (
   migrateid varchar(50) NOT NULL,
   processid varchar(50) NOT NULL,
   notename varchar(200) NOT NULL,
+	createdate DATE NULL DEFAULT NULL,
+	createtime TIME NULL DEFAULT NULL,
+	createmillis BIGINT NULL DEFAULT NULL,
+  createuser varchar(50) DEFAULT NULL,
   datafile text DEFAULT NULL,
   PRIMARY KEY (migrateid)
 );

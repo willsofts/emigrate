@@ -236,11 +236,17 @@ export class MigrateLogHandler extends TknOperateHandler {
                 datafile = Buffer.from(stream).toString("base64");
             }
         }
+        let now = Utilities.now();
         let knsql = new KnSQL();
-        knsql.append("insert into tmigratefile(migrateid,processid,notename,datafile) values(?migrateid,?processid,?notename,?datafile) ");
+        knsql.append("insert into tmigratefile(migrateid,processid,notename,createdate,createtime,createmillis,createuser,datafile) ");
+        knsql.append("values(?migrateid,?processid,?notename,?createdate,?createtime,?createmillis,?createuser,?datafile) ");
         knsql.set("migrateid",migrateid);
         knsql.set("processid",processid);
         knsql.set("notename",notename);
+        knsql.set("createdate",now,"DATE");
+        knsql.set("createtime",now,"TIME");
+        knsql.set("createmillis",now.getTime());
+        knsql.set("createuser",this.userToken?.userid);
         knsql.set("datafile",datafile);
         let rs = await knsql.executeUpdate(db,context);
         return this.createRecordSet(rs);

@@ -125,6 +125,10 @@ CREATE TABLE IF NOT EXISTS `tmigratefile` (
   `migrateid` varchar(50) COLLATE utf8mb4_general_ci NOT NULL,
   `processid` varchar(50) COLLATE utf8mb4_general_ci NOT NULL,
   `notename` varchar(200) COLLATE utf8mb4_general_ci NOT NULL,
+	`createdate` DATE NULL DEFAULT NULL,
+	`createtime` TIME NULL DEFAULT NULL,
+	`createmillis` BIGINT(19) NULL DEFAULT NULL,
+  `createuser` VARCHAR(50) NULL DEFAULT NULL COLLATE utf8mb4_general_ci,
   `datafile` longtext COLLATE utf8mb4_general_ci,
   PRIMARY KEY (`migrateid`),
   KEY `processid` (`processid`)
