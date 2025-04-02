@@ -122,7 +122,7 @@ export class ExtractLogHandler extends MigrateLogHandler {
         let rs = await this.doGetLog(context);
         if(rs && rs.rows?.length > 0) {
             let row = rs.rows[0];
-            if(row.processflag != '2') {
+            if(row.processflag != '2' || row.processstatus == "ERROR") {
                 res.status(HTTP.NOT_ALLOWED).send(row.processstatus || "PROCESSING");
                 return;
             }

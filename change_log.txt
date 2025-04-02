@@ -119,3 +119,4 @@
 2025-04-02
 + fixed bug api/extractfile note name
 + change default async export save stream with parameter async(true/false)
++ fix bug api/extract/data export with procoss status = ERROR
