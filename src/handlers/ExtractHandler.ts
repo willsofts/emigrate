@@ -21,8 +21,11 @@ export class ExtractHandler extends ExtractOperate {
         let uuid = this.randomUUID();
         if(!context.params.migrateid) context.params.migrateid = uuid;
         if(!context.params.processid) context.params.processid = uuid;
+        this.logger.debug(this.constructor.name+".doCollecting: context.params",context.params);
         let param : MigrateParams = { authtoken: this.getTokenKey(context), filename: context.params.filename, fileinfo: context.params.fileinfo, calling: calling, async: String(context.params.async)=="true", notename: this.notename };
-        return await this.processCollecting(context, taskmodel, param);
+        let result = await this.processCollecting(context, taskmodel, param);
+        this.logger.debug(this.constructor.name+".doCollecting: result",{taskid: result.taskid, processid: result.processid, async: context.params.async});
+        return result;
     }
 
     public async processCollecting(context: KnContextInfo, migratemodel: MigrateModel, param: MigrateParams): Promise<MigrateResultSet> {
@@ -83,6 +86,7 @@ export class ExtractHandler extends ExtractOperate {
         let uuid = this.randomUUID();
         let migrateid = context.params.migrateid || uuid;
         let processid = context.params.processid || uuid;
+        this.logger.debug(this.constructor.name+".processCollectingModel: param",param);
         let result : MigrateRecordSet = { migrateid: migrateid, processid: processid, taskid: context.params.taskid, modelname: taskmodel.name, totalrecords: rc.totalrecords, errorrecords: 0, skiprecords: 0, posterror: false, ...this.createRecordSet() };
         this.insertLogging(context, taskmodel, param, result);
         if(param.async) {

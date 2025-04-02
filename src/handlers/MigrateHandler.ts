@@ -32,7 +32,9 @@ export class MigrateHandler extends MigrateOperate {
         if(!context.params.processid) context.params.processid = uuid;
         if(context.params.dataset) delete context.params.dataset;
         let param : MigrateParams = { authtoken: this.getTokenKey(context), filename: context.params.filename, fileinfo: context.params.fileinfo, calling: calling, async: String(context.params.async)=="true" };
-        return await this.processInserting(context, taskmodel, param, dataset, context.params.datapart);
+        let result = await this.processInserting(context, taskmodel, param, dataset, context.params.datapart);
+        this.logger.debug(this.constructor.name+".doInserting: result",{taskid: result.taskid, processid: result.processid, async: context.params.async});
+        return result;
     }
 
     public async processInserting(context: KnContextInfo, migratemodel: MigrateModel, param: MigrateParams, dataset: any, datapart?: any): Promise<MigrateResultSet> {

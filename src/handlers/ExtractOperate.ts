@@ -1,5 +1,6 @@
 import { HTTP } from "@willsofts/will-api";
 import { KnModel, KnSetting } from "@willsofts/will-db";
+import { KnRecordSet } from "@willsofts/will-sql";
 import { KnContextInfo, VerifyError, KnValidateInfo } from '@willsofts/will-core';
 import { MigrateOperate } from "./MigrateOperate";
 import { MigrateRecordSet, MigrateParams, MigrateInfo, MigrateReject  } from "../models/MigrateAlias";
@@ -26,16 +27,16 @@ export class ExtractOperate extends MigrateOperate {
         super.updateLogging(context,param,rs,info,reject);
         if(param.async && rs.rows) {
             if(!this.loggingStreamWhenAsync) return;
-            this.updateStream(context, param, rs, rs.rows);
+            this.updateStream(context, param, rs, rs.rows).catch(ex => this.logger.error(ex));
         }
     }
 
-    protected updateStream(context: KnContextInfo, param: MigrateParams, record: MigrateRecordSet, stream: any) {
+    protected async updateStream(context: KnContextInfo, param: MigrateParams, record: MigrateRecordSet, stream: any) : Promise<KnRecordSet> {
         let params = {authtoken: param.authtoken, migrateid: record.migrateid, processid: record.processid, notename: param.notename, notefile: param.notefile };
         let handler = new MigrateLogHandler();
         handler.obtain(this.broker,this.logger);
         handler.userToken = this.userToken;
-        handler.updateStream({params: params, meta: context.meta}, stream).catch(ex => this.logger.error(ex));
+        return await handler.updateStream({params: params, meta: context.meta}, stream);
     }
 
 }

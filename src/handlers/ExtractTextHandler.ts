@@ -32,12 +32,17 @@ export class ExtractTextHandler extends ExtractControlHandler {
         this.printFooter(model,data);
         if(data.options?.writer) {
             await new Promise<void>((resolve, reject) => {
-                data.options.writer.end(() => { 
+                data.options.writer.end(async () => { 
                     param.notefile = data.options.notefile;
                     if(param.notefile) {
                         if(fs.existsSync(param.notefile)) {
                             let buffer = fs.readFileSync(param.notefile);
-                            this.updateStream(context,param,record,buffer);
+                            try {
+                                await this.updateStream(context,param,record,buffer);
+                            } catch(ex) {
+                                this.logger.error(ex);
+                                reject(ex);
+                            }
                         } else {
                             reject(new VerifyError(`File not found ${param.notefile}`,HTTP.NOT_FOUND,-16060,record.processid));
                         }

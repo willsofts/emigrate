@@ -221,6 +221,7 @@ export class MigrateLogHandler extends TknOperateHandler {
         let migrateid = context.params.migrateid;
         if(!migrateid || migrateid.trim().length==0) return this.createRecordSet();
         await this.performUpdateNote(context,db,migrateid,context.params.notename,context.params.notefile);
+        this.logger.debug(this.constructor.name+".performUpdateStream: context.params",context.params);
         return await this.performInsertStream(context,db,migrateid,context.params.processid,context.params.notename,stream);
     }
 

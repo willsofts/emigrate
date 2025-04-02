@@ -185,7 +185,9 @@ export class MigrateFileHandler extends MigrateTextHandler {
     }
 
     public override async doInserting(context: KnContextInfo, model: KnModel = this.model, calling: boolean = DEFAULT_CALLING_SERVICE): Promise<MigrateResultSet> {
-        return await this.doManipulating(context,model,calling); 
+        let result = await this.doManipulating(context,model,calling); 
+        this.logger.debug(this.constructor.name+".doInserting: result",{taskid: result.taskid, processid: result.processid, async: context.params.async});
+        return result;
     }
 
     protected async doManipulating(context: KnContextInfo, model: KnModel = this.model, calling: boolean = DEFAULT_CALLING_SERVICE, fortype?: string) : Promise<MigrateResultSet> {

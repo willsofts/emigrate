@@ -82,7 +82,9 @@ export class MigrateTextHandler extends MigrateHandler {
         if(!context.params.migrateid) context.params.migrateid = uuid;
         if(!context.params.processid) context.params.processid = uuid;
         let param : MigrateParams = { authtoken: this.getTokenKey(context), filename: filename, fileinfo: file, calling: calling, async: String(context.params.async)=="true" };
-        return await this.processInserting(context,taskmodel,param,context.params.dataset);
+        let result = await this.processInserting(context,taskmodel,param,context.params.dataset);
+        this.logger.debug(this.constructor.name+".doInserting: result",{taskid: result.taskid, processid: result.processid, async: context.params.async});
+        return result;
     }
 
     public override async processInsertingModel(context: KnContextInfo, taskmodel: TaskModel, param: MigrateParams, db: KnDBConnector | undefined): Promise<MigrateRecordSet> {

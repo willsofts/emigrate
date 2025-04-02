@@ -33,7 +33,7 @@ export class ExtractFileHandler extends ExtractHandler {
         if(handler) {
             this.assignHandler(handler);
             param.notename = handler.notename;
-            return handler.processCollectingModel(context, taskmodel, param, db, rc);
+            return await handler.processCollectingModel(context, taskmodel, param, db, rc);
         }
         return Promise.reject(new VerifyError("Not supported",HTTP.NOT_ACCEPTABLE,-16067)); 
     }

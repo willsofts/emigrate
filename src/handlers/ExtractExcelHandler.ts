@@ -30,7 +30,12 @@ export class ExtractExcelHandler extends ExtractControlHandler {
         if(param.notefile) {
             if(fs.existsSync(param.notefile)) {
                 let buffer = fs.readFileSync(param.notefile);
-                this.updateStream(context,param,record,buffer);
+                try {
+                    await this.updateStream(context,param,record,buffer);
+                } catch(ex) {
+                    this.logger.error(ex);
+                    return Promise.reject(ex);
+                }
             } else {
                 return Promise.reject(new VerifyError(`File not found ${param.notefile}`,HTTP.NOT_FOUND,-16060,record.processid));
             }
