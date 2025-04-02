@@ -15,6 +15,7 @@ export class ExtractFileHandler extends ExtractHandler {
 
     public async processCollectingModel(context: KnContextInfo, taskmodel: TaskModel, param: MigrateParams, db: KnDBConnector | undefined, rc: MigrateRecords): Promise<MigrateRecordSet> {
         let extract = context.params?.extract || taskmodel.settings?.extract || "json";
+        this.logger.debug(this.constructor.name+".processCollectingModel: extract",extract);
         let handler : ExtractHandler | undefined = undefined;
         if(extract == 'text' || extract == 'txt' || extract == 'csv') {
             handler = new ExtractTextHandler();
@@ -31,6 +32,7 @@ export class ExtractFileHandler extends ExtractHandler {
         }
         if(handler) {
             this.assignHandler(handler);
+            param.notename = handler.notename;
             return handler.processCollectingModel(context, taskmodel, param, db, rc);
         }
         return Promise.reject(new VerifyError("Not supported",HTTP.NOT_ACCEPTABLE,-16067)); 

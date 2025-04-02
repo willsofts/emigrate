@@ -203,6 +203,7 @@ export class ExtractLogHandler extends MigrateLogHandler {
                 knsql.set("processstatus",context.params.processstatus);
                 filter = " and ";
             }
+            this.logger.debug(this.constructor.name+".doGetLog:",knsql);
             let rs = await knsql.executeQuery(db,context);
             return this.createRecordSet(rs);
         } catch(ex: any) {
