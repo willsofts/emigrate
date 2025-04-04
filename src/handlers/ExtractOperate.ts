@@ -19,7 +19,7 @@ export class ExtractOperate extends MigrateOperate {
         return Promise.resolve(vi);
     }
     
-    protected override insertLogging(context: KnContextInfo, taskmodel: KnModel, param: MigrateParams, rs: MigrateRecordSet, processtype: string = "EXPORT") {
+    protected override insertLogging(context: KnContextInfo, taskmodel: KnModel, param: MigrateParams, rs: MigrateRecordSet, processtype: string = "EXTRACT") {
         super.insertLogging(context,taskmodel,param,rs,processtype);
     }
 

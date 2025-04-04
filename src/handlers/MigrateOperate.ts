@@ -6,6 +6,7 @@ import { MigrateBase } from "./MigrateBase";
 import { RefConfig, MigrateConfig, MigrateRecordSet, MigrateInfo, MigrateReject, MigrateParams, MigrateField } from "../models/MigrateAlias";
 import { MigrateLogHandler } from "./MigrateLogHandler";
 import config from "@willsofts/will-util";
+import querystring from 'querystring';
 
 export class MigrateOperate extends MigrateBase {
     
@@ -362,32 +363,51 @@ export class MigrateOperate extends MigrateBase {
         return undefined;
     }
 
-    protected assignRequestBody(body: any, data: any, values: any[]) {
+    protected assignRequestData(body: any, data: any, values: any[]) {
         for(let key in body) {
             let value = body[key];
             if(typeof value === 'string') {
                 if(value.length > 0 && value.charAt(0) == '?') {
-                    value = value.substring(1);
-                    body[key] = data[value];
-                    values.push(data[value]);
+                    let val = value.substring(1);
+                    if(data && data.hasOwnProperty(val)) {
+                        let param = data[val];
+                        body[key] = param;
+                        values.push(param);
+                    } else {                    
+                        let [param,found] = this.parseDefaultValue(value);
+                        if(found) {
+                            body[key] = param;
+                            values.push(param);
+                        } else {
+                            param = data[val];
+                            body[key] = param;
+                            values.push(param);
+                        }
+                    }
                 }    
             } else if(typeof value === 'object') {
-                this.assignRequestBody(value,data,values);
+                this.assignRequestData(value,data,values);
             }
         }
     }
 
-    public async performRequestAPI(context: KnContextInfo, field: MigrateField, config: MigrateConfig, data: any) : Promise<any> {
+    public async performRequestAPI(context: KnContextInfo, field: MigrateField, configure: MigrateConfig, data: any) : Promise<any> {
+        let config = configure;
+        let cfg = await this.getConnectionConfig(context,configure?.connectid);        
+        if(cfg) {
+            let { api, setting, body } = cfg;
+            config = { ...configure, api, setting, body };
+        }
         if(config?.api) {
             if(!context.options) context.options = {};
             //try to get from cache
             let databody = config?.body || {};
-            let body = { ... databody };
+            let body = { ...databody };
             let hash = this.toHashString(config.api+JSON.stringify(body));
             let response = context.options[hash];
             if(response) return response;
             let values : any[] = [];
-            this.assignRequestBody(body,data,values);
+            this.assignRequestData(body,data,values);
             if(config?.parameters && config?.parameters.length > 0) {
                 for(let pr of config.parameters) {
                     let [value,found] = this.parseDefaultValue(pr?.defaultValue);
@@ -403,8 +423,10 @@ export class MigrateOperate extends MigrateBase {
                 if(response) return response;
             }
             //when not found from cache, try to make request
-            let headers = config?.setting || {};
-            response = await this.requestAPI(config.api,{...headers},body,config);
+            let setting = config?.setting || {};
+            let headers = { ...setting };
+            this.assignRequestData(headers,data,[]);
+            response = await this.requestAPI(config.api,headers,body,config);
             this.logger.debug(this.constructor.name+".performRequestAPI: field:",field.name,", response:",response);
             if(response) {
                 //try to set cache by context options
@@ -423,6 +445,10 @@ export class MigrateOperate extends MigrateBase {
             let method = headers?.method || "POST";
             if(headers?.method) delete headers.method;
             let request = "GET" == method || "HEAD" == method ? { method: method, headers: { "Content-Type": "application/json", ...headers } } : { method: method, headers: { "Content-Type": "application/json", ...headers }, body };
+            if("GET" == method && Object.keys(data).length > 0) {
+                let querystr = querystring.stringify(data);
+                url = url + "?" + querystr;
+            }
             let response = await fetch(url, Object.assign(Object.assign({}, params), request));
             if (!response.ok) {
                 let msg = "Response error";

@@ -176,6 +176,8 @@ export class Emte001Handler extends TknOperateHandler {
         let entity = datacategory.entity as KnDataEntity;
         let dialectcategories = await this.performDialectCategories(context,model,db);
         let dialectentity = dialectcategories.entity as KnDataEntity;
+        let tconnecttype = {"DB":"Database","API":"API"};
+        entity["tconnecttype"] = tconnecttype;
         entity["tdialect"] = dialectentity["tdialect"];
         entity["dialects"] = dialectentity["dialects"];
         /*

@@ -1,4 +1,3 @@
-<input type="hidden" id="connecttype" name="connecttype" value="DB" />
 <div class="row row-height">
 	<div class="col-md-12 col-height">
 			<div class="table-layer-class">
@@ -28,16 +27,72 @@
 			<div class="table-layer-class">
 				<div class="row row-height">
 					<div class="col-height col-md-4">
-<label for="connectdialect" id="connectdialect_label" class="control-label"><%=label.get('connectdialect_label','Dialect')%></label>
+<label for="connecttype" id="connecttype_label" class="control-label"><%=label.get('connecttype_label','Type')%></label>
 <div class="input-group">
-<%-page.html('select',{map: data.entity?.tdialect, value: data.dataset?.connectdialect, id: "connectdialect", name: "connectdialect", class: "form-control input-md"})%>
-<div class="input-group-required"><label class="required">*</label></div></div><div id="connectdialect_alert" role="alert" class="has-feedback has-error fa-hidden"><%=label.get('connectdialect_alert','You can not leave this empty')%></div>
+<%-page.html('select',{map: data.entity?.tconnecttype, value: data.dataset?.connecttype, id: "connecttype", name: "connecttype", class: "form-control input-md"})%>
+<div class="input-group-required"><label class="required">*</label></div></div><div id="connecttype_alert" role="alert" class="has-feedback has-error fa-hidden"><%=label.get('connecttype_alert','You can not leave this empty')%></div>
 					</div>
 				</div>
 			</div>
 	</div>
 </div>
+<div id="apilayer">
+	<div class="row row-height">
+		<div class="col-md-12 col-height">
+				<div class="table-layer-class">
+					<div class="row row-height">
+						<div class="col-height col-md-10">
+	<label for="connectapi" id="connectapi_label" class="control-label"><%=label.get('connectapi_label','API URL')%></label>
+	<div class="input-group"><input type="text" id="connectapi" name="connectapi" class="form-control input-md irequired alert-input" maxlength="150" value="<%=data.dataset?.connectapi%>" /><div class="input-group-required"><label class="required">*</label></div></div><div id="connectapi_alert" role="alert" class="has-feedback has-error fa-hidden"><%=label.get('connectapi_alert','You can not leave this empty')%></div>
+						</div>
+					</div>
+				</div>
+		</div>
+	</div>
+	<div class="row row-height">
+		<div class="col-md-12 col-height">
+				<div class="table-layer-class">
+					<div class="row row-height">
+						<div class="col-height col-md-10">
+	<label for="connectsetting" id="connectsetting_label" class="control-label"><%=label.get('connectsetting_label','API Header')%></label>
+	<div class="input-group"><textarea id="connectsetting" name="connectsetting" class="form-control input-md" rows="2"><%=data.dataset?.connectsetting%></textarea><div class="input-group-required"><label class="required">&#160;</label></div></div>
+	<div id="connectsetting_alert" role="alert" class="has-feedback has-error fa-hidden"><%=label.get('connectsetting_alert','Invalid setting format')%></div>
+	<label id="connectsettinginfo_label"><%=label.get('connectsettinginfo_label','JSON format settings eg. {"key1":"value1","key2":"value2"}')%></label>
+						</div>
+					</div>
+				</div>
+		</div>
+	</div>
+	<div class="row row-height">
+		<div class="col-md-12 col-height">
+				<div class="table-layer-class">
+					<div class="row row-height">
+						<div class="col-height col-md-10">
+	<label for="connectbody" id="connectbody_label" class="control-label"><%=label.get('connectbody_label','API Parameter')%></label>
+	<div class="input-group"><textarea id="connectbody" name="connectbody" class="form-control input-md" rows="2"><%=data.dataset?.connectbody%></textarea><div class="input-group-required"><label class="required">&#160;</label></div></div>
+	<div id="connectbody_alert" role="alert" class="has-feedback has-error fa-hidden"><%=label.get('connectbody_alert','Invalid setting format')%></div>
+	<label id="connectbodyinfo_label"><%=label.get('connectbodyinfo_label','JSON format settings eg. {"key1":"value1","key2":"value2"}')%></label>
+						</div>
+					</div>
+				</div>
+		</div>
+	</div>
+</div>
 <div id="dblayer">
+	<div class="row row-height">
+		<div class="col-md-12 col-height">
+				<div class="table-layer-class">
+					<div class="row row-height">
+						<div class="col-height col-md-4">
+	<label for="connectdialect" id="connectdialect_label" class="control-label"><%=label.get('connectdialect_label','Dialect')%></label>
+	<div class="input-group">
+	<%-page.html('select',{map: data.entity?.tdialect, value: data.dataset?.connectdialect, id: "connectdialect", name: "connectdialect", class: "form-control input-md"})%>
+	<div class="input-group-required"><label class="required">*</label></div></div><div id="connectdialect_alert" role="alert" class="has-feedback has-error fa-hidden"><%=label.get('connectdialect_alert','You can not leave this empty')%></div>
+						</div>
+					</div>
+				</div>
+		</div>
+	</div>
 	<div id="providedlayer">
 		<div id="urllayer">
 			<div class="row row-height">

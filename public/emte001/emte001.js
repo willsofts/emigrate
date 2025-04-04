@@ -757,12 +757,31 @@ function setupConnectionInputs() {
 		}
 		console.log("setupConnectionInputs: connectdialect.change - cat="+$(this).val()+", fs_requiredfields",fs_requiredfields);
 	}).trigger("change"); 
+	$("#connectsetting").focus(function() {
+		$(this).parent().removeClass("has-error");
+		$("#connectsetting_alert").hide();
+	});
+	$("#connectbody").focus(function() {
+		$(this).parent().removeClass("has-error");
+		$("#connectbody_alert").hide();
+	});
+}
+function validJSONSetting(source) {
+	if($("#connecttype").val()=="API" && $.trim($(source).val()).length>0) {
+		try {
+			JSON.parse($(source).val());
+		} catch(ex) {
+			return false;
+		}
+	}
+	return true;
 }
 function saveConnection(aform) {
 	if(!aform) aform = fsentryformconnect;
 	if(!validNumericFields(aform)) return false;
 	validSaveForm(function() {
 		//#(195000) programmer code begin;
+		if(!validConnetionSettings()) return;
 		//#(195000) programmer code end;
 		confirmSave(function() {
 			let formdata = serializeDataForm(aform);
@@ -795,6 +814,7 @@ function updateConnection(aform) {
 	if(!aform) aform = fsentryformconnect;
 	if(!validNumericFields(aform)) return false;
 	validSaveForm(function() {
+		if(!validConnetionSettings()) return;
 		confirmUpdate(function() {
 			let formdata = serializeDataForm(aform);
 			startWaiting();
@@ -818,5 +838,25 @@ function updateConnection(aform) {
 		});
 	});
 	return false;
+}
+function validConnetionSettings() {
+	let validator;
+	let validsetting = validJSONSetting("#connectsetting");
+	let validbody = validJSONSetting("#connectbody");
+	if(!validsetting) {			
+		validator = "#connectsetting";
+		$("#connectsetting").parent().addClass("has-error");
+		$("#connectsetting_alert").show();
+	}
+	if(!validbody) {
+		if(!validator) validator = "#connectbody";
+		$("#connectbody").parent().addClass("has-error");
+		$("#connectbody_alert").show();
+	}
+	if(!validsetting || !validbody) {
+		$(validator).focus();	
+		return false;
+	}
+	return true;
 }
 //#(390000) programmer code end;

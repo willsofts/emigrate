@@ -2,7 +2,7 @@ import { v4 as uuid } from 'uuid';
 import { HTTP } from "@willsofts/will-api";
 import { KnModel, KnParamInfo, KnSQLUtils, KnOperation } from "@willsofts/will-db";
 import { KnContextInfo, KnValidateInfo, VerifyError } from "@willsofts/will-core";
-import { KnDBConnector, KnDBFault, KnSQL, KnDBUtils, KnDBTypes } from "@willsofts/will-sql";
+import { KnDBConnector, KnDBFault, KnSQL, KnDBUtils, KnDBTypes, KnResultSet } from "@willsofts/will-sql";
 import { TknOperateHandler, OPERATE_HANDLERS } from "@willsofts/will-serv";
 import { PRIVATE_SECTION, ERROR_CANCELATION_CODE, ERROR_CANCELATION_KEY, MIGRATE_DUMP_SQL, ALWAYS_THROW_POST_ERROR } from "../utils/EnvironmentVariable";
 import { MigrateModel, MigrateConfig, PluginSetting, StatementInfo, ParameterInfo, MigrateRecords, FilterInfo } from "../models/MigrateAlias";
@@ -13,6 +13,7 @@ import { FileDatabaseHandler } from "./FileDatabaseHandler";
 import { PluginHandler } from './PluginHandler';
 import { MigrateDate } from "../utils/MigrateDate";
 import { MigrateUtility } from '../utils/MigrateUtility';
+import config from "@willsofts/will-util";
 
 const task_models = require("../../config/model.json");
 const crypto = require('crypto');
@@ -42,6 +43,10 @@ export class MigrateBase extends TknOperateHandler {
         let result = await this.getTaskModel(context,context.params.taskid,model);
         if(result) return result;
         return Promise.reject(new VerifyError("Task not found",HTTP.NOT_FOUND,-16077));
+    }
+
+    protected override doClearing(context: KnContextInfo, model: KnModel): Promise<KnResultSet> {
+        return this.notImplementation();
     }
 
     public randomUUID() : string {
@@ -80,8 +85,13 @@ export class MigrateBase extends TknOperateHandler {
                     return [defaultValue,true];
                 }
                 if(CHARACTER_SET.includes(defaultValue.trim())) return [defaultValue,true];
-                if(defaultValue.length>1 && defaultValue.charAt(0)=='#') {
-                    return [defaultValue.substring(1),true];
+                if(defaultValue.length>1) {
+                    let first = defaultValue.charAt(0);
+                    if(first=='#' || first=='$' || first=='?') {
+                        let key = defaultValue.substring(1);
+                        let value = config.env(key,key);
+                        return [value,true];
+                    }
                 }
             }
         }
