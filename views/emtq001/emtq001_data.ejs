@@ -1,0 +1,77 @@
+<form name="fslistform" id="fslistform" method="post" autocomplete="off">
+	<input type="hidden" name="ajax" value="true"/>
+	<input type="hidden" name="rowsPerPage" value="<%=page.setting?.rowsPerPage%>"/>
+	<input type="hidden" name="limit" value="<%=page.setting?.limit%>"/>
+	<input type="hidden" name="page" value="<%=page.setting?.page%>"/>
+	<input type="hidden" name="migrateid" />
+</form>
+<form name="fssortform" id="fssortform" method="post" autocomplete="off">
+	<input type="hidden" name="ajax" value="true"/>
+	<input type="hidden" name="rowsPerPage" value="<%=page.setting?.rowsPerPage%>"/>
+	<input type="hidden" name="limit" value="<%=page.setting?.limit%>"/>
+	<input type="hidden" name="page" value="<%=page.setting?.page%>"/>
+	<input type="hidden" name="orderDir" value="<%=page.invertOrder()%>"/>
+	<input type="hidden" name="orderBy" />
+</form>
+<table id="datatable" class="table table-bordered table-hover table-striped tablesorter">
+	<thead>
+		<tr>
+			<th class="text-center th-sequence"><label id="seqno_headerlabel"><%=label.get('seqno_headerlabel','No.')%></label></th>
+			<th class="text-center th-data"><a href="javascript:void(0)" class="alink-sorterr fa-data-sort" data-sorter="processdate"><label id="processdate_headerlabel"><%=label.get('processdate_headerlabel','Date')%></label></a></th>
+			<th class="text-center th-data"><a href="javascript:void(0)" class="alink-sorterr fa-data-sort" data-sorter="processtime"><label id="processtime_headerlabel"><%=label.get('processtime_headerlabel','Time')%></label></a></th>
+			<th class="text-center th-data"><a href="javascript:void(0)" class="alink-sorterr fa-data-sort" data-sorter="processtype"><label id="processtype_headerlabel"><%=label.get('processtype_headerlabel','Type')%></label></a></th>
+			<th class="text-center th-data" nowrap><label id="taskname_headerlabel"><%=label.get('taskname_headerlabel','Task')%></label></th>
+			<th class="text-center th-data"><label id="records_headerlabel"><%=label.get('records_headerlabel','Records')%></label></a></th>
+			<th class="text-center th-data"><label id="errorrecords_headerlabel"><%=label.get('errorrecords_headerlabel','Error Record')%></label></th>
+			<th class="text-center th-data"><label id="skiprecords_headerlabel"><%=label.get('skiprecords_headerlabel','Skip Record')%></label></th>
+			<th class="text-center th-data"><label id="totalrecords_headerlabel"><%=label.get('totalrecords_headerlabel','Total Record')%></label></a></th>
+			<th class="text-center th-data"><label id="processstatus_headerlabel"><%=label.get('processstatus_headerlabel','Status')%></label></th>
+		</tr>
+	</thead>
+	<tbody id="datatablebody">							
+		<%	let rows = data.dataset?.rows;
+			if(rows && rows.length>0) { 
+				for(let index=0; index < rows.length; index++) { 
+					let item = rows[index]; %>
+					<tr>
+							<td class="text-center"><%=page.recordsNumber(index+1)%></td>
+							<td class="text-center"><%=page.format({value: item?.processdate, field:{type:"DATE"}})%></td>
+							<td class="text-center"><%=page.format({value: item?.processtime, field:{type:"TIME"}})%></td>
+							<td class="text-center"><%=item?.processtype%></td>
+							<td><%=item?.taskname || item?.taskid%></td>
+							<td class="text-center"><%=item?.records%></td>
+							<td class="text-center"><%=item?.errorrecords%></td>
+							<td class="text-center"><%=item?.skiprecords%></td>
+							<td class="text-center"><%=item?.totalrecords%></td>
+							<td class="text-center"><%=item?.processstatus%></td>
+					</tr>
+		<%		}
+			} else {
+				if(rows) { %>
+					<tr>
+						<td class="text-center" colspan="10">
+							<%=label.get('recordnotfound','Record not found')%>
+						</td>
+					</tr>
+		<%		}
+			}	%>
+	</tbody>
+</table>	
+<div id="fschaptertablelayer" class="fschaptertablelayer">
+<table id="fschaptertable" class="fschaptertable">
+	<tr class="fschapterrow"><td class="fschaptercolumn">
+	<form name="fschapterform" id="fschapterform" method="post" autocomplete="off">
+		<input type="hidden" name="ajax" value="true"/>
+		<input type="hidden" name="rowsPerPage" value="<%=page.setting?.rowsPerPage%>"/>
+		<input type="hidden" name="limit" value="<%=page.setting?.limit%>"/>
+		<input type="hidden" name="page" value="<%=page.setting?.page%>"/>
+		<input type="hidden" name="orderDir" value="<%=page.setting?.orderDir%>"/>
+		<input type="hidden" name="orderBy" value="<%=page.setting?.orderBy%>"/>
+	</form>
+	<div id="fschapterlayer">
+		<%- page.createPaging() %>
+	</div>
+	</td>
+	</tr>
+</table>
+</div>	

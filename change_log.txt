@@ -120,3 +120,10 @@
 + fixed bug api/extractfile note name
 + change default async export save stream with parameter async(true/false)
 + fix bug api/extract/data export with procoss status = ERROR
+
+2025-04-04
++ can assign request headers like body by customize parse default values and parameters
++ can define parameter with place holder ? sign from environment variables setting
++ can defined api connection setting with connect id via table tmigrateconnect like (connection.type=DB)
++ emte001: can custom define api connection
++ emtq001: migrate tracking screen
