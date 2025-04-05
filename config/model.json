@@ -2269,6 +2269,39 @@
                 "remark": { "type": "STRING", "defaultValue": "test_simple_call_db_connection" }
             }
         } ]
+    },
+    "test_file_api_setting": {
+        "models": [ {
+            "name": "tso",
+            "alias": { "privateAlias": "PROMPTDB" },
+            "fields": {
+                "mktid": { "type": "STRING", "options": { "seqno": 1 } },
+                "share": { "type": "STRING", "options": { "seqno": 2 } },
+                "unit": { "type": "DECIMAL", "options": { "seqno": 3 } },
+                "price": { "type": "DECIMAL", "options": { "seqno": 4 } },
+                "yield": { "type": "INTEGER" },
+                "effdate": { "type": "DATE", "options": { "seqno": 5 } },
+                "efftime": { "type": "TIME", "options": { "seqno": 6 } },
+                "edittime": { "type": "DATETIME", "options": { "seqno": 7 } },
+                "sharename": { "type": "STRING",  
+                    "options": { "seqno": 8, 
+                        "mapper": "share",
+                        "connection": {
+                            "type": "API",
+                            "api": "http://localhost:8080/api/category/groups", 
+                            "setting": { "Fs-Key": "?SECRET_KEY" },
+                            "body": { "names" : "tkappstype" },
+                            "mapper": "@body.tkappstype",
+                            "remarks": "SECRET_KEY in setting come from environment variables declaration"
+                        }
+                    }                    
+                },
+                "defvalue": { "type": "STRING" },
+                "message": { "type": "STRING" },
+                "remarks": { "type": "STRING", "defaultValue": "test_file_api_setting" }
+            },
+            "settings": { "skip": 1, "quotable": true, "sheetname": "tso" }
+        } ]
     }
 
 }
