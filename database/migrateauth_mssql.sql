@@ -867,6 +867,7 @@ CREATE TABLE [dbo].[tprog] (
   [shortname] varchar(50) COLLATE Thai_CI_AS DEFAULT NULL NULL,
   [shortnameth] varchar(50) COLLATE Thai_CI_AS DEFAULT NULL NULL,
   [progpath] varchar(150) COLLATE Thai_CI_AS DEFAULT NULL NULL,
+  [newflag] varchar(1) COLLATE Thai_CI_AS DEFAULT NULL NULL,
   [editdate] date DEFAULT NULL NULL,
   [edittime] time(7) DEFAULT NULL NULL,
   [edituser] varchar(50) COLLATE Thai_CI_AS DEFAULT NULL NULL
