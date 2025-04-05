@@ -1,4 +1,9 @@
 Testing
+- in case of validate token must setting header with AuthToken too
+ex. 
+curl -X POST -H "AuthToken: ?" -H "Content-Type: application/json" http://localhost:8080/api/migrate/insert -d "{\"taskid\":\"tmigrate\", \"dataset\":[{\"field1\": \"1111-1\", \"field2\": 2500.55, \"field3\": 100, \"field4\": \"2024-12-17\", \"field5\": \"10:10:10\", \"field6\": \"2024-12-17 10:10:10\", \"field7\": \"A\"}]}"
+(AuthToken come from login or screen Access Token setting)
+
 - migrate (goto path test)
 
 curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/migrate/insert -d "{\"taskid\":\"tmigrate\", \"dataset\":[{\"field1\": \"1111-1\", \"field2\": 2500.55, \"field3\": 100, \"field4\": \"2024-12-17\", \"field5\": \"10:10:10\", \"field6\": \"2024-12-17 10:10:10\", \"field7\": \"A\"}]}"
@@ -371,4 +376,5 @@ curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/extra
 curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/extractfile/collect -d "{\"taskid\":\"extract_data_file_excel\"}"
 - export file pdf
 curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/extractfile/collect -d "{\"taskid\":\"extract_data_file_pdf\"}"
+curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/extractfile/collect -d "{\"taskid\":\"extract_data_file_pdf\", \"async\":\"true\"}"
 

@@ -118,6 +118,11 @@ This project contains examples API that it can invoke by [curl](https://curl.se/
 1. Support export file
 - This support extract data and export file (csv,fix-length,xml,json,excel,pdf)
 
+## API Caller
+Migrate and Extract API have to validate access token that have to define in request header with `AuthToken`. \
+ex. \
+curl -X POST -H `"AuthToken: ?"` http://localhost:8080/api/your/service \
+(AuthToken come from login or screen Access Token setting)
 
 ## Database Connection String
 
