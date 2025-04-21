@@ -23,6 +23,7 @@ export class Emte001Handler extends TknOperateHandler {
             tasktype: { type: "STRING" },
             connectid: { type: "STRING", updated: true },
             taskconfigs: { type: "STRING", updated: true },
+            shareflag: { type: "STRING", selected: true, created: true, updated: true, defaultValue: "0" },
             createmillis: { type: "BIGINT", selected: true, created: true, updated: false, defaultValue: Utilities.currentTimeMillis() },
             createdate: { type: "DATE", selected: true, created: true, updated: false, defaultValue: Utilities.now() },
             createtime: { type: "TIME", selected: true, created: true, updated: false, defaultValue: Utilities.now() },
@@ -110,13 +111,13 @@ export class Emte001Handler extends TknOperateHandler {
             knsql.append(" from ");
             knsql.append(model.name);
             let filter = " where ";
-            /*
+            
             if(this.userToken?.userid) {
-                knsql.append(filter).append(" ( createuser = ?userid or createuser is null ) ");
+                knsql.append(filter).append(" ( createuser = ?userid or createuser is null or shareflag = '1' ) ");
                 knsql.set("userid",this.userToken?.userid);
                 filter = " and ";    
             }
-            */
+            
             if(params.tasktype && params.tasktype!="") {
                 knsql.append(filter).append("tasktype = ?tasktype");
                 knsql.set("tasktype",params.tasktype);

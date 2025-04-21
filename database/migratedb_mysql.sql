@@ -208,6 +208,7 @@ CREATE TABLE IF NOT EXISTS `tmigratetask` (
   `tasktype` varchar(10) COLLATE utf8mb4_general_ci NOT NULL DEFAULT 'IMPORT',
   `connectid` varchar(50) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT 'tmigrateconnect.connectid',
   `taskconfigs` text COLLATE utf8mb4_general_ci,
+  `shareflag` VARCHAR(1) NULL DEFAULT '0' COMMENT '1=Sharing' COLLATE 'utf8mb4_general_ci',
   `createdate` date DEFAULT NULL,
   `createtime` time DEFAULT NULL,
   `createmillis` bigint DEFAULT NULL,
