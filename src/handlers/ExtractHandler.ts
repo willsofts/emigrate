@@ -138,10 +138,10 @@ export class ExtractHandler extends ExtractOperate {
     }
 
     public async performCollectingResultSet(context: KnContextInfo, model: KnModel, db: KnDBConnector, rc: MigrateRecords, param: MigrateParams): Promise<[MigrateRecordSet,MigrateInfo,MigrateReject]> {
-        await this.performPreTransaction(context,model,db,rc,{});
+        await this.performPreTransaction(context,model,db,rc,param,{});
         let [result,info,reject] = await this.performCollectingDataSet(context,model,db,rc,param);
         if(!reject.reject) {
-            let post = await this.performPostTransaction(context,model,db,rc,{});            
+            let post = await this.performPostTransaction(context,model,db,rc,param,{});            
             if(post.throwable) {
                 result.posterror = true;
                 result.message = post.throwable?.message;

@@ -21,6 +21,7 @@ testMigrateText(file,taskid);
 //node dist/test/test.migrate.text.js test_file_post_statement_error
 //node dist/test/test.migrate.text.js test_file_statement_element
 //node dist/test/test.migrate.text.js test_file_post_statement_params
+//node dist/test/test.migrate.text.js test_file_post_statement_handler
 
 //node dist/test/test.migrate.text.js test_file_api
 //node dist/test/test.migrate.text.js test_file_api ./assets/tso_api.txt

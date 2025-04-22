@@ -260,11 +260,11 @@ export class MigrateHandler extends MigrateOperate {
     }
 
     public async performSaveTransaction(context: KnContextInfo, model: KnModel, db: KnDBConnector, rc: MigrateRecords, param: MigrateParams, dataset: any): Promise<[MigrateRecordSet,MigrateInfo,MigrateReject]> {
-        await this.performPreTransaction(context,model,db,rc,dataset);
+        await this.performPreTransaction(context,model,db,rc,param,dataset);
         let [result,info,reject] = await this.performInsertTransaction(context,model,db,rc,param,dataset);
         if(!reject.reject) {
-            let post = await this.performPostTransaction(context,model,db,rc,dataset);            
-            if(post.throwable) {
+            let post = await this.performPostTransaction(context,model,db,rc,param,dataset);            
+            if(post?.throwable) {
                 result.posterror = true;
                 result.message = post.throwable?.message;
             }

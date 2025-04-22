@@ -181,7 +181,8 @@ curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/migra
 curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/migratetext/insert -d "{\"taskid\":\"test_file_post_statement_params\", \"file\": \"./assets/tso.txt\", \"message\": \"Testing\"}"
 3. statement elements
 curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/migratetext/insert -d "{\"taskid\":\"test_file_statement_element\", \"file\": \"./assets/tso.txt\"}"
-
+4. post statement with function handler verify
+curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/migratetext/insert -d "{\"taskid\":\"test_file_post_statement_handler\", \"file\": \"./assets/tso.txt\"}"
 
 test download/report log:
 1. using migrate id

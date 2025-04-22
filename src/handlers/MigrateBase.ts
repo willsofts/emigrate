@@ -5,7 +5,7 @@ import { KnContextInfo, KnValidateInfo, VerifyError } from "@willsofts/will-core
 import { KnDBConnector, KnDBFault, KnSQL, KnDBUtils, KnDBTypes, KnResultSet } from "@willsofts/will-sql";
 import { TknOperateHandler, OPERATE_HANDLERS } from "@willsofts/will-serv";
 import { PRIVATE_SECTION, ERROR_CANCELATION_CODE, ERROR_CANCELATION_KEY, MIGRATE_DUMP_SQL, ALWAYS_THROW_POST_ERROR } from "../utils/EnvironmentVariable";
-import { MigrateModel, MigrateConfig, PluginSetting, StatementInfo, ParameterInfo, MigrateRecords, FilterInfo } from "../models/MigrateAlias";
+import { MigrateModel, MigrateConfig, PluginSetting, StatementInfo, ParameterInfo, MigrateRecords, MigrateParams, FilterInfo } from "../models/MigrateAlias";
 import { FileDownloadHandler } from "./FileDownloadHandler";
 import { FileTransferHandler } from "./FileTransferHandler";
 import { FileAttachmentHandler } from './FileAttachmentHandler';
@@ -378,8 +378,17 @@ export class MigrateBase extends TknOperateHandler {
         }
     }
 
-    public async performPreTransaction(context: KnContextInfo, model: KnModel, db: KnDBConnector, rc: MigrateRecords, dataset: any): Promise<any> {
+    public async performPreTransaction(context: KnContextInfo, model: KnModel, db: KnDBConnector, rc: MigrateRecords, param: MigrateParams, dataset: any): Promise<any> {
         if(model.settings?.statement?.prestatement) {
+            let handler = model.settings?.statement?.prehandler;
+            let func = this.tryParseFunction(handler,'dataset','param','model','context');
+            if(func) {
+                let res = func(dataset,param,model,context);
+                //expect boolean as result
+                if(res != undefined || res != null) {
+                    if(!res) return res;        
+                }
+            }            
             await this.performQueryStatements(context,model,db,rc,dataset,model.settings?.statement?.prestatement?.statements)
             let knsql = this.composeQuery(context,model.settings?.statement?.prestatement,db);
             if(knsql) {
@@ -389,9 +398,18 @@ export class MigrateBase extends TknOperateHandler {
         }
     }
 
-    public async performPostTransaction(context: KnContextInfo, model: KnModel, db: KnDBConnector, rc: MigrateRecords, dataset: any): Promise<FilterInfo> {
+    public async performPostTransaction(context: KnContextInfo, model: KnModel, db: KnDBConnector, rc: MigrateRecords, param: MigrateParams, dataset: any): Promise<FilterInfo> {
         let result : FilterInfo = { cancel: false };
         if(model.settings?.statement?.poststatement) {
+            let handler = model.settings?.statement?.posthandler;
+            let func = this.tryParseFunction(handler,'dataset','param','model','context');
+            if(func) {
+                let res = func(dataset,param,model,context);
+                //expect boolean as result
+                if(res != undefined || res != null) {
+                    if(!res) return result;        
+                }
+            }
             await this.performQueryStatements(context,model,db,rc,dataset,model.settings?.statement?.poststatement?.statements)
             let knsql = this.composeQuery(context,model.settings?.statement?.poststatement,db);
             if(knsql) {

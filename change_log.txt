@@ -127,3 +127,8 @@
 + can defined api connection setting with connect id via table tmigrateconnect like (connection.type=DB)
 + emte001: can custom define api connection
 + emtq001: migrate tracking screen
+
+2025-04-22
++ support prehandler dynamic function to prevent execute prestatement if return false
++ support posthandler dynamic function to prevent execute poststatement if return false
++ support moleculer transporter libraries (amqp,redis,kafka,nats)

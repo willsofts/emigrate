@@ -2302,6 +2302,38 @@
             },
             "settings": { "skip": 1, "quotable": true, "sheetname": "tso" }
         } ]
+    },
+    "test_file_post_statement_handler": {
+        "models": [ {
+            "name": "tso",
+            "alias": { "privateAlias": "PROMPTDB" },
+            "fields": {
+                "mktid": { "type": "STRING", "options": { "seqno": 1 } },
+                "share": { "type": "STRING", "options": { "seqno": 2 } },
+                "unit": { "type": "DECIMAL", "options": { "seqno": 3 } },
+                "price": { "type": "DECIMAL", "options": { "seqno": 4 } },
+                "yield": { "type": "INTEGER" },
+                "effdate": { "type": "DATE", "options": { "seqno": 5 } },
+                "efftime": { "type": "TIME", "options": { "seqno": 6 } },
+                "edittime": { "type": "DATETIME", "options": { "seqno": 7 } },
+                "sharename": { "type": "STRING", "options": { "seqno": 8 } },
+                "defvalue": { "type": "STRING" },
+                "message": { "type": "STRING" },
+                "remarks": { "type": "STRING", "defaultValue": "test_file_post_statement_handler" }
+            },
+            "settings": { "skip": 1, "delimiter": ",", "quotable": true,
+                "statement": {
+                    "prehandler": "function prehandler(dataset,param,model,context) { console.log('param',param,'dataset',dataset); if(Array.isArray(dataset)) { let record = dataset.find(item => item.mktid == 'TSO'); console.log('prehandler: record',record); if(record) return true; } return false; }",
+                    "prestatement": {
+                        "sql": "update tso set defvalue=null where mktid='TSO' "
+                    },
+                    "posthandler": "function posthandler(dataset,param,model,context) { console.log('param',param,'dataset',dataset); if(Array.isArray(dataset)) { let record = dataset.find(item => item.share == 'BBL'); console.log('posthandler: record',record); if(record) return true; } return false; }",
+                    "poststatement": {
+                        "sql": "update tso set defvalue='POSTING' where mktid='TSO' and share='BBL' "
+                    }
+                }
+            }
+        } ]
     }
 
 }
