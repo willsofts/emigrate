@@ -132,3 +132,7 @@
 + support prehandler dynamic function to prevent execute prestatement if return false
 + support posthandler dynamic function to prevent execute poststatement if return false
 + support moleculer transporter libraries (amqp,redis,kafka,nats)
+
+2025-04-23
++ fix bug emte001: cannot delete model when retrieve 
++ emte001: support share flag
