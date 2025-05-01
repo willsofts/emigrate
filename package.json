@@ -1,6 +1,6 @@
 {
   "name": "emigrate",
-  "version": "1.0.19",
+  "version": "1.0.20",
   "description": "This is project introduce to node application with http server and express framework under moleculer engine",
   "main": "index.js",
   "scripts": {

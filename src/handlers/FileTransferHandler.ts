@@ -1,5 +1,6 @@
 import { KnModel } from "@willsofts/will-db";
 import { KnContextInfo } from '@willsofts/will-core';
+import { Utilities } from "@willsofts/will-util";
 import { DOWNLOAD_FILE_PATH, UPLOAD_FILE_PATH, IMPORT_FTP_HOST, IMPORT_FTP_USER, IMPORT_FTP_PASSWORD, IMPORT_FTP_KEYFILE } from "../utils/EnvironmentVariable";
 import { FileSetting, PluginSetting } from "../models/MigrateAlias";
 import { MigrateUtility } from "../utils/MigrateUtility";
@@ -54,6 +55,9 @@ export class FileTransferHandler extends PluginHandler {
             let source = setting.source;
             let reconcile = setting?.reconcile;
             if(reconcile && reconcile.trim().length > 0) source = reconcile;
+            if(context && source.indexOf("${") >= 0) {
+                source = Utilities.translateVariables(source,context.params);
+            }
             setting.file = undefined;
             let info = path.parse(setting.target);
             let filename = setting.target;
@@ -95,6 +99,10 @@ export class FileTransferHandler extends PluginHandler {
         this.logger.debug(this.constructor.name+".performDownload: plugin",MigrateUtility.maskAttributes(plugin));        
         let setting = plugin.property;
         if(setting?.source && setting?.source.trim().length > 0 && setting?.target && setting?.target.trim().length > 0) {
+            let source = setting.source;
+            if(context && source.indexOf("${") >= 0) {
+                source = Utilities.translateVariables(source,context.params);
+            }
             setting.file = undefined;
             let info = path.parse(setting.target);
             let filename = info.base; //setting.target;
@@ -113,8 +121,8 @@ export class FileTransferHandler extends PluginHandler {
                 let config = await this.getConfig(setting);
                 sftp = await this.getClient();
                 await sftp.connect(config);
-                await sftp.put(setting.source,fullfilename);
-                this.logger.debug(this.constructor.name+".performDownload: put:",setting.source," as:",fullfilename);
+                await sftp.put(source,fullfilename);
+                this.logger.debug(this.constructor.name+".performDownload: put:",source,"("+setting.source+") as:",fullfilename);
                 setting.file = fullfilename;
                 return setting;
             } catch (err: any) {

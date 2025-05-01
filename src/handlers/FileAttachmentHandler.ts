@@ -1,5 +1,6 @@
 import { KnModel } from "@willsofts/will-db";
 import { KnContextInfo } from '@willsofts/will-core';
+import { Utilities } from "@willsofts/will-util";
 import { ATTACH_FILE_PATH } from "../utils/EnvironmentVariable";
 import { ATTACH_MAIL_HOST, ATTACH_MAIL_PORT, ATTACH_MAIL_USER, ATTACH_MAIL_PASSWORD, ATTACH_MAIL_TLS, ATTACH_MAIL_TIMEOUT, ATTACH_MAIL_MARKSEEN, ATTACH_MAIL_FROM, ATTACH_MAIL_SUBJECT, ATTACH_MAIL_FILENAME } from "../utils/EnvironmentVariable";
 import { FileSetting, PluginSetting } from "../models/MigrateAlias";
@@ -102,6 +103,9 @@ export class FileAttachmentHandler extends PluginHandler {
             let source = setting.source;
             let reconcile = setting?.reconcile;
             if(reconcile && reconcile.trim().length > 0) source = reconcile;
+            if(context && source.indexOf("${") >= 0) {
+                source = Utilities.translateVariables(source,context.params);
+            }
             setting.file = undefined;
             let filepath = setting?.path || ATTACH_FILE_PATH;
             if(!fs.existsSync(filepath)) {

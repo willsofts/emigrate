@@ -1,5 +1,6 @@
 import { KnModel } from "@willsofts/will-db";
 import { KnContextInfo } from '@willsofts/will-core';
+import { Utilities } from "@willsofts/will-util";
 import { DOWNLOAD_FILE_PATH } from "../utils/EnvironmentVariable";
 import { FileSetting, PluginSetting } from "../models/MigrateAlias";
 import { MigrateUtility } from "../utils/MigrateUtility";
@@ -21,6 +22,9 @@ export class FileDownloadHandler extends PluginHandler {
             let source = setting.source;
             let reconcile = setting?.reconcile;
             if(reconcile && reconcile.trim().length > 0) source = reconcile;
+            if(context && source.indexOf("${") >= 0) {
+                source = Utilities.translateVariables(source,context.params);
+            }
             setting.file = undefined;
             let info = path.parse(setting.target);
             let filename = info.base; //setting.target;

@@ -1,24 +1,115 @@
-2025-02-06
-+ text file
-    - csv file
-    - fix length file
-    - file with TAB delimiter
-    - support quote
-+ json file
-+ upload files
-+ suppoprt unsave into persistence but return json dataset
-    - define model.name = ""
-    - define parameter stored = "false"
+2025-05-01
+version: 1.0.20
++ plugin support dynamic parameter with place holder ${variable-name} in source setting
 
-2025-02-11
-+ excel (lib: exceljs), xslsx,xls (lib: xlsx)
-+ xml (fast-xml-parser)
-+ support sync/async (default sync)
-    - async = true, the server treat request as background process (make reponse suddenly)
-    (reponse contain processid that can invoke api/migratelog/get)
-+ support center api
-    - api/migratefile/file
-    - upload/migrate/file
+2025-04-30
+version: 1.0.19
++ update library will-core & will-serv
++ dynamic version depending on package.json
+
+2025-04-23
+version: 1.0.18
++ fix bug emte001: cannot delete model when retrieve 
++ emte001: support share flag
+
+2025-04-22
++ support prehandler dynamic function to prevent execute prestatement if return false
++ support posthandler dynamic function to prevent execute poststatement if return false
++ support moleculer transporter libraries (amqp,redis,kafka,nats)
+
+2025-04-04
++ can assign request headers like body by customize parse default values and parameters
++ can define parameter with place holder ? sign from environment variables setting
++ can defined api connection setting with connect id via table tmigrateconnect like (connection.type=DB)
++ emte001: can custom define api connection
++ emtq001: migrate tracking screen
+
+2025-04-02
++ fixed bug api/extractfile note name
++ change default async export save stream with parameter async(true/false)
++ fix bug api/extract/data export with procoss status = ERROR
+
+2025-04-01
++ fixed display time by format function instead of default to string
++ alter table tmigratefile (createdate,createtime,createmillis,createuser)
+
+2025-03-30
++ support migrate plugin database query dataset (import data from query table)
+(see ex. config/model.json: test_simple_text_plugin_database)
++ support connection setting with connectid defined in table tmigrateconnect
+(see ex. config/model.json: test_simple_call_db_connection)
+
+2025-03-27
++ update will-run to support payload limit setting
+
+2025-03-25
++ fixed verify export with header setting false
++ support api response with manual check error (test_simple_call_api_response_error_checker)
++ support api get task config (api/migrate/config & api/extract/config)
+
+2025-03-21
++ support complex request api parameters
++ support api response xml (detect from header content-type or config.options.acceptType == 'text/xml')
++ support extract data 
++ support export file (csv,fix-length,xml,json,excel,pdf)
++ add new table schema tmigratefile to keep export data file (see database/migratedb_mysql.sql)
+
+2025-03-14
++ fixed xlsx reading data array reform into object (test_file_api)
++ support reconcile parameter when invoke api
++ support parameter setting when call api & db by connection setting 
+(test_simple_call_api_param & test_simple_call_db_param)
++ support base64 data submit (specifiedy by parameter datafile)
+(test_simple_text_base64 & test_simple_xlsx_base64)
+
+2025-03-04
++ support task setting screen (emte001)
+
+2025-03-02
++ support statement elements
++ can validate statement required parameter
+
+2025-02-28
++ can custom post statement error handler
++ can cancel error code
++ can custom detect error key (since error object from db throwing was depend on driver usage)
+
+2025-02-27
++ can import with filter data setting
+
+2025-02-26
++ can import with reconcile file (cross check between : data file & reconcile file)
+(reconcile file contain number of total records)
+
+2025-02-25
++ can import with vary date format
++ can mix date format with TH/EN locale
+
+2025-02-23
++ can import file from mail attachment
++ can auto naming file from mail attachment
+
+2025-02-19
++ can transfer file from server (support import by ftp file)
++ can auto naming transfer file
++ can using key file (with OpenSSH format)
+
+2025-02-18
++ can download file from URL (support import by download file)
++ can auto naming download file
+
+2025-02-15
++ support download/report logging error api
+    - report/migrate/log        -> default as text file
+    - report/migrate/log/txt    -> text file
+    - report/migrate/log/json   -> json file
+
+2025-02-14
++ support result/logging api
+    - api/migratelog/retrieve (with migrateid)
+    - api/migratelog/get (with processid)
++ support logging by command line running
++ support multi models
 
 2025-02-13
 + support error handling
@@ -34,105 +125,24 @@
     - api/migratelog/get (with processid)
 + support pre/post statement
 
-2025-02-14
-+ support result/logging api
-    - api/migratelog/retrieve (with migrateid)
-    - api/migratelog/get (with processid)
-+ support logging by command line running
-+ support multi models
+2025-02-11
++ excel (lib: exceljs), xslsx,xls (lib: xlsx)
++ xml (fast-xml-parser)
++ support sync/async (default sync)
+    - async = true, the server treat request as background process (make reponse suddenly)
+    (reponse contain processid that can invoke api/migratelog/get)
++ support center api
+    - api/migratefile/file
+    - upload/migrate/file
 
-2025-02-15
-+ support download/report logging error api
-    - report/migrate/log        -> default as text file
-    - report/migrate/log/txt    -> text file
-    - report/migrate/log/json   -> json file
-
-2025-02-18
-+ can download file from URL (support import by download file)
-+ can auto naming download file
-
-2025-02-19
-+ can transfer file from server (support import by ftp file)
-+ can auto naming transfer file
-+ can using key file (with OpenSSH format)
-
-2025-02-23
-+ can import file from mail attachment
-+ can auto naming file from mail attachment
-
-2025-02-25
-+ can import with vary date format
-+ can mix date format with TH/EN locale
-
-2025-02-26
-+ can import with reconcile file (cross check between : data file & reconcile file)
-(reconcile file contain number of total records)
-
-2025-02-27
-+ can import with filter data setting
-
-2025-02-28
-+ can custom post statement error handler
-+ can cancel error code
-+ can custom detect error key (since error object from db throwing was depend on driver usage)
-
-2025-03-02
-+ support statement elements
-+ can validate statement required parameter
-
-2025-03-04
-+ support task setting screen (emte001)
-
-2025-03-14
-+ fixed xlsx reading data array reform into object (test_file_api)
-+ support reconcile parameter when invoke api
-+ support parameter setting when call api & db by connection setting 
-(test_simple_call_api_param & test_simple_call_db_param)
-+ support base64 data submit (specifiedy by parameter datafile)
-(test_simple_text_base64 & test_simple_xlsx_base64)
-
-2025-03-21
-+ support complex request api parameters
-+ support api response xml (detect from header content-type or config.options.acceptType == 'text/xml')
-+ support extract data 
-+ support export file (csv,fix-length,xml,json,excel,pdf)
-+ add new table schema tmigratefile to keep export data file (see database/migratedb_mysql.sql)
-
-2025-03-25
-+ fixed verify export with header setting false
-+ support api response with manual check error (test_simple_call_api_response_error_checker)
-+ support api get task config (api/migrate/config & api/extract/config)
-
-2025-03-27
-+ update will-run to support payload limit setting
-
-2025-03-30
-+ support migrate plugin database query dataset (import data from query table)
-(see ex. config/model.json: test_simple_text_plugin_database)
-+ support connection setting with connectid defined in table tmigrateconnect
-(see ex. config/model.json: test_simple_call_db_connection)
-
-2025-04-01
-+ fixed display time by format function instead of default to string
-+ alter table tmigratefile (createdate,createtime,createmillis,createuser)
-
-2025-04-02
-+ fixed bug api/extractfile note name
-+ change default async export save stream with parameter async(true/false)
-+ fix bug api/extract/data export with procoss status = ERROR
-
-2025-04-04
-+ can assign request headers like body by customize parse default values and parameters
-+ can define parameter with place holder ? sign from environment variables setting
-+ can defined api connection setting with connect id via table tmigrateconnect like (connection.type=DB)
-+ emte001: can custom define api connection
-+ emtq001: migrate tracking screen
-
-2025-04-22
-+ support prehandler dynamic function to prevent execute prestatement if return false
-+ support posthandler dynamic function to prevent execute poststatement if return false
-+ support moleculer transporter libraries (amqp,redis,kafka,nats)
-
-2025-04-23
-+ fix bug emte001: cannot delete model when retrieve 
-+ emte001: support share flag
+2025-02-06
++ text file
+    - csv file
+    - fix length file
+    - file with TAB delimiter
+    - support quote
++ json file
++ upload files
++ suppoprt unsave into persistence but return json dataset
+    - define model.name = ""
+    - define parameter stored = "false"
