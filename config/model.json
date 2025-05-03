@@ -2405,6 +2405,73 @@
             },
             "settings": { "extract": "text", "header": true, "delimiter": ",", "naming": "auto" }
         } ] 
+    },
+    "test_file_initialize": {
+        "configs": { 
+            "initialize": { 
+                "remark": "initialize category can apply for all models in this task",
+                "connection": {
+                    "type": "API",
+                    "api": "http://localhost:8080/api/category/groups?names=tksharename", 
+                    "setting": {},
+                    "body": {},
+                    "mapper": "@body.tksharename"
+                }
+            } 
+        },
+        "models": [ {
+            "name": "tso",
+            "alias": { "privateAlias": "PROMPTDB" },
+            "fields": {
+                "mktid": { "type": "STRING", "options": { "seqno": 1 } },
+                "share": { "type": "STRING", "options": { "seqno": 2 } },
+                "unit": { "type": "DECIMAL", "options": { "seqno": 3 } },
+                "price": { "type": "DECIMAL", "options": { "seqno": 4 } },
+                "yield": { "type": "INTEGER" },
+                "effdate": { "type": "DATE", "options": { "seqno": 5 } },
+                "efftime": { "type": "TIME", "options": { "seqno": 6 } },
+                "edittime": { "type": "DATETIME", "options": { "seqno": 7 } },
+                "sharename": { "type": "STRING", "options": { "seqno": 8, "mapper": "share", "datasource": "initialize", "remark": "datasource define to initialize category for mapper value" } },
+                "defvalue": { "type": "STRING", "options": { "seqno": 9, "mapper": "initialize.BBL", "remark": "this using direct mapper value from initialize category" } },
+                "message": { "type": "STRING" },
+                "remarks": { "type": "STRING", "defaultValue": "test_file_initialize" }
+            },
+            "settings": { "skip": 1, "quotable": true, "sheetname": "tso" }
+        } ]
+    },
+    "extract_data_file_text_initialize": { 
+        "configs": { 
+            "initialize": { 
+                "remark": "initialize category can apply for all models in this task",
+                "connection": {
+                    "type": "API",
+                    "api": "http://localhost:8080/api/health/check", 
+                    "setting": {},
+                    "body": {}
+                }
+            } 
+        },
+        "models": [ {
+            "name": "tso",
+            "alias": { "privateAlias": "PROMPTDB" },
+            "fields": {
+                "mktid": { "type": "STRING", "options": { "caption": "Marketing" } },
+                "share": { "type": "STRING", "options": { "caption": "Share" }  },
+                "unit": { "type": "DECIMAL", "options": { "caption": "Unit" }  },
+                "price": { "type": "DECIMAL", "options": { "caption": "Price" }  },
+                "yield": { "type": "INTEGER", "options": { "caption": "Yield" }  },
+                "effdate": { "type": "DATE", "options": { "caption": "Effect Date" }  },
+                "efftime": { "type": "TIME", "options": { "caption": "Effect Time" }  },
+                "edittime": { "type": "DATETIME", "options": { "caption": "Date/Time" }  },
+                "sharename": { "type": "STRING", "options": { "caption": "Share Name" }  },
+                "defvalue": { "type": "STRING", "options": { "caption": "Default" } , "defaultValue": "#current_timestamp" },
+                "message": { "type": "STRING", "options": { "caption": "Message", "fieldscell": {
+                    "status": { "type": "STRING" }
+                } , "remark": "status in fieldscell variable come from initialize category configure setting" }  },
+                "remarks": { "type": "STRING", "options": { "caption": "Remarks" } , "defaultValue": "extract_data_file_text_initialize" }
+            },
+            "settings": { "extract": "text", "header": true, "delimiter": ",", "naming": "auto" }
+        } ] 
     }
 
 }

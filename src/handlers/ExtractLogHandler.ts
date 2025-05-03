@@ -173,7 +173,7 @@ export class ExtractLogHandler extends MigrateLogHandler {
     protected async tryErase(context: KnContextInfo, model: KnModel = this.model) : Promise<void> {
         let erase = String(context.params.erase)=="true" || ALWAYS_ERASE_DATA_STREAM;
         if(erase) {
-            this.erase(context).catch(err => console.error(err));
+            this.erase(context).catch(err => this.logger.error(err));
         }
     }
     

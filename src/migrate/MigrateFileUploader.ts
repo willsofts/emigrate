@@ -34,8 +34,8 @@ export class MigrateFileUploader extends TknUploadRouter {
 		if(req.file?.originalname) {
 			req.file.originalname = Buffer.from(req.file.originalname, 'latin1').toString('utf8');
 		}
-		console.log(this.constructor.name+".doUploadFile: body",JSON.stringify(req.body));
-		console.log(this.constructor.name+".doUploadFile: file",req.file);
+		this.logger.debug(this.constructor.name+".doUploadFile: body",JSON.stringify(req.body));
+		this.logger.debug(this.constructor.name+".doUploadFile: file",req.file);
 		let response: JSONReply = new JSONReply();
 		response.head.modeling("migrate","upload");
 		response.head.composeNoError();

@@ -1,8 +1,8 @@
 import { HTTP } from "@willsofts/will-api";
-import { KnModel, KnFieldSetting, KnCellSetting } from "@willsofts/will-db";
+import { KnModel, KnFieldSetting, KnCellSetting, KnDBField } from "@willsofts/will-db";
 import { KnDBConnector, KnResultSet, KnSQL } from "@willsofts/will-sql";
 import { KnContextInfo, KnValidateInfo, VerifyError, KnFormatInfo, KnUtility } from '@willsofts/will-core';
-import { TaskModel, MigrateRecordSet, MigrateResultSet, MigrateInfo, MigrateReject, MigrateModel, MigrateParams, MigrateRecords, FilterInfo, MigrateDataRow, MigrateState } from "../models/MigrateAlias";
+import { TaskModel, MigrateRecordSet, MigrateResultSet, MigrateInfo, MigrateReject, MigrateModel, MigrateParams, MigrateRecords, FilterInfo, MigrateDataRow, MigrateState, MigrateField } from "../models/MigrateAlias";
 import { ExtractOperate } from "./ExtractOperate";
 import { DEFAULT_CALLING_SERVICE } from "../utils/EnvironmentVariable";
 import { MigrateUtility } from "../utils/MigrateUtility";
@@ -59,12 +59,46 @@ export class ExtractHandler extends ExtractOperate {
         return result;
     }
 
-    public async processCollectingPreceding(context: KnContextInfo, migratemodel: MigrateModel, param: MigrateParams, rc: MigrateRecords): Promise<any> {
-
+    public async processCollectingPreceding(context: KnContextInfo, migratemodel: MigrateModel, param: MigrateParams, rc: MigrateRecords, dataset?: any): Promise<any> {
+        let initconfig = migratemodel.configs?.initialize;        
+        if(initconfig) {
+            let data = dataset || {};
+            if(Array.isArray(dataset)) data = { };
+            let dbfield : KnDBField = { type: "STRING", options: { connection: initconfig?.connection }};
+            let field : MigrateField = { name: "initialize", field: dbfield };
+            let response = await this.performFetchData(context,this.model,field,data,dataset||{});
+            this.logger.debug(this.constructor.name+".processInsertingPreceding: fetch data",response);
+            if(response) {
+                let conmapper = field.field.options?.connection?.mapper;
+                let values = response;
+                if(conmapper) {
+                    values = this.scrapeData(conmapper,response,response);
+                }
+                this.logger.debug(this.constructor.name+".processCollectingPreceding: mapper="+conmapper,", scrapeData=",values);
+                if(Array.isArray(values)) {
+                    context.params[field.name] = values;
+                } else {
+                    for(let p in values) {
+                        if(!context.params.hasOwnProperty(p)) {
+                            context.params[p] = values[p];
+                        }
+                    }
+                }
+                this.logger.debug(this.constructor.name+".processCollectingPreceding: context.params",context.params);
+            }
+        }
     }
 
-    public async processCollecttingSucceeding(context: KnContextInfo, migratemodel: MigrateModel, param: MigrateParams, rc: MigrateRecords): Promise<any> {
-
+    public async processCollecttingSucceeding(context: KnContextInfo, migratemodel: MigrateModel, param: MigrateParams, rc: MigrateRecords, dataset?: any): Promise<any> {
+        let finalconfig = migratemodel.configs?.finalize;        
+        if(finalconfig) {
+            let data = dataset || {};
+            if(Array.isArray(dataset)) data = { };
+            let dbfield : KnDBField = { type: "STRING", options: { connection: finalconfig?.connection }};
+            let field : MigrateField = { name: "finalize", field: dbfield };
+            let response = await this.performFetchData(context,this.model,field,data,dataset||{});
+            this.logger.debug(this.constructor.name+".processCollecttingSucceeding: fetch data",response);
+        }
     }
 
     public async processCollectingIsolate(context: KnContextInfo, migratemodel: MigrateModel, param: MigrateParams, rc: MigrateRecords): Promise<MigrateResultSet> {

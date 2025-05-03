@@ -248,59 +248,70 @@ export class MigrateOperate extends MigrateBase {
                             data[attrname] = result;
                         }
                     }
-                }                
-                let connection = field?.options?.connection;
-                if(connection) {
-                    this.logger.debug(this.constructor.name+".performConversion: connection",connection);
-                    let response = await this.performFetchData(context,model,{name: attrname,field},data,dataset);
-                    this.logger.debug(this.constructor.name+".performConversion: fetch data",response);
-                    if(response) {
-                        let conmapper = connection?.mapper;
-                        let values = response;
-                        if(conmapper) {
-                            values = this.scrapeData(conmapper,response,response);
-                        }
-                        this.logger.debug(this.constructor.name+".performConversion: mapper="+conmapper,", scrapeData=",values);
-                        if(values) {
-                            if(Array.isArray(values)) {
-                                let confieldname = connection?.fieldname;
-                                let confieldvalue = connection?.fieldvalue;
-                                if(confieldname && confieldname.trim().length>0 && confieldvalue && confieldvalue.trim().length>0) {
-                                    let dataValue = data[attrname];
-                                    for(let record of values) {
-                                        let value = record[confieldname];
-                                        if(value == dataValue) {
-                                            data[attrname] = record[confieldvalue];
-                                            break;
-                                        }
-                                    }
-                                }
-                            } else {
-                                let dataValue = data[attrname];
-                                let value = values[dataValue];
-                                data[attrname] = value;
-                            }
-                        }
-                        let conhandler = connection?.handler;
-                        let confunc = this.tryParseFunction(conhandler,'response','data','dataset','model','context');
-                        if(confunc) {
-                            let conAccept = connection?.handlerType == "function";
-                            let conresult = confunc(response,data,dataset,model,context);
-                            if(conAccept) {
-                                data[attrname] = conresult;
-                            } else {
-                                if(conresult != undefined || conresult != null) {
-                                    data[attrname] = conresult;
-                                }        
-                            }
-                        }
-                    }
-                }
+                }        
+                await this.performFetching(context,model,{name: attrname,field},data,dataset);
             }
         }
         return dataset;
     }
-    
+
+    public async performFetching(context: KnContextInfo, model: KnModel, field: MigrateField, data: any, dataset: any) : Promise<any> {
+        let response;
+        let connection = field.field?.options?.connection;
+        if(connection) {
+            this.logger.debug(this.constructor.name+".performFetching: connection",connection);
+            response = await this.performFetchData(context,model,field,data,dataset);
+            this.logger.debug(this.constructor.name+".performFetching: fetch data",response);
+        } else {
+            let dsmapper = field.field?.options?.datasource;
+            if(dsmapper) {
+                response = this.scrapeData(dsmapper,context.params,context.params);
+            }
+        }
+        let attrname = field.name;
+        if(response) {
+            let conmapper = connection?.mapper;
+            let values = response;
+            if(conmapper) {
+                values = this.scrapeData(conmapper,response,response);
+                this.logger.debug(this.constructor.name+".performFetching: mapper="+conmapper,", scrapeData=",values);
+            }
+            if(values) {
+                if(Array.isArray(values)) {
+                    let confieldname = connection?.fieldname;
+                    let confieldvalue = connection?.fieldvalue;
+                    if(confieldname && confieldname.trim().length>0 && confieldvalue && confieldvalue.trim().length>0) {
+                        let dataValue = data[attrname];
+                        for(let record of values) {
+                            let value = record[confieldname];
+                            if(value == dataValue) {
+                                data[attrname] = record[confieldvalue];
+                                break;
+                            }
+                        }
+                    }
+                } else {
+                    let dataValue = data[attrname];
+                    let value = values[dataValue];
+                    data[attrname] = value;
+                }
+            }
+            let conhandler = connection?.handler;
+            let confunc = this.tryParseFunction(conhandler,'response','data','dataset','model','context');
+            if(confunc) {
+                let conAccept = connection?.handlerType == "function";
+                let conresult = confunc(response,data,dataset,model,context);
+                if(conAccept) {
+                    data[attrname] = conresult;
+                } else {
+                    if(conresult != undefined || conresult != null) {
+                        data[attrname] = conresult;
+                    }        
+                }
+            }
+        }
+    }
+
     public async performFetchData(context: KnContextInfo, model: KnModel, field: MigrateField, data: any, dataset: any) : Promise<any> {
         let connection = field.field?.options?.connection as MigrateConfig;
         if(connection) {

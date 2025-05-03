@@ -110,7 +110,7 @@ export class Sftu004Handler extends TknOperateHandler {
             this.logger.error(this.constructor.name,ex);
             return Promise.reject(this.getDBError(ex));
 		} finally {
-			try { if(db) db.close(); } catch(er) { console.error(er); }
+			try { if(db) db.close(); } catch(er) { this.logger.error(er); }
         }
     }
 
@@ -132,7 +132,7 @@ export class Sftu004Handler extends TknOperateHandler {
             this.logger.error(this.constructor.name,ex);
             return Promise.reject(this.getDBError(ex));
 		} finally {
-			try { if(db) db.close(); } catch(er) { console.error(er); }
+			try { if(db) db.close(); } catch(er) { this.logger.error(er); }
         }
     }
 
@@ -191,7 +191,7 @@ export class Sftu004Handler extends TknOperateHandler {
             this.logger.error(this.constructor.name,ex);
             return Promise.reject(this.getDBError(ex));
 		} finally {
-			try { if(db) db.close(); } catch(er) { console.error(er); }
+			try { if(db) db.close(); } catch(er) { this.logger.error(er); }
         }
     }
 

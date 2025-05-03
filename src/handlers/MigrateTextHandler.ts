@@ -199,14 +199,12 @@ export class MigrateTextHandler extends MigrateHandler {
                                 if(text.length > endIndex) {
                                     value = text.substring(startIndex,endIndex+1);
                                 }
-                                //console.log("name="+fname+", value=["+value+"], start="+startIndex+", end="+endIndex);
                                 dataset[fname] = settings?.quotable? MigrateUtility.removeDoubleQuote(triming?value.trim():value) : (triming?value.trim():value);
                             } else if(endIndex < 0) {
                                 let value = "";
                                 if(text.length > startIndex) {
                                     value = text.substring(startIndex);
                                 }
-                                //console.log("name="+fname+", value=["+value+"], start="+startIndex+", end="+endIndex);
                                 dataset[fname] = settings?.quotable? MigrateUtility.removeDoubleQuote(triming?value.trim():value) : (triming?value.trim():value);
                             }
                         }
@@ -231,7 +229,6 @@ export class MigrateTextHandler extends MigrateHandler {
 
     public async scrapeDataArray(taskmodel: KnModel, fields: KnFieldSetting | undefined, texts: string[], index: number) : Promise<KnDataSet | undefined> {
         let settings = taskmodel.settings;
-        //console.log("length: ",texts.length," texts:",texts);
         if(texts.length > 0) {
             if(fields) {
                 let dataset : KnDataSet = {};

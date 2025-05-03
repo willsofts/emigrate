@@ -22,3 +22,4 @@ testExtract(file,taskid).catch(ex => console.error("error",ex));
 //node dist/test/test.extract.text.js extract_data_file_text_quote
 //node dist/test/test.extract.text.js extract_data_file_text_tab
 //node dist/test/test.extract.text.js extract_data_file_text_request_params
+//node dist/test/test.extract.text.js extract_data_file_text_initialize

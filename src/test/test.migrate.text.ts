@@ -25,3 +25,4 @@ testMigrateText(file,taskid);
 
 //node dist/test/test.migrate.text.js test_file_api
 //node dist/test/test.migrate.text.js test_file_api ./assets/tso_api.txt
+//node dist/test/test.migrate.text.js test_file_initialize
