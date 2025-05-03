@@ -1,3 +1,8 @@
+2025-05-03
+version: 1.0.21
++ support inject request parameters into data set as parameter mapper setting
++ support parse more default value from submit parameters by setting defaultValue with #params.xxx where xxx come from request parameter
+
 2025-05-01
 version: 1.0.20
 + plugin support dynamic parameter with place holder ${variable-name} in source setting

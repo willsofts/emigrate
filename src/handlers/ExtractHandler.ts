@@ -204,11 +204,14 @@ export class ExtractHandler extends ExtractOperate {
 
     protected async performDataList(context: KnContextInfo, model: KnModel, rc: MigrateRecords, record: MigrateRecordSet, param: MigrateParams, fields: KnFieldSetting | KnCellSetting[], data: MigrateDataRow): Promise<[number,MigrateRecordSet]> {
         let index = 0;
+        let paras = this.getContextParameters(context);
+        this.logger.debug(this.constructor.name+".performDataList: paras",paras);
         if(Array.isArray(fields)) {
             let cells = fields as KnCellSetting[];
             for(let row of data.rs.rows) {
                 index++;
-                let [hasdata,datarow] = this.scrapeDataCells(model,cells,row);
+                let ds = { ...paras, ...row };
+                let [hasdata,datarow] = this.scrapeDataCells(model,cells,ds);
                 if(hasdata) {
                     data.index = index;
                     data.state = MigrateState.RUN;
@@ -222,7 +225,8 @@ export class ExtractHandler extends ExtractOperate {
         } else {
             for(let row of data.rs.rows) {
                 index++;
-                let datarow = this.transformData(row,fields,(info:KnFormatInfo) => this.formatData(info));
+                let ds = { ...paras, ...row };
+                let datarow = this.transformData(ds,fields,(info:KnFormatInfo) => this.formatData(info));
                 data.index = index;
                 data.state = MigrateState.RUN;
                 data.datarow = datarow;

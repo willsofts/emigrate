@@ -136,13 +136,19 @@ curl -X POST http://localhost:8080/upload/migrate/xml -F filename=@D:\exim\asset
 
 test center api:
 1. api/migratefile/file (file existing on server)
+- file text
 curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/migratefile/file -d "{\"taskid\":\"test_file_text\", \"file\": \"./assets/tso.txt\"}"
+- file json (specified parameter type=json too)
 curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/migratefile/file -d "{\"taskid\":\"test_file_json\", \"file\": \"./assets/tso_json.txt\", \"type\":\"json\"}"
+- file excel
 curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/migratefile/file -d "{\"taskid\":\"test_file_xlsx\", \"file\": \"./assets/tso.xlsx\" }"
+- file xml
 curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/migratefile/file -d "{\"taskid\":\"test_file_xml\", \"file\": \"./assets/tso.xml\" }"
-
+- no stored (not persist) but return json
 curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/migratefile/file -d "{\"taskid\":\"test_file_text\", \"file\": \"./assets/tso.txt\", \"stored\": \"false\" }"
 curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/migratefile/file -d "{\"taskid\":\"test_file_excel_download\", \"stored\": \"false\" }"
+- file text with dynamic request parameters mapping
+curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/migratefile/file -d "{\"taskid\":\"test_file_text_request_params\", \"file\": \"./assets/tso.txt\", \"fs_requester\": \"tso\"}"
 
 2. upload/migrate/file (file come from client)
 curl -X POST http://localhost:8080/upload/migrate/file -F filename=@D:\exim\assets\tso.txt -F taskid=test_file_text
@@ -203,7 +209,7 @@ curl -X POST http://localhost:8080/api/migratelog/get -d "processid=1aa6dd2b-e61
 4. test error
 curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/migratetext/insert -d "{\"taskid\":\"test_file_multi_model\", \"file\": \"./assets/tso_error.txt\"}"
 
-5. dominate connection (not seprated connection)
+5. dominate connection (not separated connection)
 curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/migratetext/insert -d "{\"taskid\":\"test_file_multi_model_dominate\", \"file\": \"./assets/tso.txt\"}"
 curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/migratetext/insert -d "{\"taskid\":\"test_file_multi_model_dominate\", \"file\": \"./assets/tso.txt\", \"async\":\"true\"}"
 curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/migratetext/insert -d "{\"taskid\":\"test_file_multi_model_dominate\", \"file\": \"./assets/tso_error.txt\"}"

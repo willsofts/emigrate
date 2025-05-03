@@ -70,7 +70,7 @@ export class MigrateBase extends TknOperateHandler {
         return false;
     }
 
-    public parseDefaultValue(defaultValue: string | undefined) : [any,boolean] {
+    public parseDefaultValue(defaultValue: string | undefined, context?: KnContextInfo) : [any,boolean] {
         if("#current_date"==defaultValue || "#current_time"==defaultValue || "#current_timestamp"==defaultValue || "#systemdate"==defaultValue || "#systemtime"==defaultValue || "#systemtimestamp"==defaultValue || "#kndate"==defaultValue) {
             return [new Date(),true];
         } else if("#current_uuid"==defaultValue || "#uuid"==defaultValue || "#guid"==defaultValue || "#newid"==defaultValue) {
@@ -81,11 +81,16 @@ export class MigrateBase extends TknOperateHandler {
             return [this.userToken?.site,true];
         } else {
             if(defaultValue) {
-                if(defaultValue.trim().length==0) {
+                if(defaultValue.trim().length == 0) {
                     return [defaultValue,true];
                 }
                 if(CHARACTER_SET.includes(defaultValue.trim())) return [defaultValue,true];
-                if(defaultValue.length>1) {
+                if(defaultValue.length > 1) {
+                    if(defaultValue.indexOf("#params.") >= 0) {
+                        let key = defaultValue.substring(8);
+                        let value = context?.params[key];
+                        if(value) return [value,true];
+                    }
                     let first = defaultValue.charAt(0);
                     if(first=='#' || first=='$' || first=='?') {
                         let key = defaultValue.substring(1);
@@ -434,6 +439,11 @@ export class MigrateBase extends TknOperateHandler {
 
     public tryParseXmlToJSON(xml?: string) : any {
         return MigrateUtility.tryParseXmlToJSON(xml);
+    }
+
+    public getContextParameters(context: KnContextInfo) : any {
+        let { taskid, migrateid, processid, async, stored, type, file, filename, fileinfo, dataset, ...paras } = context.params;
+        return paras;
     }
 
 }

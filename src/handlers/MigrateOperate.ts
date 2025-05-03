@@ -79,14 +79,15 @@ export class MigrateOperate extends MigrateBase {
         return dataset;
     }
 
-    public transformDataMapper(model: KnModel, dataSet: any, dataTarget: any) : any {
+    public transformDataMapper(model: KnModel, dataSet: any, dataTarget: any, dataParams: any) : any {
         if(!model.fields) return dataTarget;
         let dataStructure = model.fields;
+        let dataSpec = {...dataParams,...dataTarget};
         let newDataSet : any = {};
         for (let [key, value] of Object.entries(dataStructure)) {
             let mapper = (value as any)?.options?.mapper;
             if(mapper) {
-                let dataValue = this.scrapeData(mapper,dataSet,dataTarget);
+                let dataValue = this.scrapeData(mapper,dataSet,dataSpec);
                 newDataSet[key] = dataValue;
             }
         }    
@@ -159,13 +160,15 @@ export class MigrateOperate extends MigrateBase {
     }
 
     public async performDataMapper(context: KnContextInfo, model: KnModel, datasource: any, dataset: any): Promise<any> {
-        if(!model.fields) return dataset;        
+        if(!model.fields) return dataset;
+        let paras = this.getContextParameters(context);
+        this.logger.debug(this.constructor.name+".performDataMapper: paras",paras);
         if(Array.isArray(dataset)) {
             for(let data of dataset) {
-                await this.transformDataMapper(model,datasource,data);
+                await this.transformDataMapper(model,datasource,data,paras);
             }     
         } else {
-            await this.transformDataMapper(model,datasource,dataset);
+            await this.transformDataMapper(model,datasource,dataset,paras);
         }
         return dataset;
     }
@@ -175,7 +178,7 @@ export class MigrateOperate extends MigrateBase {
             for(let fname in model.fields) {
                 let dbf = model.fields[fname];
                 if(dbf.defaultValue) {
-                    let [value] = this.parseDefaultValue(dbf.defaultValue);
+                    let [value] = this.parseDefaultValue(dbf.defaultValue,context);
                     data[fname] = value;
                 }
                 //find out data from datapart by header setting
@@ -332,7 +335,7 @@ export class MigrateOperate extends MigrateBase {
             }    
             if(config?.parameters && config?.parameters.length > 0) {
                 for(let pr of config.parameters) {
-                    let [value,found] = this.parseDefaultValue(pr?.defaultValue);
+                    let [value,found] = this.parseDefaultValue(pr?.defaultValue,context);
                     if(found) {
                         knsql.set(pr.name,value);
                         values.push(value);
@@ -363,7 +366,7 @@ export class MigrateOperate extends MigrateBase {
         return undefined;
     }
 
-    protected assignRequestData(body: any, data: any, values: any[]) {
+    protected assignRequestData(context: KnContextInfo,body: any, data: any, values: any[]) {
         for(let key in body) {
             let value = body[key];
             if(typeof value === 'string') {
@@ -374,7 +377,7 @@ export class MigrateOperate extends MigrateBase {
                         body[key] = param;
                         values.push(param);
                     } else {                    
-                        let [param,found] = this.parseDefaultValue(value);
+                        let [param,found] = this.parseDefaultValue(value,context);
                         if(found) {
                             body[key] = param;
                             values.push(param);
@@ -386,7 +389,7 @@ export class MigrateOperate extends MigrateBase {
                     }
                 }    
             } else if(typeof value === 'object') {
-                this.assignRequestData(value,data,values);
+                this.assignRequestData(context,value,data,values);
             }
         }
     }
@@ -407,10 +410,10 @@ export class MigrateOperate extends MigrateBase {
             let response = context.options[hash];
             if(response) return response;
             let values : any[] = [];
-            this.assignRequestData(body,data,values);
+            this.assignRequestData(context,body,data,values);
             if(config?.parameters && config?.parameters.length > 0) {
                 for(let pr of config.parameters) {
-                    let [value,found] = this.parseDefaultValue(pr?.defaultValue);
+                    let [value,found] = this.parseDefaultValue(pr?.defaultValue,context);
                     if(found) {
                         body[pr.name] = value;
                         values.push(value);
@@ -425,7 +428,7 @@ export class MigrateOperate extends MigrateBase {
             //when not found from cache, try to make request
             let setting = config?.setting || {};
             let headers = { ...setting };
-            this.assignRequestData(headers,data,[]);
+            this.assignRequestData(context,headers,data,[]);
             response = await this.requestAPI(config.api,headers,body,config);
             this.logger.debug(this.constructor.name+".performRequestAPI: field:",field.name,", response:",response);
             if(response) {
