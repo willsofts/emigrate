@@ -1,6 +1,6 @@
 {
   "name": "emigrate",
-  "version": "1.0.20",
+  "version": "1.0.21",
   "description": "This is project introduce to node application with http server and express framework under moleculer engine",
   "main": "index.js",
   "scripts": {
@@ -22,12 +22,12 @@
   "license": "ISC",
   "dependencies": {
     "@willsofts/will-api": "^1.0.13",
-    "@willsofts/will-core": "^1.1.32",
+    "@willsofts/will-core": "^1.1.33",
     "@willsofts/will-db": "^1.0.63",
     "@willsofts/will-lib": "^1.0.30",
     "@willsofts/will-run": "^1.0.14",
-    "@willsofts/will-serv": "^1.0.57",
-    "@willsofts/will-sql": "^1.0.35",
+    "@willsofts/will-serv": "^1.0.58",
+    "@willsofts/will-sql": "^1.0.36",
     "@willsofts/will-util": "^1.0.26",
     "amqplib": "^0.10.7",
     "axios": "^1.7.9",

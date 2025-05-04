@@ -75,15 +75,7 @@ export class ExtractHandler extends ExtractOperate {
                     values = this.scrapeData(conmapper,response,response);
                 }
                 this.logger.debug(this.constructor.name+".processCollectingPreceding: mapper="+conmapper,", scrapeData=",values);
-                if(Array.isArray(values)) {
-                    context.params[field.name] = values;
-                } else {
-                    for(let p in values) {
-                        if(!context.params.hasOwnProperty(p)) {
-                            context.params[p] = values[p];
-                        }
-                    }
-                }
+                context.params[field.name] = values;
                 this.logger.debug(this.constructor.name+".processCollectingPreceding: context.params",context.params);
             }
         }
@@ -317,7 +309,28 @@ export class ExtractHandler extends ExtractOperate {
 
     protected formatData(info: KnFormatInfo) : any {
         let format = info.field?.options?.format;
+        let mapper = info.field?.options?.mapper;
+        if(mapper && mapper.trim().length > 0) {
+            let datasource = info.field?.options?.datasource;
+            if(datasource && datasource.trim().length > 0) {
+                let ds = info.rs[datasource];
+                if(ds) {
+                    let mapvalue = this.scrapeData(mapper,info.rs,info.rs);
+                    if(mapvalue) {
+                        let values = this.scrapeData(mapvalue,ds,ds);
+                        info.value = values;
+                    }
+                }
+            } else {
+                let values = this.scrapeData(mapper,info.rs,info.rs);
+                info.value = values;
+            }
+        }
         if(format && format.trim().length > 0) {
+            if(!info.value && info.field?.defaultValue) {
+                let [value] = this.parseDefaultValue(info.field.defaultValue);
+                info.value = value;
+            }    
             let locale = info.field?.options?.locale;
             let era = info.field?.options?.era;
             if(info.value instanceof Date) {
