@@ -10,7 +10,7 @@ import { MigrateXlsxHandler } from "../handlers/MigrateXlsxHandler";
 export class MigrateXlsxUploader extends TknUploadRouter {
 
 	public getUploadPath() : string {
-		return path.join(os.tmpdir(),"uploaded","migrate");;
+		return path.join(os.tmpdir(),"uploaded","migrate","xlsx");
 	}
 
 	protected override verifyFile(file: any, fileTypes: RegExp) : KnValidateInfo {
@@ -30,7 +30,7 @@ export class MigrateXlsxUploader extends TknUploadRouter {
 		this.logger.debug(this.constructor.name+".doUploadFile: body",JSON.stringify(req.body));
 		this.logger.debug(this.constructor.name+".doUploadFile: file",req.file);
 		let response: JSONReply = new JSONReply();
-		response.head.modeling("migrate","upload");
+		response.head.modeling("migrate","xlsx");
 		response.head.composeNoError();
 		try {
             let ctx = await this.createContext(req);
@@ -41,7 +41,7 @@ export class MigrateXlsxUploader extends TknUploadRouter {
 			response.body = rs;
 			res.end(JSON.stringify(response));
 		} catch(ex) {
-			KnResponser.responseError(res,ex,"migrate","upload");
+			KnResponser.responseError(res,ex,"migrate","xlsx");
 		}
 	}
 

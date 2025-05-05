@@ -15,7 +15,7 @@ import { MigrateUtility } from "../utils/MigrateUtility";
 export class MigrateFileUploader extends TknUploadRouter {
 
 	public getUploadPath() : string {
-		return path.join(os.tmpdir(),"uploaded","migrate");;
+		return path.join(os.tmpdir(),"uploaded","migrate","file");
 	}
 
 	protected override verifyFile(file: any, fileTypes: RegExp) : KnValidateInfo {
@@ -37,7 +37,7 @@ export class MigrateFileUploader extends TknUploadRouter {
 		this.logger.debug(this.constructor.name+".doUploadFile: body",JSON.stringify(req.body));
 		this.logger.debug(this.constructor.name+".doUploadFile: file",req.file);
 		let response: JSONReply = new JSONReply();
-		response.head.modeling("migrate","upload");
+		response.head.modeling("migrate","file");
 		response.head.composeNoError();
 		try {
             let ctx = await this.createContext(req);
@@ -80,7 +80,7 @@ export class MigrateFileUploader extends TknUploadRouter {
 			}
 			res.end(JSON.stringify(response));
 		} catch(ex) {
-			KnResponser.responseError(res,ex,"migrate","upload");
+			KnResponser.responseError(res,ex,"migrate","file");
 		}
 	}
 
@@ -92,16 +92,4 @@ curl -X POST http://localhost:8080/upload/migrate/file -F filename=@D:\exim\tso_
 curl -X POST http://localhost:8080/upload/migrate/file -F filename=@D:\exim\tso.xlsx -F taskid=test_file_xlsx
 curl -X POST http://localhost:8080/upload/migrate/file -F filename=@D:\exim\tso.xlsx -F taskid=test_file_excel -F type=excel
 curl -X POST http://localhost:8080/upload/migrate/file -F filename=@D:\exim\tso.xml -F taskid=test_file_xml
-*/
-/*
-file {
-  fieldname: 'filename',
-  originalname: 'birth.png',
-  encoding: '7bit',
-  mimetype: 'image/png',
-  destination: 'C:\\Users\\ADMIN\\AppData\\Local\\Temp\\uploaded\\files',
-  filename: 'f51aa9e2-385b-4ae2-b024-2b65f1a5250b.png',
-  path: 'C:\\Users\\ADMIN\\AppData\\Local\\Temp\\uploaded\\files\\f51aa9e2-385b-4ae2-b024-2b65f1a5250b.png',
-  size: 10717
-}
 */
