@@ -48,7 +48,7 @@ export class FileTransferHandler extends PluginHandler {
         };
     }
 
-    public override async performDownload(plugin: PluginSetting, context?: KnContextInfo, model: KnModel = this.model) : Promise<FileSetting | undefined> {
+    public override async performDownload(plugin: PluginSetting, context?: KnContextInfo, model: KnModel = this.model) : Promise<[string,FileSetting | undefined]> {
         this.logger.debug(this.constructor.name+".performDownload: plugin",MigrateUtility.maskAttributes(plugin));        
         let setting = plugin.property;
         if(setting?.source && setting?.source.trim().length > 0 && setting?.target && setting?.target.trim().length > 0) {
@@ -83,7 +83,7 @@ export class FileTransferHandler extends PluginHandler {
                 await sftp.get(source,fullfilename);
                 this.logger.debug(this.constructor.name+".performDownload: get:",source,"("+setting.source+") as:",fullfilename);
                 setting.file = fullfilename;
-                return setting;
+                return [source,setting];
             } catch (err: any) {
                 this.logger.error(err);
                 return Promise.reject(err);
@@ -92,10 +92,10 @@ export class FileTransferHandler extends PluginHandler {
                 if(sftp) sftp.end().catch(ex => this.logger.error(ex));
             }                
         }
-        return undefined;
+        return ["",undefined];
     }
 
-    public async performUpload(plugin: PluginSetting, context?: KnContextInfo, model: KnModel = this.model) : Promise<FileSetting | undefined> {
+    public async performUpload(plugin: PluginSetting, context?: KnContextInfo, model: KnModel = this.model) : Promise<[string,FileSetting | undefined]> {
         this.logger.debug(this.constructor.name+".performDownload: plugin",MigrateUtility.maskAttributes(plugin));        
         let setting = plugin.property;
         if(setting?.source && setting?.source.trim().length > 0 && setting?.target && setting?.target.trim().length > 0) {
@@ -124,7 +124,7 @@ export class FileTransferHandler extends PluginHandler {
                 await sftp.put(source,fullfilename);
                 this.logger.debug(this.constructor.name+".performDownload: put:",source,"("+setting.source+") as:",fullfilename);
                 setting.file = fullfilename;
-                return setting;
+                return [source,setting];
             } catch (err: any) {
                 this.logger.error(err);
                 return Promise.reject(err);
@@ -133,7 +133,7 @@ export class FileTransferHandler extends PluginHandler {
                 if(sftp) sftp.end().catch(ex => this.logger.error(ex));
             }                
         }
-        return undefined;
+        return ["",undefined];
     }
 
 }

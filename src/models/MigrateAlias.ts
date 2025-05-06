@@ -36,11 +36,14 @@ export interface MigrateRecordSet extends KnRecordSet {
     skiprecords: number;
     posterror: boolean;
     message?: string;
+    filename?: string;
+    originalname?: string;
 }
 
 export interface MigrateResultSet {
     taskid: string;
     processid: string;
+    filepath?: string;
     resultset: MigrateRecordSet[];
 }
 
@@ -162,4 +165,11 @@ export interface MigrateDataRow {
 export interface MigrateField {
     name: string;
     field: KnDBField;
+}
+
+export interface MigrateFileInfo {
+    calling: boolean;
+    file: any;
+    type?: string;
+    fortype?: string;
 }

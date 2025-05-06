@@ -10,6 +10,7 @@ import { FileDownloadHandler } from "./FileDownloadHandler";
 import { FileTransferHandler } from "./FileTransferHandler";
 import { FileAttachmentHandler } from './FileAttachmentHandler';
 import { FileDatabaseHandler } from "./FileDatabaseHandler";
+import { FilePathHandler } from "./FilePathHandler";
 import { PluginHandler } from './PluginHandler';
 import { MigrateDate } from "../utils/MigrateDate";
 import { MigrateUtility } from '../utils/MigrateUtility';
@@ -197,6 +198,10 @@ export class MigrateBase extends TknOperateHandler {
                 return handler;
             } else if("database"==plugin.name) {
                 let handler = new FileDatabaseHandler();
+                handler.obtain(this.broker,this.logger);
+                return handler;
+            } else if("folder"==plugin.name) {
+                let handler = new FilePathHandler();
                 handler.obtain(this.broker,this.logger);
                 return handler;
             }
@@ -442,7 +447,7 @@ export class MigrateBase extends TknOperateHandler {
     }
 
     public getContextParameters(context: KnContextInfo) : any {
-        let { taskid, migrateid, processid, async, stored, type, file, filename, fileinfo, dataset, ...paras } = context.params;
+        let { taskid, migrateid, processid, async, stored, type, file, filename, fileinfo, dataset, datafile, ...paras } = context.params;
         return paras;
     }
 

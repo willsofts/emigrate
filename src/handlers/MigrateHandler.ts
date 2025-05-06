@@ -40,7 +40,7 @@ export class MigrateHandler extends MigrateOperate {
     public async processInserting(context: KnContextInfo, migratemodel: MigrateModel, param: MigrateParams, dataset: any, datapart?: any): Promise<MigrateResultSet> {
         await this.executeValidating(context,migratemodel,param);
         if(!context.params.processid) context.params.processid = this.randomUUID();
-        let result : MigrateResultSet = { taskid: context.params.taskid, processid: context.params.processid, resultset: [] };
+        let result : MigrateResultSet = { taskid: context.params.taskid, processid: context.params.processid, filepath: param.filename, resultset: [] };
         let totalrecords = Array.isArray(dataset) ? dataset.length : 1;
         let rc : MigrateRecords = { totalrecords: totalrecords, errorrecords: 0, skiprecords: 0 };
         if(param.async) {
@@ -62,7 +62,7 @@ export class MigrateHandler extends MigrateOperate {
 
     public async executeInserting(context: KnContextInfo, migratemodel: MigrateModel, param: MigrateParams, rc: MigrateRecords, dataset: any, datapart?: any): Promise<MigrateResultSet> {
         if(!context.params.processid) context.params.processid = this.randomUUID();
-        let result : MigrateResultSet = { taskid: context.params.taskid, processid: context.params.processid, resultset: [] };
+        let result : MigrateResultSet = { taskid: context.params.taskid, processid: context.params.processid, filepath: param.filename, resultset: [] };
         await this.processInsertingPreceding(context, migratemodel, param, rc, dataset, datapart);
         let dominated = String(migratemodel.configs?.isolateConnection) === "false";
         if(dominated) {
@@ -109,7 +109,7 @@ export class MigrateHandler extends MigrateOperate {
     public async processInsertingIsolate(context: KnContextInfo, migratemodel: MigrateModel, param: MigrateParams, rc: MigrateRecords, dataset: any, datapart?: any): Promise<MigrateResultSet> {
         //this sperated db connection to each models
         if(!context.params.processid) context.params.processid = this.randomUUID();
-        let result : MigrateResultSet = { taskid: context.params.taskid, processid: context.params.processid, resultset: [] };
+        let result : MigrateResultSet = { taskid: context.params.taskid, processid: context.params.processid, filepath: param.filename, resultset: [] };
         for(let taskmodel of migratemodel.models) {
             context.params.migrateid = this.randomUUID();
             let rs = await this.processInsertingModel(context, taskmodel, param, undefined, rc, dataset, datapart);
@@ -130,7 +130,7 @@ export class MigrateHandler extends MigrateOperate {
     public async processInsertingDominateSync(context: KnContextInfo, migratemodel: MigrateModel, param: MigrateParams, rc: MigrateRecords, dataset: any, datapart?: any): Promise<MigrateResultSet> {
         //this using one db connection to all models
         if(!context.params.processid) context.params.processid = this.randomUUID();
-        let result : MigrateResultSet = { taskid: context.params.taskid, processid: context.params.processid, resultset: [] };
+        let result : MigrateResultSet = { taskid: context.params.taskid, processid: context.params.processid, filepath: param.filename, resultset: [] };
         if(migratemodel.models.length>0) {
             let autoCommit = String(migratemodel.configs?.autoCommit)=="true";
             param.async = false;
@@ -159,7 +159,7 @@ export class MigrateHandler extends MigrateOperate {
     public async processInsertingDominateAsync(context: KnContextInfo, migratemodel: MigrateModel, param: MigrateParams, rc: MigrateRecords, dataset: any, datapart?: any): Promise<MigrateResultSet> {
         //this using one db connection to all models
         if(!context.params.processid) context.params.processid = this.randomUUID();
-        let result : MigrateResultSet = { taskid: context.params.taskid, processid: context.params.processid, resultset: [] };
+        let result : MigrateResultSet = { taskid: context.params.taskid, processid: context.params.processid, filepath: param.filename, resultset: [] };
         if(migratemodel.models.length>0) {
             try {
                 param.async = false;
@@ -193,7 +193,7 @@ export class MigrateHandler extends MigrateOperate {
         let uuid = this.randomUUID();
         let migrateid = context.params.migrateid || uuid;
         let processid = context.params.processid || uuid;
-        let result : MigrateRecordSet = { migrateid: migrateid, processid: processid, taskid: context.params.taskid, modelname: taskmodel.name, totalrecords: rc.totalrecords, errorrecords: 0, skiprecords: 0, posterror: false, ...this.createRecordSet() };
+        let result : MigrateRecordSet = { migrateid: migrateid, processid: processid, taskid: context.params.taskid, modelname: taskmodel.name, totalrecords: rc.totalrecords, errorrecords: 0, skiprecords: 0, posterror: false, filename: param.filename, originalname: param.fileinfo?.originalname, ...this.createRecordSet() };
         //let defaultInfo : MigrateInfo = { exception: false, errormessage: "", errorcontents: [] };
         //let defaultReject : MigrateReject = { reject: false, throwable: undefined };
         if(taskmodel.name.trim().length == 0 || context.params.stored == "NONE" || String(context.params.stored) == "false") {
@@ -300,7 +300,7 @@ export class MigrateHandler extends MigrateOperate {
         let uuid = this.randomUUID();
         let migrateid = context.params.migrateid || uuid;
         let processid = context.params.processid || uuid;
-        let result : MigrateRecordSet = { migrateid: migrateid, processid: processid, taskid: context.params.taskid, modelname: model.name, totalrecords: rc.totalrecords, errorrecords: 0, skiprecords: 0, posterror: false, ...this.createRecordSet() };
+        let result : MigrateRecordSet = { migrateid: migrateid, processid: processid, taskid: context.params.taskid, modelname: model.name, totalrecords: rc.totalrecords, errorrecords: 0, skiprecords: 0, posterror: false, filename: param.filename, originalname: param.fileinfo?.originalname, ...this.createRecordSet() };
         let datalist = dataset;
         if(!Array.isArray(dataset)) {
             datalist = [dataset];

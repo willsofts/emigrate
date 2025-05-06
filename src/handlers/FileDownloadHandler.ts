@@ -15,7 +15,7 @@ const pipe = promisify(pipeline);
 
 export class FileDownloadHandler extends PluginHandler {
 
-    public override async performDownload(plugin: PluginSetting, context?: KnContextInfo, model: KnModel = this.model) : Promise<FileSetting | undefined> {
+    public override async performDownload(plugin: PluginSetting, context?: KnContextInfo, model: KnModel = this.model) : Promise<[string,FileSetting | undefined]> {
         this.logger.debug(this.constructor.name+".performDownload: plugin",MigrateUtility.maskAttributes(plugin));        
         let setting = plugin.property;
         if(setting?.source && setting?.source.trim().length > 0 && setting?.target && setting?.target.trim().length > 0) {
@@ -64,14 +64,14 @@ export class FileDownloadHandler extends PluginHandler {
                     await pipe(res.body, writer);
                     if(writeError) throw writeError;
                     setting.file = fullfilename;
-                    return setting;
+                    return [source,setting];
                 }
             } catch (err: any) {
                 this.logger.error(this.constructor.name+".performDownload: error",err);
                 return Promise.reject(err);
             }                
         }
-        return undefined;
+        return ["",undefined];
     }
 
 }

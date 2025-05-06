@@ -56,6 +56,24 @@ export class MigrateUtility {
         return result;
     }
 
+    public static async getFileInfos(dir: string) : Promise<FileInfo[] | undefined> {
+        if(dir && dir.trim().length > 0) {
+            if(fs.existsSync(dir)) {
+                let files = await fs.promises.readdir(dir);
+                if(files && files.length > 0) {
+                    let filearray : FileInfo[] = [];
+                    for(let file of files) {
+                        let filepath = path.join(dir,file);
+                        let fileinfo = await MigrateUtility.getFileInfo(filepath);
+                        filearray.push(fileinfo);
+                    }
+                    return filearray;
+                }
+            }
+        }
+        return undefined;
+    }
+
     public static tryParseDate(param: KnParamInfo) : Date | undefined {
         let dbf = KnSQLUtils.getDBField(param.name,param.model);
         if(dbf) {

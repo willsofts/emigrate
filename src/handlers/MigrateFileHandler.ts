@@ -2,7 +2,7 @@ import { HTTP } from "@willsofts/will-api";
 import { VerifyError } from "@willsofts/will-core";
 import { KnModel } from "@willsofts/will-db";
 import { KnContextInfo, KnValidateInfo } from '@willsofts/will-core';
-import { MigrateResultSet, PluginSetting, FileInfo, MigrateModel } from "../models/MigrateAlias";
+import { MigrateResultSet, PluginSetting, FileInfo, MigrateModel, MigrateFileInfo } from "../models/MigrateAlias";
 import { MigrateTextHandler } from "./MigrateTextHandler";
 import { MigrateJsonHandler } from "./MigrateJsonHandler";
 import { MigrateExcelHandler } from "./MigrateExcelHandler";
@@ -123,6 +123,9 @@ export class MigrateFileHandler extends MigrateTextHandler {
     protected async processFile(context: KnContextInfo, model: KnModel = this.model, calling: boolean = DEFAULT_CALLING_SERVICE, fortype?: string) : Promise<MigrateResultSet> {
         await this.validateRequireFields(context,model);
         await this.doDataFile(context,model);
+        let result = await this.performFile(context,model,{calling: calling, file: context.params.file, type: context.params.type, fortype: fortype});
+        if(result) return result;
+        /*
         let file = context.params.file;
         let filename = file;
         if(typeof file === "object") {
@@ -180,8 +183,72 @@ export class MigrateFileHandler extends MigrateTextHandler {
             } else {
                 return this.processXlsx(context,model,calling);
             }
-        }
+        }*/
         return Promise.reject(new VerifyError("Not supported",HTTP.NOT_ACCEPTABLE,-16067)); 
+    }
+
+    protected async performFile(context: KnContextInfo, model: KnModel = this.model, fileinfo: MigrateFileInfo) : Promise<MigrateResultSet | undefined> {
+        let file = fileinfo.file;
+        let filename = file;
+        if(typeof file === "object") {
+            filename = file.path;
+        }
+        if(!filename || filename.trim().length==0) {
+            return Promise.reject(new VerifyError("File is undefined",HTTP.NOT_ACCEPTABLE,-16065));
+        }
+        let foundfile = fs.existsSync(filename);
+        if(!foundfile) {
+            return Promise.reject(new VerifyError("File not found",HTTP.NOT_ACCEPTABLE,-16064));
+        }
+        let calling = fileinfo.calling;
+        let fortype = fileinfo.fortype;
+        if(fortype) {
+            if("text"==fortype || "txt"==fortype || "csv"==fortype) {
+                return this.processText(context,model,calling); 
+            } else if("json"==fortype) {
+                return this.processJson(context,model,calling);
+            } else if("xml"==fortype) {
+                return this.processXml(context,model,calling);
+            } else if("excel"==fortype) {
+                return this.processExcel(context,model,calling);
+            } else if("xlsx"==fortype) {
+                return this.processXlsx(context,model,calling);
+            }
+        }   
+        let isText = false;
+        let isJson = false;
+        let isXlsx = false;
+        let isXml = false;
+        if(filename) {
+            const textfiletypes = new RegExp("text|txt|csv","i");
+            const jsonfiletypes = new RegExp("json","i");
+            const xlsxfiletypes = new RegExp("xlsx|xls","i");
+            const xmlfiletypes = new RegExp("xml","i");
+            const extname = path.extname(filename).toLowerCase();
+            isText = textfiletypes.test(extname);
+            isJson = jsonfiletypes.test(extname);
+            isXlsx = xlsxfiletypes.test(extname);
+            isXml = xmlfiletypes.test(extname);
+        }
+        let type = fileinfo.type;
+        if(isText) {
+            if("json"==type) {
+                return this.processJson(context,model,calling);
+            } else {
+                return this.processText(context,model,calling);
+            }
+        } else if(isJson || "json"==type) {
+            return this.processJson(context,model,calling);
+        } else if(isXml || "xml"==type) {
+            return this.processXml(context,model,calling);
+        } else if(isXlsx) {
+            if("excel"==type) {
+                return this.processExcel(context,model,calling);
+            } else {
+                return this.processXlsx(context,model,calling);
+            }
+        }
+        return undefined;
     }
 
     public override async doInserting(context: KnContextInfo, model: KnModel = this.model, calling: boolean = DEFAULT_CALLING_SERVICE): Promise<MigrateResultSet> {
@@ -203,8 +270,9 @@ export class MigrateFileHandler extends MigrateTextHandler {
         if(plugin) {
             let handler = await this.getPluginHandler(plugin);
             if(handler) {
-                let fileinfo = await handler.perform(plugin,context,model);                
+                let [src,fileinfo] = await handler.perform(plugin,context,model);                
                 if(fileinfo) {
+                    if(Array.isArray(fileinfo)) fileinfo = fileinfo[0];
                     if(plugin.name=="database") {
                         context.params.dataset = fileinfo.body;
                         return await this.processData(context,model,calling);
@@ -226,8 +294,9 @@ export class MigrateFileHandler extends MigrateTextHandler {
             this.logger.debug(this.constructor.name+".doRecocile: reconcile setting",reconcile,", model:",reconcile_model);
             let reconcile_handler = await this.getPluginHandler(reconcile);
             if(reconcile_handler) {
-                let reconcile_fileinfo = await reconcile_handler.perform(reconcile,context,reconcile_model);
+                let [src,reconcile_fileinfo] = await reconcile_handler.perform(reconcile,context,reconcile_model);
                 if(reconcile_fileinfo) {
+                    if(Array.isArray(reconcile_fileinfo)) reconcile_fileinfo = reconcile_fileinfo[0];
                     let [reconcile_data] = await this.processFileReading(context,reconcile_model,reconcile_fileinfo,reconcile?.filetype);
                     this.logger.debug(this.constructor.name+".doReconcile: reconcile data",reconcile_data);
                     if(reconcile_data) {

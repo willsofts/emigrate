@@ -95,7 +95,7 @@ export class FileAttachmentHandler extends PluginHandler {
         return fullfilename;
     }
 
-    public override async performDownload(plugin: PluginSetting, context?: KnContextInfo, model: KnModel = this.model) : Promise<FileSetting | undefined> {
+    public override async performDownload(plugin: PluginSetting, context?: KnContextInfo, model: KnModel = this.model) : Promise<[string,FileSetting | undefined]> {
         this.logger.debug(this.constructor.name+".performDownload: plugin",MigrateUtility.maskAttributes(plugin));        
         let setting = plugin.property;
         //setting.source = from email , setting.target = attach filename filter
@@ -129,14 +129,14 @@ export class FileAttachmentHandler extends PluginHandler {
                     }
                     setting.file = fullfilename;
                     setting.originalname = res.originalname;
-                    return setting;
+                    return [source,setting];
                 }
             } catch (err: any) {
                 this.logger.error(err);
                 return Promise.reject(err);
             }                
         }
-        return undefined;
+        return ["",undefined];
     }
 
 }

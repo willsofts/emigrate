@@ -9,7 +9,7 @@ import { MigrateBase } from "./MigrateBase";
 
 export class FileDatabaseHandler extends PluginHandler {
 
-    public override async performDownload(plugin: PluginSetting, context: KnContextInfo, model: KnModel = this.model) : Promise<FileSetting | undefined> {
+    public override async performDownload(plugin: PluginSetting, context: KnContextInfo, model: KnModel = this.model) : Promise<[string,FileSetting | undefined]> {
         this.logger.debug(this.constructor.name+".performDownload: plugin",MigrateUtility.maskAttributes(plugin));        
         let setting = plugin.property;
         if(setting?.source && setting?.source.trim().length > 0 && setting?.target && setting?.target.trim().length > 0) {
@@ -34,7 +34,7 @@ export class FileDatabaseHandler extends PluginHandler {
                         setting.stat = false;
                         setting.file = setting.target;
                         setting.body = rs.rows;
-                        return setting;
+                        return [source,setting];
                     }
                 } catch(ex: any) {
                     this.logger.error(ex);
@@ -44,7 +44,7 @@ export class FileDatabaseHandler extends PluginHandler {
                 }
             }
         }
-        return undefined;
+        return ["",undefined];
     }
 
 }
