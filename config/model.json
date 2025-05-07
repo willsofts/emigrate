@@ -2536,6 +2536,38 @@
             },
             "settings": { "skip": 1, "delimiter": ",", "quotable": true }
         } ] 
+    },
+    "test_file_text_s3_storage": { 
+        "configs": { 
+            "plugin": { 
+                "name": "s3", 
+                "property": { "source": "assets/migrate/test/", "target": "assets/migrate/back/", "remark": "using source & target as folder, if defined target then all files from source will move to target path after perform" },
+                "connection": {
+                    "url": "ap-southeast-1",
+                    "database": "mdc-soc-dev",
+                    "remark": "using url as region and database as bucket, in case of credentials using access key as user and secret key as password setting"
+                }
+            } 
+        },
+        "models": [ {
+            "name": "tso",
+            "alias": { "privateAlias": "PROMPTDB" },
+            "fields": {
+                "mktid": { "type": "STRING", "options": { "seqno": 1 } },
+                "share": { "type": "STRING", "options": { "seqno": 2 } },
+                "unit": { "type": "DECIMAL", "options": { "seqno": 3 } },
+                "price": { "type": "DECIMAL", "options": { "seqno": 4 } },
+                "yield": { "type": "INTEGER" },
+                "effdate": { "type": "DATE", "options": { "seqno": 5 } },
+                "efftime": { "type": "TIME", "options": { "seqno": 6 } },
+                "edittime": { "type": "DATETIME", "options": { "seqno": 7 } },
+                "sharename": { "type": "STRING", "options": { "seqno": 8 } },
+                "defvalue": { "type": "STRING" },
+                "message": { "type": "STRING" },
+                "remarks": { "type": "STRING", "defaultValue": "test_file_text_s3_storage" }
+            },
+            "settings": { "skip": 1, "delimiter": ",", "quotable": true }
+        } ] 
     }
 
 }
