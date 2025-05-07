@@ -39,7 +39,12 @@ export class MigrateUtility {
         let index = extension.indexOf('.');
         if(index>=0) extension = extension.substring(index+1);
         let mimetype = mime.lookup(file);
-        const stats = stat ? await fs.promises.stat(file) : null;
+        let stats : fs.Stats | undefined = undefined;
+        if(stat) { 
+            if(fs.existsSync(file)) {
+                stats = await fs.promises.stat(file); 
+            }
+        }
         let result : FileInfo = {
             type: extension,
             originalname: info.base,
@@ -48,7 +53,7 @@ export class MigrateUtility {
             size: stats ? stats.size : 0,
             isDirectory: stats ? stats.isDirectory() : false,
             isFile: stats ? stats.isFile() : false,
-            mimetype: mimetype?mimetype:undefined,
+            mimetype: mimetype ? mimetype : undefined,
             destination: info.dir,
             path: path.join(info.dir,info.base),
             info: info
