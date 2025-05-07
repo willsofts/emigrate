@@ -77,7 +77,7 @@ This project contains examples API that it can invoke by [curl](https://curl.se/
 - This is a custom function handler. this support for java script function to manual data handling.
 
 4. Default values.
-- This is a reserved entities for default values.
+- This is can parse for default values that can be reserved word and environment variables or come from parameters submitted.
 
 5. Support API fetching.
 - This is an external data from calling API.
@@ -112,6 +112,13 @@ This project contains examples API that it can invoke by [curl](https://curl.se/
 15. Support reconcile file
 - This can import with reconcile file by cross check between data file & reconcile file.
 (reconcile file contain number of total records)
+
+16. Support file path
+- This can import all files specified by path.
+
+17. Support external storage
+- This can import file from Azure storage and AWS S3 storage.
+
 
 #### Extract Data
 
