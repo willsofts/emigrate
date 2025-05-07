@@ -1,3 +1,13 @@
+2025-05-07
+version: 1.0.22
++ support import all file from azure storage and aws s3 storage
+
+2025-05-06
++ support import all files in folder (specified by path parameter or plugin name=folder)
+
+2025-05-05
++ support migrate with upload multiple files
+
 2025-05-03
 version: 1.0.21
 + support inject request parameters into data set as parameter mapper setting

@@ -17,3 +17,4 @@ testMigrate(path,taskid);
 
 //node dist/test/test.migrate.path.js
 //node dist/test/test.migrate.path.js test_file_text ./assets/migrate
+//node dist/test/test.migrate.path.js test_file_text_azure_storage ""

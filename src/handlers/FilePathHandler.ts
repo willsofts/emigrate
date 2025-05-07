@@ -7,14 +7,12 @@ import { PluginHandler } from "./PluginHandler";
 
 export class FilePathHandler extends PluginHandler {
 
-    public async perform(plugin: PluginSetting, context: KnContextInfo, model: KnModel = this.model) : Promise<[string,FileInfo | FileInfo[] | undefined]> {
+    public override async perform(plugin: PluginSetting, context: KnContextInfo, model: KnModel = this.model) : Promise<[string,FileInfo | FileInfo[] | undefined]> {
         if(plugin) {
             this.logger.debug(this.constructor.name+".perform: plugin",MigrateUtility.maskAttributes(plugin));
             let setting = plugin.property;
             if(setting?.source && setting?.source.trim().length > 0) {
                 let source = setting.source;
-                let reconcile = setting?.reconcile;
-                if(reconcile && reconcile.trim().length > 0) source = reconcile;
                 if(context && source.indexOf("${") >= 0) {
                     source = Utilities.translateVariables(source,context.params);
                 }

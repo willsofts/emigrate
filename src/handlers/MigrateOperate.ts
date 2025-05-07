@@ -2,13 +2,13 @@ import { HTTP } from "@willsofts/will-api";
 import { KnModel } from "@willsofts/will-db";
 import { KnRecordSet, KnSQL } from "@willsofts/will-sql";
 import { KnContextInfo, VerifyError } from '@willsofts/will-core';
-import { MigrateBase } from "./MigrateBase";
-import { RefConfig, MigrateConfig, MigrateRecordSet, MigrateInfo, MigrateReject, MigrateParams, MigrateField } from "../models/MigrateAlias";
+import { MigrateSystem } from "./MigrateSystem";
+import { RefConfig, MigrateConnectSetting, MigrateRecordSet, MigrateInfo, MigrateReject, MigrateParams, MigrateField } from "../models/MigrateAlias";
 import { MigrateLogHandler } from "./MigrateLogHandler";
 import config from "@willsofts/will-util";
 import querystring from 'querystring';
 
-export class MigrateOperate extends MigrateBase {
+export class MigrateOperate extends MigrateSystem {
     
     protected insertLogging(context: KnContextInfo, taskmodel: KnModel, param: MigrateParams, rs: MigrateRecordSet, processtype: string = "IMGRATE") {
         let { rows, columns, ...mrs} = rs;
@@ -313,7 +313,7 @@ export class MigrateOperate extends MigrateBase {
     }
 
     public async performFetchData(context: KnContextInfo, model: KnModel, field: MigrateField, data: any, dataset: any) : Promise<any> {
-        let connection = field.field?.options?.connection as MigrateConfig;
+        let connection = field.field?.options?.connection as MigrateConnectSetting;
         if(connection) {
             let type = connection?.type;
             if(type=="API") {
@@ -325,7 +325,7 @@ export class MigrateOperate extends MigrateBase {
         return undefined;
     }
 
-    public async performRequestDB(context: KnContextInfo, field: MigrateField, config: MigrateConfig, data: any) : Promise<KnRecordSet | undefined> {
+    public async performRequestDB(context: KnContextInfo, field: MigrateField, config: MigrateConnectSetting, data: any) : Promise<KnRecordSet | undefined> {
         if(config.query) {
             //try to get from cache
             if(!context.options) context.options = {};
@@ -377,35 +377,7 @@ export class MigrateOperate extends MigrateBase {
         return undefined;
     }
 
-    protected assignRequestData(context: KnContextInfo,body: any, data: any, values: any[]) {
-        for(let key in body) {
-            let value = body[key];
-            if(typeof value === 'string') {
-                if(value.length > 0 && value.charAt(0) == '?') {
-                    let val = value.substring(1);
-                    if(data && data.hasOwnProperty(val)) {
-                        let param = data[val];
-                        body[key] = param;
-                        values.push(param);
-                    } else {                    
-                        let [param,found] = this.parseDefaultValue(value,context);
-                        if(found) {
-                            body[key] = param;
-                            values.push(param);
-                        } else {
-                            param = data[val];
-                            body[key] = param;
-                            values.push(param);
-                        }
-                    }
-                }    
-            } else if(typeof value === 'object') {
-                this.assignRequestData(context,value,data,values);
-            }
-        }
-    }
-
-    public async performRequestAPI(context: KnContextInfo, field: MigrateField, configure: MigrateConfig, data: any) : Promise<any> {
+    public async performRequestAPI(context: KnContextInfo, field: MigrateField, configure: MigrateConnectSetting, data: any) : Promise<any> {
         let config = configure;
         let cfg = await this.getConnectionConfig(context,configure?.connectid);        
         if(cfg) {
@@ -421,7 +393,7 @@ export class MigrateOperate extends MigrateBase {
             let response = context.options[hash];
             if(response) return response;
             let values : any[] = [];
-            this.assignRequestData(context,body,data,values);
+            this.scrapeDataValues(context,body,data,values);
             if(config?.parameters && config?.parameters.length > 0) {
                 for(let pr of config.parameters) {
                     let [value,found] = this.parseDefaultValue(pr?.defaultValue,context);
@@ -439,7 +411,7 @@ export class MigrateOperate extends MigrateBase {
             //when not found from cache, try to make request
             let setting = config?.setting || {};
             let headers = { ...setting };
-            this.assignRequestData(context,headers,data,[]);
+            this.scrapeDataValues(context,headers,data,[]);
             response = await this.requestAPI(config.api,headers,body,config);
             this.logger.debug(this.constructor.name+".performRequestAPI: field:",field.name,", response:",response);
             if(response) {

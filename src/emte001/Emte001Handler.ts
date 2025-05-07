@@ -6,7 +6,7 @@ import { VerifyError, KnValidateInfo, KnContextInfo, KnDataTable, KnPageUtility,
 import { Utilities } from "@willsofts/will-util";
 import { TknOperateHandler, OPERATE_HANDLERS } from '@willsofts/will-serv';
 import { PRIVATE_SECTION } from "../utils/EnvironmentVariable";
-import { MigrateConfig } from "../models/MigrateAlias";
+import { MigrateConnectSetting } from "../models/MigrateAlias";
 import { MigrateModelHandler } from './MigrateModelHandler';
 import { MigrateConnectHandler } from './MigrateConnectHandler';
 
@@ -42,7 +42,7 @@ export class Emte001Handler extends TknOperateHandler {
 
     public handlers = OPERATE_HANDLERS.concat([ {name: "config"}, {name: "dialect"}, {name: "connectretrieve"}, {name: "connectinsert"}, {name: "connectupdate"}, {name: "connectadd"}, {name: "connectretrieval"} ]);
 
-    public async config(context: KnContextInfo) : Promise<MigrateConfig> {
+    public async config(context: KnContextInfo) : Promise<MigrateConnectSetting> {
         return this.callFunctional(context, {operate: "config", raw: false}, this.doConfig);
     }
 
@@ -50,29 +50,29 @@ export class Emte001Handler extends TknOperateHandler {
         return this.callFunctional(context, {operate: "dialect", raw: false}, this.doDialect);
     }
 
-    public async doConfig(context: KnContextInfo, model: KnModel) : Promise<MigrateConfig> {
+    public async doConfig(context: KnContextInfo, model: KnModel) : Promise<MigrateConnectSetting> {
         await this.validateRequireFields(context, model, KnOperation.GET);
         let rs = await this.doConfiguring(context, model, KnOperation.GET);
         return await this.createCipherData(context, KnOperation.GET, rs);
     }
 
-    public async connectretrieve(context: KnContextInfo) : Promise<MigrateConfig> {
+    public async connectretrieve(context: KnContextInfo) : Promise<MigrateConnectSetting> {
         return this.callFunctional(context, {operate: "connectretrieve", raw: false}, this.doConnectRetrieve);
     }
 
-    public async connectinsert(context: KnContextInfo) : Promise<MigrateConfig> {
+    public async connectinsert(context: KnContextInfo) : Promise<MigrateConnectSetting> {
         return this.callFunctional(context, {operate: "connectinsert", raw: false}, this.doConnectInsert);
     }
 
-    public async connectupdate(context: KnContextInfo) : Promise<MigrateConfig> {
+    public async connectupdate(context: KnContextInfo) : Promise<MigrateConnectSetting> {
         return this.callFunctional(context, {operate: "connectupdate", raw: false}, this.doConnectUpdate);
     }
 
-    public async connectadd(context: KnContextInfo) : Promise<MigrateConfig> {
+    public async connectadd(context: KnContextInfo) : Promise<MigrateConnectSetting> {
         return this.callFunctional(context, {operate: "connectadd", raw: true}, this.doConnectAdd);
     }
 
-    public async connectretrieval(context: KnContextInfo) : Promise<MigrateConfig> {
+    public async connectretrieval(context: KnContextInfo) : Promise<MigrateConnectSetting> {
         return this.callFunctional(context, {operate: "connectretrieval", raw: true}, this.doConnectRetrieval);
     }
 
@@ -480,10 +480,10 @@ export class Emte001Handler extends TknOperateHandler {
         return this.createRecordSet(rs);
     }
 
-    protected async doConfiguring(context: KnContextInfo, model: KnModel, action: string = KnOperation.GET) : Promise<MigrateConfig> {
+    protected async doConfiguring(context: KnContextInfo, model: KnModel, action: string = KnOperation.GET) : Promise<MigrateConnectSetting> {
         let db = this.getPrivateConnector(model);
         try {
-            let result = await this.getMigrateConfig(context,db,context.params.taskid);
+            let result = await this.getMigrateConnectSetting(context,db,context.params.taskid);
             if(result) return result;
             return Promise.reject(new VerifyError("Configuration not found",HTTP.NOT_FOUND,-16004));
         } catch(ex: any) {
@@ -506,7 +506,7 @@ export class Emte001Handler extends TknOperateHandler {
         }        
     }
     
-    public async getMigrateConfig(context: KnContextInfo, db: KnDBConnector, taskid: string) : Promise<MigrateConfig | undefined> {
+    public async getMigrateConnectSetting(context: KnContextInfo, db: KnDBConnector, taskid: string) : Promise<MigrateConnectSetting | undefined> {
         try {
             let rs = await this.performRetrieving(db, taskid, context);
             if(rs && rs.rows.length > 0) {
@@ -520,7 +520,7 @@ export class Emte001Handler extends TknOperateHandler {
         }
     }
 
-    public async getMigrateConnection(context: KnContextInfo, db: KnDBConnector, connectid: string): Promise<MigrateConfig | undefined> {
+    public async getMigrateConnection(context: KnContextInfo, db: KnDBConnector, connectid: string): Promise<MigrateConnectSetting | undefined> {
         let result = undefined;
         let knsql = new KnSQL();
         knsql.append("select c.connecttype,c.connectdialect,c.connecturl,c.connectuser,c.connectpassword,");

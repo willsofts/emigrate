@@ -2376,7 +2376,7 @@
                 "efftime": { "type": "TIME", "options": { "seqno": 6 } },
                 "edittime": { "type": "DATETIME", "options": { "seqno": 7 } },
                 "sharename": { "type": "STRING", "options": { "seqno": 8 } },
-                "defvalue": { "type": "STRING", "defaultValue": "#params.fs_requester" },
+                "defvalue": { "type": "STRING", "defaultValue": "#params.fs_requester", "remark": "using #params.xxx to obtain value where xxx come from request parameter" },
                 "message": { "type": "STRING", "options": { "mapper": "fs_requester", "remark": "fs_requester variable come from request parameter submit"} },
                 "remarks": { "type": "STRING", "defaultValue": "test_file_text_request_params" }
             },
@@ -2503,6 +2503,38 @@
                 "remarks": { "type": "STRING", "options": { "caption": "Remarks" } , "defaultValue": "extract_data_file_text_initialize_mapper" }
             },
             "settings": { "extract": "text", "header": true, "delimiter": ",", "naming": "auto" }
+        } ] 
+    },
+    "test_file_text_azure_storage": { 
+        "configs": { 
+            "plugin": { 
+                "name": "azure", 
+                "property": { "source": "assets/migrate/test/", "target": "assets/migrate/back/", "remark": "using source & target as folder, if defined target then all files from source will move to target path after perform" },
+                "connection": {
+                    "url": "?AZURE_STORAGE_CONNECTION",
+                    "database": "dev-cloranc-blob",
+                    "remark": "using url as connection string and database as container name"                                    
+                }
+            } 
+        },
+        "models": [ {
+            "name": "tso",
+            "alias": { "privateAlias": "PROMPTDB" },
+            "fields": {
+                "mktid": { "type": "STRING", "options": { "seqno": 1 } },
+                "share": { "type": "STRING", "options": { "seqno": 2 } },
+                "unit": { "type": "DECIMAL", "options": { "seqno": 3 } },
+                "price": { "type": "DECIMAL", "options": { "seqno": 4 } },
+                "yield": { "type": "INTEGER" },
+                "effdate": { "type": "DATE", "options": { "seqno": 5 } },
+                "efftime": { "type": "TIME", "options": { "seqno": 6 } },
+                "edittime": { "type": "DATETIME", "options": { "seqno": 7 } },
+                "sharename": { "type": "STRING", "options": { "seqno": 8 } },
+                "defvalue": { "type": "STRING" },
+                "message": { "type": "STRING" },
+                "remarks": { "type": "STRING", "defaultValue": "test_file_text_azure_storage" }
+            },
+            "settings": { "skip": 1, "delimiter": ",", "quotable": true }
         } ] 
     }
 

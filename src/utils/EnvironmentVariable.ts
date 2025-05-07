@@ -1,4 +1,5 @@
 import os from "os";
+import path from "path";
 import config from "@willsofts/will-util";
 
 export const META_INFO: any = config.get("META_INFO") || {};
@@ -20,7 +21,7 @@ export const MIGRATE_DUMP_SQL: boolean = config.env("MIGRATE_DUMP_SQL","false") 
 
 export const DEFAULT_CALLING_SERVICE: boolean = config.env("DEFAULT_CALLING_SERVICE","true") === "true";
 export const FILE_ASSETS: string = config.env("FILE_ASSETS","./assets");
-export const DOWNLOAD_FILE_PATH: string = config.env("DOWNLOAD_FILE_PATH") || os.tmpdir();
+export const DOWNLOAD_FILE_PATH: string = config.env("DOWNLOAD_FILE_PATH") || path.join(os.tmpdir(),"download");
 export const UPLOAD_FILE_PATH: string = config.env("UPLOAD_FILE_PATH");
 export const IMPORT_FTP_HOST: string = config.env("IMPORT_FTP_HOST");
 export const IMPORT_FTP_USER: string = config.env("IMPORT_FTP_USER");
@@ -36,10 +37,12 @@ export const ATTACH_MAIL_MARKSEEN: boolean = config.env("ATTACH_MAIL_MARKSEEN","
 export const ATTACH_MAIL_FROM: string = config.env("ATTACH_MAIL_FROM");
 export const ATTACH_MAIL_SUBJECT: string = config.env("ATTACH_MAIL_SUBJECT");
 export const ATTACH_MAIL_FILENAME: string = config.env("ATTACH_MAIL_FILENAME");
-export const ATTACH_FILE_PATH: string = config.env("ATTACH_FILE_PATH") || os.tmpdir();
+export const ATTACH_FILE_PATH: string = config.env("ATTACH_FILE_PATH") || path.join(os.tmpdir(),"attach");
 export const ERROR_CANCELATION_CODE: string = config.env("ERROR_CANCELATION_CODE");
 export const ERROR_CANCELATION_KEY: string = config.env("ERROR_CANCELATION_KEY");
 export const ALWAYS_THROW_POST_ERROR: boolean = config.env("ALWAYS_THROW_POST_ERROR","false") === "true";
 export const MIN_AD_YEAR: number = parseInt(config.env("MIN_AD_YEAR","2500")) || 2500;
 export const ALWAYS_ERASE_DATA_STREAM: boolean = config.env("ALWAYS_ERASE_DATA_STREAM","false") === "true";
-export const EXTRACT_FILE_PATH: string = config.env("EXTRACT_FILE_PATH") || os.tmpdir();
+export const EXTRACT_FILE_PATH: string = config.env("EXTRACT_FILE_PATH") || path.join(os.tmpdir(),"extract");
+export const AZURE_STORAGE_PATH: string = config.env("AZURE_STORAGE_PATH") || path.join(os.tmpdir(),"azure");
+export const S3_STORAGE_PATH: string = config.env("S3_STORAGE_PATH") || path.join(os.tmpdir(),"s3");

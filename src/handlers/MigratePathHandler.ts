@@ -6,6 +6,7 @@ import { MigrateResultSet, PluginSetting, FileInfo } from "../models/MigrateAlia
 import { DEFAULT_CALLING_SERVICE } from "../utils/EnvironmentVariable";
 import { MigrateUtility } from "../utils/MigrateUtility";
 import { MigrateFileHandler } from "./MigrateFileHandler";
+import { PluginHandler } from "./PluginHandler";
 
 export class MigratePathHandler extends MigrateFileHandler {
     public handlers = [ {name: "insert"} ];
@@ -26,9 +27,10 @@ export class MigratePathHandler extends MigrateFileHandler {
         if(path && path.trim().length > 0) {
             filearray = await MigrateUtility.getFileInfos(path);
         }
+        let handler : PluginHandler | undefined = undefined;
         let plugin = taskmodel.configs?.plugin as PluginSetting;        
         if(!filearray && plugin) {
-            let handler = await this.getPluginHandler(plugin);
+            handler = await this.getPluginHandler(plugin);
             if(handler) {
                 let [src,fileinfo] = await handler.perform(plugin,context,model);                
                 if(fileinfo) {
@@ -40,7 +42,7 @@ export class MigratePathHandler extends MigrateFileHandler {
                 }
             }
         }
-        if(filearray && filearray.length > 0) {
+        if(filearray) {
             let result : MigrateResultSet = { taskid: context.params.taskid, processid: context.params.processid, filepath: path, resultset: [] };
             for(let file of filearray) {
                 if(file.isFile) {
@@ -50,6 +52,9 @@ export class MigratePathHandler extends MigrateFileHandler {
                         rs.resultset.forEach((rss) => result.resultset.push(rss));
                     }
                 }
+            }
+            if(handler) {
+                handler.terminate(plugin,context,model).catch(ex => this.logger.error(this.constructor.name+".doManipulating",ex)); 
             }
             return result;
         }

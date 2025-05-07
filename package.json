@@ -1,6 +1,6 @@
 {
   "name": "emigrate",
-  "version": "1.0.21",
+  "version": "1.0.22",
   "description": "This is project introduce to node application with http server and express framework under moleculer engine",
   "main": "index.js",
   "scripts": {
@@ -28,6 +28,7 @@
     "@willsofts/will-run": "^1.0.14",
     "@willsofts/will-serv": "^1.0.58",
     "@willsofts/will-sql": "^1.0.36",
+    "@willsofts/will-store": "^1.0.3",
     "@willsofts/will-util": "^1.0.26",
     "amqplib": "^0.10.7",
     "axios": "^1.7.9",

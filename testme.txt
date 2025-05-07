@@ -156,6 +156,10 @@ curl -X POST http://localhost:8080/upload/migrate/file -F filename=@D:\exim\asse
 curl -X POST http://localhost:8080/upload/migrate/file -F filename=@D:\exim\assets\tso.xml -F taskid=test_file_xml
 curl -X POST http://localhost:8080/upload/migrate/file -F filename=@D:\exim\assets\tso.xlsx -F taskid=test_file_xlsx
 
+3. upload multiple files
+curl -X POST http://localhost:8080/upload/migrate/files -F taskid=test_file_text -F filename=@D:\exim\assets\tso.txt 
+curl -X POST http://localhost:8080/upload/migrate/files -F taskid=test_file_text -F filename=@D:\exim\assets\tso.txt -F filename=@D:\exim\assets\tas.txt
+
 
 test sync/async:
 1. async
@@ -306,6 +310,16 @@ curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/extra
 
 test connection setting with connect id (from table tmigrateconnect)
 curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/migrate/task -d @test_simple_call_db_connection.json
+
+
+test import files in folder:
+- using /migratepath/insert api specified by path
+curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/migratepath/insert -d "{\"taskid\":\"test_file_text\", \"path\": \"./assets/migrate\"}"
+- using rest api
+curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/migrate/path -d "{\"taskid\":\"test_file_text\", \"path\": \"./assets/migrate\"}"
+
+test import file from azure storage
+curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/migrate/path -d "{\"taskid\":\"test_file_text_azure_storage\"}"
 
 
 setting up sftp server on windows:

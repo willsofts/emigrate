@@ -28,7 +28,8 @@ export class FileDownloadHandler extends PluginHandler {
             setting.file = undefined;
             let info = path.parse(setting.target);
             let filename = info.base; //setting.target;
-            if("auto"===setting.naming || "true"===setting.naming) {
+            let naming = String(setting.naming);
+            if("auto"===naming || "true"===naming) {
                 let fileid = uuid();
                 filename = fileid + info.ext;        
             }

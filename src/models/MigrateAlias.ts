@@ -15,7 +15,7 @@ export interface MigrateSetting {
     query?: string;
 }
 
-export interface MigrateConfig extends KnDBConfig, MigrateSetting {
+export interface MigrateConnectSetting extends KnDBConfig, MigrateSetting {
     connectid?: string;
     parameters?: ParameterInfo[];
 }
@@ -94,7 +94,8 @@ export interface PluginSetting {
     name: string;
     property: any;
     filetype?: string;
-    connection?: any;
+    connection?: MigrateConnectSetting;
+    model?: KnModel;
 }
 
 export interface FileSetting {

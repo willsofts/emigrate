@@ -80,7 +80,8 @@ export class FileAttachmentHandler extends PluginHandler {
     protected async saveFile(fetchfile: FetchFile, filepath: string, options: FetchOptions) : Promise<string> {
         let fullfilename = path.join(filepath,fetchfile.originalname);
         let info = path.parse(fetchfile.originalname);
-        if("auto"===options.naming || "true"===options.naming) {
+        let naming = String(options.naming);
+        if("auto"===naming || "true"===naming) {
             let fileid = uuid();
             fullfilename = path.join(filepath,fileid + info.ext);
         }

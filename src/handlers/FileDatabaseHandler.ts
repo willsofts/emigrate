@@ -5,7 +5,7 @@ import { Utilities } from "@willsofts/will-util";
 import { FileSetting, PluginSetting } from "../models/MigrateAlias";
 import { MigrateUtility } from "../utils/MigrateUtility";
 import { PluginHandler } from "./PluginHandler";
-import { MigrateBase } from "./MigrateBase";
+import { MigrateSystem } from "./MigrateSystem";
 
 export class FileDatabaseHandler extends PluginHandler {
 
@@ -19,14 +19,14 @@ export class FileDatabaseHandler extends PluginHandler {
             }
             this.logger.debug(this.constructor.name+".performDownload: try fetch result:",source,"("+setting.source+")");
             let connection = plugin?.connection;
-            if(plugin?.connection) {
-                let handler = new MigrateBase();
+            if(connection) {
+                let handler = new MigrateSystem();
                 handler.obtain(this.broker,this.logger);
-                let cfg = await handler.getConnectionConfig(context,plugin.connection?.connectid);
+                let cfg = await handler.getConnectionConfig(context,connection?.connectid);
                 let db = cfg ? this.getConnector(cfg) : this.getConnector(connection);
                 try {
                     let knsql = handler.composeQuery(context,setting?.statement,db);
-                    if(!knsql && plugin.connection?.query) knsql = new KnSQL(plugin.connection.query);
+                    if(!knsql && connection?.query) knsql = new KnSQL(connection.query);
                     if(!knsql) knsql = new KnSQL("select * from "+source);
                     this.logger.debug(this.constructor.name+".performDownload: sql:",knsql);
                     if(knsql) {

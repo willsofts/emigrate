@@ -125,65 +125,6 @@ export class MigrateFileHandler extends MigrateTextHandler {
         await this.doDataFile(context,model);
         let result = await this.performFile(context,model,{calling: calling, file: context.params.file, type: context.params.type, fortype: fortype});
         if(result) return result;
-        /*
-        let file = context.params.file;
-        let filename = file;
-        if(typeof file === "object") {
-            filename = file.path;
-        }
-        if(!filename || filename.trim().length==0) {
-            return Promise.reject(new VerifyError("File is undefined",HTTP.NOT_ACCEPTABLE,-16065));
-        }
-        let foundfile = fs.existsSync(filename);
-        if(!foundfile) {
-            return Promise.reject(new VerifyError("File not found",HTTP.NOT_ACCEPTABLE,-16064));
-        }
-        if(fortype) {
-            if("text"==fortype || "txt"==fortype || "csv"==fortype) {
-                return this.processText(context,model,calling); 
-            } else if("json"==fortype) {
-                return this.processJson(context,model,calling);
-            } else if("xml"==fortype) {
-                return this.processXml(context,model,calling);
-            } else if("excel"==fortype) {
-                return this.processExcel(context,model,calling);
-            } else if("xlsx"==fortype) {
-                return this.processXlsx(context,model,calling);
-            }
-        }   
-        let isText = false;
-        let isJson = false;
-        let isXlsx = false;
-        let isXml = false;
-        if(filename) {
-            const textfiletypes = new RegExp("text|txt|csv","i");
-            const jsonfiletypes = new RegExp("json","i");
-            const xlsxfiletypes = new RegExp("xlsx|xls","i");
-            const xmlfiletypes = new RegExp("xml","i");
-            const extname = path.extname(filename).toLowerCase();
-            isText = textfiletypes.test(extname);
-            isJson = jsonfiletypes.test(extname);
-            isXlsx = xlsxfiletypes.test(extname);
-            isXml = xmlfiletypes.test(extname);
-        }
-        let type = context.params.type;
-        if(isText) {
-            if("json"==type) {
-                return this.processJson(context,model,calling);
-            } else {
-                return this.processText(context,model,calling);
-            }
-        } else if(isJson || "json"==type) {
-            return this.processJson(context,model,calling);
-        } else if(isXml || "xml"==type) {
-            return this.processXml(context,model,calling);
-        } else if(isXlsx) {
-            if("excel"==type) {
-                return this.processExcel(context,model,calling);
-            } else {
-                return this.processXlsx(context,model,calling);
-            }
-        }*/
         return Promise.reject(new VerifyError("Not supported",HTTP.NOT_ACCEPTABLE,-16067)); 
     }
 

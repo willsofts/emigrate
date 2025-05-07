@@ -24,6 +24,7 @@ const ExpressService : ServiceSchema = {
                     "GET fetch/config/:name": "fetch.config",
                     "POST fetch/context/:id": "fetch.context",
                     "POST migrate/task/:taskid?": "migrate.insert",
+                    "POST migrate/path/:taskid?": "migratepath.insert",
                 }
             }
         ]

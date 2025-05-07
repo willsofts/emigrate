@@ -1,13 +1,10 @@
 import { KnModel } from "@willsofts/will-db";
 import { KnContextInfo } from '@willsofts/will-core';
-import { TknOperateHandler } from "@willsofts/will-serv";
 import { FileInfo, FileSetting, PluginSetting } from "../models/MigrateAlias";
 import { MigrateUtility } from "../utils/MigrateUtility";
-import { PRIVATE_SECTION } from "../utils/EnvironmentVariable";
+import { MigrateBase } from "./MigrateBase";
 
-export class PluginHandler extends TknOperateHandler {
-    public section = PRIVATE_SECTION;    
-    public model : KnModel = { name: "tmigrate", alias: { privateAlias: this.section } };
+export class PluginHandler extends MigrateBase {
 
     public async perform(plugin: PluginSetting, context: KnContextInfo, model: KnModel = this.model) : Promise<[string,FileInfo | FileInfo[] | undefined]> {
         if(plugin) {
@@ -31,4 +28,8 @@ export class PluginHandler extends TknOperateHandler {
         return ["",undefined];
     }
     
+    public async terminate(plugin: PluginSetting, context: KnContextInfo, model: KnModel = this.model) : Promise<any> {
+
+    }
+
 }
