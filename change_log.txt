@@ -1,4 +1,7 @@
 2025-05-07
+version: 1.0.24
++ fixed bug stat file does not exist
+
 version: 1.0.23
 + fixed bug s3 download file
 
