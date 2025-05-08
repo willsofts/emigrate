@@ -40,7 +40,7 @@ export class Emte001Handler extends TknOperateHandler {
         prefixNaming: true
     };
 
-    public handlers = OPERATE_HANDLERS.concat([ {name: "config"}, {name: "dialect"}, {name: "connectretrieve"}, {name: "connectinsert"}, {name: "connectupdate"}, {name: "connectadd"}, {name: "connectretrieval"} ]);
+    public handlers = OPERATE_HANDLERS.concat([ {name: "config"}, {name: "dialect"}, {name: "connectretrieve"}, {name: "connectinsert"}, {name: "connectupdate"}, {name: "connectremove"}, {name: "connectadd"}, {name: "connectretrieval"} ]);
 
     public async config(context: KnContextInfo) : Promise<MigrateConnectSetting> {
         return this.callFunctional(context, {operate: "config", raw: false}, this.doConfig);
@@ -66,6 +66,10 @@ export class Emte001Handler extends TknOperateHandler {
 
     public async connectupdate(context: KnContextInfo) : Promise<MigrateConnectSetting> {
         return this.callFunctional(context, {operate: "connectupdate", raw: false}, this.doConnectUpdate);
+    }
+
+    public async connectremove(context: KnContextInfo) : Promise<MigrateConnectSetting> {
+        return this.callFunctional(context, {operate: "connectremove", raw: true}, this.doConnectRemove);
     }
 
     public async connectadd(context: KnContextInfo) : Promise<MigrateConnectSetting> {
@@ -591,6 +595,13 @@ export class Emte001Handler extends TknOperateHandler {
         handler.obtain(this.broker,this.logger);
         let rs = await handler.update(context);
         return await this.createCipherData(context, KnOperation.UPDATE, rs);
+    }
+
+    public async doConnectRemove(context: KnContextInfo, model: KnModel) : Promise<KnRecordSet> {
+        let handler = new MigrateConnectHandler();
+        handler.obtain(this.broker,this.logger);
+        let rs = await handler.remove(context);
+        return await this.createCipherData(context, KnOperation.REMOVE, rs);
     }
 
     public async getDataConnectionAdd(context: KnContextInfo, model: KnModel) : Promise<KnDataTable> {

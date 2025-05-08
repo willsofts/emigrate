@@ -1,3 +1,7 @@
+2025-05-08
+version: 1.0.25
++ support scrape initialize data category in connection setting
+
 2025-05-07
 version: 1.0.24
 + fixed bug stat file does not exist

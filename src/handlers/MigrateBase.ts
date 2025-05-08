@@ -5,7 +5,7 @@ import { KnContextInfo, VerifyError } from "@willsofts/will-core";
 import { KnDBConnector, KnDBFault, KnSQL, KnDBUtils, KnDBTypes, KnResultSet } from "@willsofts/will-sql";
 import { TknOperateHandler } from "@willsofts/will-serv";
 import { PRIVATE_SECTION, MIGRATE_DUMP_SQL } from "../utils/EnvironmentVariable";
-import { MigrateConnectSetting } from "../models/MigrateAlias";
+import { MigrateConnectSetting, RefConfig } from "../models/MigrateAlias";
 import { MigrateDate } from "../utils/MigrateDate";
 import { MigrateUtility } from '../utils/MigrateUtility';
 import config from "@willsofts/will-util";
@@ -64,14 +64,34 @@ export class MigrateBase extends TknOperateHandler {
                 if(defaultValue.length > 1) {
                     if(defaultValue.indexOf("#params.") >= 0) {
                         let key = defaultValue.substring(8);
-                        let value = context?.params[key];
-                        if(value) return [value,true];
+                        if(key.indexOf(".") > 0 && context) {
+                            let value = this.scrapeData(key,context.params,context.params);
+                            if(value) {
+                                return [value,true];
+                            } else {
+                                value = context?.params[key];
+                                if(value) return [value,true];    
+                            }
+                        } else {
+                            let value = context?.params[key];
+                            if(value) return [value,true];
+                        }
                     }
                     let first = defaultValue.charAt(0);
                     if(first=='#' || first=='$' || first=='?') {
                         let key = defaultValue.substring(1);
-                        let value = config.env(key,key);
-                        return [value,true];
+                        if(key.indexOf(".") > 0 && context) {
+                            let value = this.scrapeData(key,context.params,context.params);
+                            if(value) { 
+                                return [value,true];
+                            } else {
+                                value = config.env(key,key);
+                                return [value,true];    
+                            }
+                        } else {
+                            let value = config.env(key,key);
+                            return [value,true];
+                        }
                     }
                 }
             }
@@ -205,15 +225,23 @@ export class MigrateBase extends TknOperateHandler {
                         let param = data[val];
                         body[key] = param;
                         values.push(param);
-                    } else {                    
-                        let [param,found] = this.parseDefaultValue(value,context);
-                        if(found) {
-                            body[key] = param;
-                            values.push(param);
+                    } else {
+                        if(val.indexOf(".") > 0) {
+                            let mapvalues = this.scrapeData(val,context.params,context.params,context);
+                            if(mapvalues) {
+                                body[key] = mapvalues;
+                                values.push(mapvalues);
+                            }
                         } else {
-                            param = data[val];
-                            body[key] = param;
-                            values.push(param);
+                            let [param,found] = this.parseDefaultValue(value,context);
+                            if(found) {
+                                body[key] = param;
+                                values.push(param);
+                            } else {
+                                param = data[val];
+                                body[key] = param;
+                                values.push(param);
+                            }
                         }
                     }
                 }    
@@ -221,6 +249,71 @@ export class MigrateBase extends TknOperateHandler {
                 this.scrapeDataValues(context,value,data,values);
             }
         }
+    }
+
+    public scrapeData(mapper: string | RefConfig | Array<string|RefConfig>, dataSet: any, dataTarget: any, context?: KnContextInfo) : any {
+        let results = undefined;
+        if(Array.isArray(mapper)) {
+            for(let item of mapper) {
+                if(typeof item === 'string') {
+                    let value = this.scratchData(item, dataSet, dataTarget, context);
+                    if(value!=undefined || value!=null) {
+                        results = ( results ?? "" ) + value;
+                    }
+                } else {
+                    let prefix = item.ref == '$' || item.ref == '.' ? '' : item.ref;
+                    let value = this.scratchData(prefix + item.name, dataSet, dataTarget, context); 
+                    if(value!=undefined || value!=null) {
+                        results = ( results ?? "" ) + value;
+                    }
+                }
+            }
+        } else {
+            if(typeof mapper === 'string') {
+                results = this.scratchData(mapper, dataSet, dataTarget, context);
+            } else {
+                let prefix = mapper.ref == '$' || mapper.ref == '.' ? '' : mapper.ref;
+                results = this.scratchData(prefix + mapper.name, dataSet, dataTarget, context);
+            }
+        }
+        return results;
+    }
+
+    public scratchData(mapper: string, dataSet: any, dataTarget: any, context?: KnContextInfo) : any {
+        if(mapper && mapper.trim().length>0) {
+            // % = environment variable, @ = find out from root tag, $ or . = find out from current node
+            let firstchar = mapper.charAt(0);
+            let configTag = firstchar=="%";
+            let reservedTag = firstchar=='$' || firstchar=='.';
+            let rootTag = firstchar=='@'; 
+            if(rootTag || reservedTag || configTag) {
+                mapper = mapper.substring(1);
+            }
+            if(configTag) {
+                return config.env(mapper);
+            }
+            let path = mapper.split('.');
+            //find out data in array at index specified
+            let regex = new RegExp(`\\[(\\d+)\\]$`);
+            let results = path.reduce((item: any, part: any) => { 
+                let match = part.match(regex); 
+                if (match && match[1]) {
+                    let index = parseInt(match[1], 10);
+                    let idx = part.lastIndexOf('[');
+                    let token = part.substring(0,idx);
+                    let array = item[token];
+                    if(Array.isArray(array) && array.length>index) {
+                        return array[index];
+                    }
+                }                
+                let [value,flag] = this.parseDefaultValue(part,context);
+                if(flag) return value;
+                let rs = item && item[part]; 
+                return rs; 
+            }, rootTag ? dataSet : dataTarget);        
+            return results;
+        }
+        return mapper;
     }
 
 }

@@ -3,9 +3,8 @@ import { KnModel } from "@willsofts/will-db";
 import { KnRecordSet, KnSQL } from "@willsofts/will-sql";
 import { KnContextInfo, VerifyError } from '@willsofts/will-core';
 import { MigrateSystem } from "./MigrateSystem";
-import { RefConfig, MigrateConnectSetting, MigrateRecordSet, MigrateInfo, MigrateReject, MigrateParams, MigrateField } from "../models/MigrateAlias";
+import { MigrateConnectSetting, MigrateRecordSet, MigrateInfo, MigrateReject, MigrateParams, MigrateField } from "../models/MigrateAlias";
 import { MigrateLogHandler } from "./MigrateLogHandler";
-import config from "@willsofts/will-util";
 import querystring from 'querystring';
 
 export class MigrateOperate extends MigrateSystem {
@@ -61,7 +60,7 @@ export class MigrateOperate extends MigrateSystem {
         let dataset = datasource;        
         if(model.settings?.xpath && model.settings?.xpath.trim().length>0) {
             //find out data set from xpath
-            dataset = this.scrapeData(model.settings.xpath,datasource,datasource);
+            dataset = this.scrapeData(model.settings.xpath,datasource,datasource,context);
         }
         if(Array.isArray(dataset)) {
             dataset = await this.performReformation(context,model,dataset);
@@ -79,7 +78,7 @@ export class MigrateOperate extends MigrateSystem {
         return dataset;
     }
 
-    public transformDataMapper(model: KnModel, dataSet: any, dataTarget: any, dataParams: any) : any {
+    public transformDataMapper(context: KnContextInfo, model: KnModel, dataSet: any, dataTarget: any, dataParams: any) : any {
         if(!model.fields) return dataTarget;
         let dataStructure = model.fields;
         let dataSpec = {...dataParams,...dataTarget};
@@ -87,76 +86,11 @@ export class MigrateOperate extends MigrateSystem {
         for (let [key, value] of Object.entries(dataStructure)) {
             let mapper = (value as any)?.options?.mapper;
             if(mapper) {
-                let dataValue = this.scrapeData(mapper,dataSet,dataSpec);
+                let dataValue = this.scrapeData(mapper,dataSet,dataSpec,context);
                 newDataSet[key] = dataValue;
             }
         }    
         return Object.assign(dataTarget,newDataSet);
-    }
-
-    public scrapeData(mapper: string | RefConfig | Array<string|RefConfig>, dataSet: any, dataTarget: any) : any {
-        let results = undefined;
-        if(Array.isArray(mapper)) {
-            for(let item of mapper) {
-                if(typeof item === 'string') {
-                    let value = this.scratchData(item, dataSet, dataTarget);
-                    if(value!=undefined || value!=null) {
-                        results = ( results ?? "" ) + value;
-                    }
-                } else {
-                    let prefix = item.ref == '$' || item.ref == '.' ? '' : item.ref;
-                    let value = this.scratchData(prefix + item.name, dataSet, dataTarget); 
-                    if(value!=undefined || value!=null) {
-                        results = ( results ?? "" ) + value;
-                    }
-                }
-            }
-        } else {
-            if(typeof mapper === 'string') {
-                results = this.scratchData(mapper, dataSet, dataTarget);
-            } else {
-                let prefix = mapper.ref == '$' || mapper.ref == '.' ? '' : mapper.ref;
-                results = this.scratchData(prefix + mapper.name, dataSet, dataTarget);
-            }
-        }
-        return results;
-    }
-
-    public scratchData(mapper: string, dataSet: any, dataTarget: any) : any {
-        if(mapper && mapper.trim().length>0) {
-            // % = environment variable, @ = find out from root tag, $ or . = find out from current node
-            let firstchar = mapper.charAt(0);
-            let configTag = firstchar=="%";
-            let reservedTag = firstchar=='$' || firstchar=='.';
-            let rootTag = firstchar=='@'; 
-            if(rootTag || reservedTag || configTag) {
-                mapper = mapper.substring(1);
-            }
-            if(configTag) {
-                return config.env(mapper);
-            }
-            let path = mapper.split('.');
-            //find out data in array at index specified
-            let regex = new RegExp(`\\[(\\d+)\\]$`);
-            let results = path.reduce((item: any, part: any) => { 
-                let match = part.match(regex); 
-                if (match && match[1]) {
-                    let index = parseInt(match[1], 10);
-                    let idx = part.lastIndexOf('[');
-                    let token = part.substring(0,idx);
-                    let array = item[token];
-                    if(Array.isArray(array) && array.length>index) {
-                        return array[index];
-                    }
-                }                
-                let [value,flag] = this.parseDefaultValue(part);
-                if(flag) return value;
-                let rs = item && item[part]; 
-                return rs; 
-            }, rootTag ? dataSet : dataTarget);        
-            return results;
-        }
-        return mapper;
     }
 
     public async performDataMapper(context: KnContextInfo, model: KnModel, datasource: any, dataset: any): Promise<any> {
@@ -165,10 +99,10 @@ export class MigrateOperate extends MigrateSystem {
         this.logger.debug(this.constructor.name+".performDataMapper: paras",paras);
         if(Array.isArray(dataset)) {
             for(let data of dataset) {
-                await this.transformDataMapper(model,datasource,data,paras);
+                await this.transformDataMapper(context,model,datasource,data,paras);
             }     
         } else {
-            await this.transformDataMapper(model,datasource,dataset,paras);
+            await this.transformDataMapper(context,model,datasource,dataset,paras);
         }
         return dataset;
     }
@@ -265,7 +199,7 @@ export class MigrateOperate extends MigrateSystem {
         } else {
             let dsmapper = field.field?.options?.datasource;
             if(dsmapper) {
-                response = this.scrapeData(dsmapper,context.params,context.params);
+                response = this.scrapeData(dsmapper,context.params,context.params,context);
             }
         }
         let attrname = field.name;
@@ -273,7 +207,7 @@ export class MigrateOperate extends MigrateSystem {
             let conmapper = connection?.mapper;
             let values = response;
             if(conmapper) {
-                values = this.scrapeData(conmapper,response,response);
+                values = this.scrapeData(conmapper,response,response,context);
                 this.logger.debug(this.constructor.name+".performFetching: mapper="+conmapper,", scrapeData=",values);
             }
             if(values) {
