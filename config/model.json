@@ -2612,7 +2612,82 @@
             },
             "settings": { "skip": 1, "quotable": true, "sheetname": "tso" }
         } ]
+    },
+    "test_file_json_sub_model": { 
+        "models": [ 
+            {
+                "name": "tso",
+                "alias": { "privateAlias": "PROMPTDB" },
+                "fields": {
+                    "mktid": { "type": "STRING", "options": { "seqno": 1 } },
+                    "share": { "type": "STRING", "options": { "seqno": 2 } },
+                    "unit": { "type": "DECIMAL", "options": { "seqno": 3 } },
+                    "price": { "type": "DECIMAL", "options": { "seqno": 4 } },
+                    "yield": { "type": "INTEGER" },
+                    "effdate": { "type": "DATE", "options": { "seqno": 5 } },
+                    "efftime": { "type": "TIME", "options": { "seqno": 6 } },
+                    "edittime": { "type": "DATETIME", "options": { "seqno": 7 } },
+                    "sharename": { "type": "STRING", "options": { "seqno": 8 } },
+                    "defvalue": { "type": "STRING", "options": { "mapper": "@body.defvalue" } },
+                    "message": { "type": "STRING", "options": { "mapper": "message.remark" }  },
+                    "remarks": { "type": "STRING", "defaultValue": "test_file_sub_model" }
+                },
+                "settings": { 
+                    "xpath": "rows", 
+                    "statement": {
+                        "prestatement": {
+                            "statements": [
+                                { "sql": "delete from ttas" },
+                                { "sql": "delete from ttso" },
+                                { "sql": "delete from tso" }
+                            ]                            
+                        }
+                    }
+                },
+                "models": [
+                    {
+                        "name": "ttso",
+                        "alias": { "privateAlias": "PROMPTDB" },
+                        "fields": {
+                            "mktid": { "type": "STRING", "options": { "seqno": 1 } },
+                            "share": { "type": "STRING", "options": { "seqno": 2 } },
+                            "unit": { "type": "DECIMAL", "options": { "seqno": 3 } },
+                            "price": { "type": "DECIMAL", "options": { "seqno": 4 } },
+                            "yield": { "type": "INTEGER" },
+                            "effdate": { "type": "DATE", "options": { "seqno": 5 } },
+                            "efftime": { "type": "TIME", "options": { "seqno": 6 } },
+                            "edittime": { "type": "DATETIME", "options": { "seqno": 7 } },
+                            "sharename": { "type": "STRING", "options": { "seqno": 8 } },
+                            "defvalue": { "type": "STRING", "options": { "mapper": "@body.defvalue" } },
+                            "message": { "type": "STRING", "options": { "mapper": "^message", "remark": "this point to parent model message field" }  },
+                            "remarks": { "type": "STRING", "defaultValue": "test_file_sub_model" }
+                        },
+                        "settings": { "xpath": "items" },
+                        "models": [
+                            {
+                                "name": "ttas",
+                                "alias": { "privateAlias": "PROMPTDB" },
+                                "fields": {
+                                    "mktid": { "type": "STRING", "options": { "seqno": 1 } },
+                                    "share": { "type": "STRING", "options": { "seqno": 2 } },
+                                    "unit": { "type": "DECIMAL", "options": { "seqno": 3 } },
+                                    "price": { "type": "DECIMAL", "options": { "seqno": 4 } },
+                                    "yield": { "type": "INTEGER" },
+                                    "effdate": { "type": "DATE", "options": { "seqno": 5 } },
+                                    "efftime": { "type": "TIME", "options": { "seqno": 6 } },
+                                    "edittime": { "type": "DATETIME", "options": { "seqno": 7 } },
+                                    "sharename": { "type": "STRING", "options": { "seqno": 8 } },
+                                    "defvalue": { "type": "STRING", "options": { "mapper": "@body.defvalue" } },
+                                    "message": { "type": "STRING", "options": { "mapper": "^message", "remark": "this point to parent model message field" }  },
+                                    "remarks": { "type": "STRING", "defaultValue": "test_file_sub_model" }
+                                },
+                                "settings": { "xpath": "elements" }
+                            } 
+                        ]
+                    } 
+                ]
+            }
+        ] 
     }
-
 
 }

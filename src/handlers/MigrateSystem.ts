@@ -4,7 +4,7 @@ import { KnContextInfo, KnValidateInfo, VerifyError } from "@willsofts/will-core
 import { KnDBConnector, KnSQL } from "@willsofts/will-sql";
 import { OPERATE_HANDLERS } from "@willsofts/will-serv";
 import { ERROR_CANCELATION_CODE, ERROR_CANCELATION_KEY, ALWAYS_THROW_POST_ERROR } from "../utils/EnvironmentVariable";
-import { MigrateModel, MigrateConnectSetting, PluginSetting, StatementInfo, ParameterInfo, MigrateRecords, MigrateParams, FilterInfo } from "../models/MigrateAlias";
+import { TaskModel, MigrateTask, MigrateConnectSetting, PluginSetting, StatementInfo, ParameterInfo, MigrateRecords, MigrateParams, FilterInfo } from "../models/MigrateAlias";
 import { FileDownloadHandler } from "./FileDownloadHandler";
 import { FileTransferHandler } from "./FileTransferHandler";
 import { FileAttachmentHandler } from './FileAttachmentHandler';
@@ -21,18 +21,18 @@ export class MigrateSystem extends MigrateBase {
     
     public handlers = OPERATE_HANDLERS.concat([ {name: "config"} ]);
 
-    public async config(context: KnContextInfo) : Promise<MigrateModel> {
+    public async config(context: KnContextInfo) : Promise<MigrateTask> {
         return this.callFunctional(context, {operate: "config", raw: false}, this.doConfig);
     }
 
-    public async doConfig(context: KnContextInfo, model: KnModel) : Promise<MigrateModel> {
+    public async doConfig(context: KnContextInfo, model: KnModel) : Promise<MigrateTask> {
         await this.validateRequireFields(context, model, KnOperation.GET);
         let rs = await this.doConfiguring(context, model, KnOperation.GET);
         return await this.createCipherData(context, KnOperation.GET, rs);
     }
 
-    protected async doConfiguring(context: KnContextInfo, model: KnModel, action: string = KnOperation.GET) : Promise<MigrateModel> {
-        let result = await this.getTaskModel(context,context.params.taskid,model);
+    protected async doConfiguring(context: KnContextInfo, model: KnModel, action: string = KnOperation.GET) : Promise<MigrateTask> {
+        let result = await this.getMigrateTaskModel(context,context.params.taskid,model);
         if(result) return result;
         return Promise.reject(new VerifyError("Task not found",HTTP.NOT_FOUND,-16077));
     }
@@ -121,10 +121,10 @@ export class MigrateSystem extends MigrateBase {
         return false;
     }
 
-    public async getTaskModel(context: KnContextInfo, taskid: string, model: KnModel = this.model): Promise<MigrateModel | undefined> {
+    public async getMigrateTaskModel(context: KnContextInfo, taskid: string, model: KnModel = this.model): Promise<MigrateTask | undefined> {
         let db = this.getPrivateConnector(model);
         try {
-            return await this.getMigrateModel(context,model,db,taskid);
+            return await this.getMigrateTask(context,model,db,taskid);
         } catch(ex: any) {
             this.logger.error(ex);
             return Promise.reject(this.getDBError(ex));
@@ -133,11 +133,12 @@ export class MigrateSystem extends MigrateBase {
         }
     }
 
-    public async getMigrateModel(context: KnContextInfo, model: KnModel, db: KnDBConnector, taskid: string): Promise<MigrateModel | undefined> {
-        let results : MigrateModel = { models: [], configs: {} };
+    public async getMigrateTask(context: KnContextInfo, model: KnModel, db: KnDBConnector, taskid: string): Promise<MigrateTask | undefined> {
+        let allmodels : TaskModel[] = [];
+        let result : MigrateTask = { taskid: taskid, models: [], configs: {} };
         let knsql = new KnSQL();
         knsql.append("select t.taskid,t.taskname,t.connectid,t.taskconfigs,");
-        knsql.append("m.modelid,m.modelname,m.tablename,m.tablefields,m.tablesettings,tm.seqno ");
+        knsql.append("m.modelid,m.modelname,m.tablename,m.tablefields,m.tablesettings,m.submodels,tm.seqno ");
         knsql.append("from tmigratetask t, tmigratetaskmodel tm, tmigratemodel m ");
         knsql.append("where t.taskid = ?taskid ");
         knsql.append("and t.taskid = tm.taskid ");
@@ -146,26 +147,75 @@ export class MigrateSystem extends MigrateBase {
         knsql.set("taskid",taskid);
         let rs = await knsql.executeQuery(db,context);
         if(rs && rs.rows?.length > 0) {
-            results.configs = this.tryParseJSON(rs.rows[0].taskconfigs);
+            let firstrow = rs.rows[0];
+            result.configs = this.tryParseJSON(firstrow.taskconfigs);
+            let privateAlias : string | MigrateConnectSetting = model.alias.privateAlias;
+            let config = await this.getMigrateConnectSetting(context,db,firstrow.connectid);
+            if(config) {
+                privateAlias = config;        
+            }
             for(let row of rs.rows) {
-                let privateAlias : string | MigrateConnectSetting = model.alias.privateAlias;
-                let config = await this.getMigrateConnectSetting(context,db,row.connectid);
-                if(config) {
-                    privateAlias = config;        
-                }
                 let tablefields = this.tryParseJSON(row.tablefields);
                 let tablesettings = this.tryParseJSON(row.tablesettings);
-                let taskmodel = {
+                let submodels = this.tryParseJSON(row.submodels);
+                let taskmodel : TaskModel = {
+                    modelid: row.modelid,
                     name: row.tablename,
                     alias: { privateAlias: privateAlias },
                     fields: tablefields,
                     settings: tablesettings,
+                    models: submodels,
                 }
-                results.models.push(taskmodel);
+                result.models.push(taskmodel);
+                allmodels.push(taskmodel);
             }
         }
-        if(results.models.length > 0) return results;
-        return task_models[taskid];
+        if(result.models.length > 0) {
+            for(let taskmodel of result.models) {
+                let submodels = await this.getSubModel(context,model,db,taskmodel,allmodels);
+                if(submodels) taskmodel.models = submodels;
+            }
+            return result;
+        }
+        return task_models[taskid] as MigrateTask;
+    }
+
+    public async getSubModel(context: KnContextInfo, model: KnModel, db: KnDBConnector, parentmodel: TaskModel, allmodels: TaskModel[]): Promise<TaskModel[] | undefined> {
+        let result : TaskModel[] | undefined = undefined;
+        let knsql = new KnSQL();
+        knsql.append("select sm.seqno,m.modelid,m.modelname,m.tablename,m.tablefields,m.tablesettings ");
+        knsql.append("from tmigratesubmodel sm, tmigratemodel m ");
+        knsql.append("where sm.modelid = ?modelid ");
+        knsql.append("and sm.submodelid = m.modelid ");
+        knsql.append("order by seqno ");
+        knsql.set("modelid",parentmodel.modelid);
+        let rs = await knsql.executeQuery(db,context);
+        if(rs && rs.rows?.length > 0) {
+            result = [];
+            for(let row of rs.rows) {
+                let tablefields = this.tryParseJSON(row.tablefields);
+                let tablesettings = this.tryParseJSON(row.tablesettings);
+                let taskmodel : TaskModel = {
+                    modelid: row.modelid,
+                    name: row.tablename,
+                    alias: { privateAlias: parentmodel.alias.privateAlias },
+                    fields: tablefields,
+                    settings: tablesettings,
+                }
+                result.push(taskmodel);
+            }
+        }
+        if(result && result.length > 0) {
+            for(let taskmodel of result) {
+                let foundmodel = allmodels.find((item:TaskModel) => item.modelid == taskmodel.modelid);
+                if(foundmodel) return Promise.reject(new VerifyError("Circular model not allow ("+foundmodel.name+")",HTTP.NOT_ALLOWED,-16078));
+                allmodels.push(taskmodel);
+            }
+            for(let taskmodel of result) {
+                taskmodel.models = await this.getSubModel(context,model,db,taskmodel,allmodels);
+            }
+        }
+        return result;
     }
 
     public async invalidateStatementParameters(context: KnContextInfo, model: KnModel) : Promise<ParameterInfo[]> {
@@ -221,7 +271,7 @@ export class MigrateSystem extends MigrateBase {
         }
     }
 
-    public async performPreTransaction(context: KnContextInfo, model: KnModel, db: KnDBConnector, rc: MigrateRecords, param: MigrateParams, dataset: any): Promise<any> {
+    public async performPreTransaction(context: KnContextInfo, task: MigrateTask, model: KnModel, db: KnDBConnector, rc: MigrateRecords, param: MigrateParams, dataset: any): Promise<any> {
         if(model.settings?.statement?.prestatement) {
             let handler = model.settings?.statement?.prehandler;
             let func = this.tryParseFunction(handler,'dataset','param','model','context');
@@ -241,7 +291,7 @@ export class MigrateSystem extends MigrateBase {
         }
     }
 
-    public async performPostTransaction(context: KnContextInfo, model: KnModel, db: KnDBConnector, rc: MigrateRecords, param: MigrateParams, dataset: any): Promise<FilterInfo> {
+    public async performPostTransaction(context: KnContextInfo, task: MigrateTask, model: KnModel, db: KnDBConnector, rc: MigrateRecords, param: MigrateParams, dataset: any): Promise<FilterInfo> {
         let result : FilterInfo = { cancel: false };
         if(model.settings?.statement?.poststatement) {
             let handler = model.settings?.statement?.posthandler;

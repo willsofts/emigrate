@@ -19,7 +19,7 @@ export const MAX_EXPIRE_DATE: string = config.env("MAX_EXPIRE_DATE","31/12/9000"
 export const MENU_TREE: boolean = config.env("MENU_TREE","true") === "true";
 export const MIGRATE_DUMP_SQL: boolean = config.env("MIGRATE_DUMP_SQL","false") === "true";
 
-export const DEFAULT_CALLING_SERVICE: boolean = config.env("DEFAULT_CALLING_SERVICE","true") === "true";
+export const DEFAULT_CALLING_SERVICE: boolean = config.env("DEFAULT_CALLING_SERVICE","false") === "true";
 export const FILE_ASSETS: string = config.env("FILE_ASSETS","./assets");
 export const DOWNLOAD_FILE_PATH: string = config.env("DOWNLOAD_FILE_PATH") || path.join(os.tmpdir(),"download");
 export const UPLOAD_FILE_PATH: string = config.env("UPLOAD_FILE_PATH");

@@ -1,21 +1,23 @@
 import { MigrateFileHandler } from "../handlers/MigrateFileHandler";
+import { Arguments } from "@willsofts/will-util";
 
-let taskid = "test_file_text";
-let file = "./assets/tso.txt";
-let fs_requester = "tso";
 let args = process.argv.slice(2);
-if(args.length>0) taskid = args[0];
-if(args.length>1) file = args[1];
-if(args.length>2) fs_requester = args[2];
-async function testMigrateText(file: string, taskid: string) {
-    let context = { params: { file: file, taskid: taskid, fs_requester: fs_requester }, meta: {} };
+let taskid = Arguments.getString(args,"test_file_text","-task","-t") as string;
+let file = Arguments.getString(args,"./assets/tso.txt","-file","-f") as string;
+let async = Arguments.getBoolean(args,false,"-async","-a") as boolean;
+let type = Arguments.getString(args,undefined,"-type") as string;
+let fs_requester = Arguments.getString(args,"tso","-user","-u") as string;
+
+async function testMigrateText() {
+    let context = { params: { file: file, taskid: taskid, async: async, type: type, fs_requester: fs_requester }, meta: {} };
     let handler = new MigrateFileHandler();
     let result = await handler.doInserting(context,undefined,false);
-    console.log("result:",result);
+    console.log("result:",JSON.stringify(result,undefined,2));
 }
-testMigrateText(file,taskid);
+testMigrateText();
 
 //node dist/test/test.migrate.file.js
-//node dist/test/test.migrate.file.js test_simple_text_plugin_database
-//node dist/test/test.migrate.file.js test_simple_text_plugin_connection
-//node dist/test/test.migrate.file.js test_file_text_request_params
+//node dist/test/test.migrate.file.js -t test_simple_text_plugin_database
+//node dist/test/test.migrate.file.js -t test_simple_text_plugin_connection
+//node dist/test/test.migrate.file.js -t test_file_text_request_params
+//node dist/test/test.migrate.file.js -t test_file_json_sub_model -f ./assets/tso_json_sub.txt -type json

@@ -1,6 +1,14 @@
-import { KnDBConfig, KnRecordSet, KnResultSet } from "@willsofts/will-sql";
+import { KnDBConfig, KnRecordSet, KnResultSet, KnDBFault } from "@willsofts/will-sql";
 import { KnModel, KnGenericObject, KnFieldSetting, KnCellSetting, KnDBField } from "@willsofts/will-db";
 import { ParsedPath } from "path";
+
+export class MigrateFault extends KnDBFault {
+    public stack: any;
+    constructor(message: string, code: number, state?: string, stack?: any) {
+        super(message,code,state);
+        this.stack = stack;
+    }
+}
 
 export interface MigrateSetting {
     type?: string;
@@ -30,6 +38,7 @@ export interface MigrateRecordSet extends KnRecordSet {
     migrateid: string;
     processid: string;
     taskid: string;
+    modelid: string;
     modelname: string;
     totalrecords: number;
     errorrecords: number;
@@ -38,6 +47,7 @@ export interface MigrateRecordSet extends KnRecordSet {
     message?: string;
     filename?: string;
     originalname?: string;
+    subset?: MigrateRecordSet[];
 }
 
 export interface MigrateResultSet {
@@ -45,6 +55,7 @@ export interface MigrateResultSet {
     processid: string;
     filepath?: string;
     resultset: MigrateRecordSet[];
+    taskset?: MigrateResultSet[];
 }
 
 export interface MigrateInfo {
@@ -64,14 +75,18 @@ export interface RefConfig {
 }
 
 export interface TaskModel extends KnModel {
+    modelid: string;
+    models?: TaskModel[];
     resultset?: MigrateRecordSet;
     dataset?: any;
     datapart?: any;
 }
 
-export interface MigrateModel {
+export interface MigrateTask {
+    taskid: string;
     models: TaskModel[];
     configs?: KnGenericObject;
+    tasks?: MigrateTask[];
 }
 
 export interface MigrateParams {
@@ -173,4 +188,11 @@ export interface MigrateFileInfo {
     file: any;
     type?: string;
     fortype?: string;
+}
+
+export interface DataScrape {
+    dataSet: any;
+    dataTarget: any;
+    dataChunk: any;
+    dataParent: any;
 }

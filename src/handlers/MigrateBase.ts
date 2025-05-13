@@ -5,7 +5,7 @@ import { KnContextInfo, VerifyError } from "@willsofts/will-core";
 import { KnDBConnector, KnDBFault, KnSQL, KnDBUtils, KnDBTypes, KnResultSet } from "@willsofts/will-sql";
 import { TknOperateHandler } from "@willsofts/will-serv";
 import { PRIVATE_SECTION, MIGRATE_DUMP_SQL } from "../utils/EnvironmentVariable";
-import { MigrateConnectSetting, RefConfig } from "../models/MigrateAlias";
+import { MigrateConnectSetting, RefConfig, MigrateFault, DataScrape } from "../models/MigrateAlias";
 import { MigrateDate } from "../utils/MigrateDate";
 import { MigrateUtility } from '../utils/MigrateUtility';
 import config from "@willsofts/will-util";
@@ -31,7 +31,7 @@ export class MigrateBase extends TknOperateHandler {
     
     public getDBFault(err: any, state: string = "", code: number = -32000) : KnDBFault | VerifyError {
         if(err instanceof VerifyError) return err;
-        return new KnDBFault(this.getSQLError(err),code,state);
+        return new MigrateFault(this.getSQLError(err),code,state,err?.stack);
     }
 
     public isEmptyObject(data: any) : boolean {
@@ -65,7 +65,7 @@ export class MigrateBase extends TknOperateHandler {
                     if(defaultValue.indexOf("#params.") >= 0) {
                         let key = defaultValue.substring(8);
                         if(key.indexOf(".") > 0 && context) {
-                            let value = this.scrapeData(key,context.params,context.params);
+                            let value = this.scrapeData(key,{ dataSet: context.params, dataTarget: context.params, dataChunk: context.params, dataParent: context.params });
                             if(value) {
                                 return [value,true];
                             } else {
@@ -81,7 +81,7 @@ export class MigrateBase extends TknOperateHandler {
                     if(first=='#' || first=='$' || first=='?') {
                         let key = defaultValue.substring(1);
                         if(key.indexOf(".") > 0 && context) {
-                            let value = this.scrapeData(key,context.params,context.params);
+                            let value = this.scrapeData(key,{ dataSet: context.params, dataTarget: context.params, dataChunk: context.params, dataParent: context.params });
                             if(value) { 
                                 return [value,true];
                             } else {
@@ -227,7 +227,7 @@ export class MigrateBase extends TknOperateHandler {
                         values.push(param);
                     } else {
                         if(val.indexOf(".") > 0) {
-                            let mapvalues = this.scrapeData(val,context.params,context.params,context);
+                            let mapvalues = this.scrapeData(val,{ dataSet: context.params, dataTarget: context.params, dataChunk: context.params, dataParent: context.params },context);
                             if(mapvalues) {
                                 body[key] = mapvalues;
                                 values.push(mapvalues);
@@ -251,18 +251,18 @@ export class MigrateBase extends TknOperateHandler {
         }
     }
 
-    public scrapeData(mapper: string | RefConfig | Array<string|RefConfig>, dataSet: any, dataTarget: any, context?: KnContextInfo) : any {
+    public scrapeData(mapper: string | RefConfig | Array<string|RefConfig>, data: DataScrape, context?: KnContextInfo) : any {
         let results = undefined;
         if(Array.isArray(mapper)) {
             for(let item of mapper) {
                 if(typeof item === 'string') {
-                    let value = this.scratchData(item, dataSet, dataTarget, context);
+                    let value = this.scratchData(item, data, context);
                     if(value!=undefined || value!=null) {
                         results = ( results ?? "" ) + value;
                     }
                 } else {
                     let prefix = item.ref == '$' || item.ref == '.' ? '' : item.ref;
-                    let value = this.scratchData(prefix + item.name, dataSet, dataTarget, context); 
+                    let value = this.scratchData(prefix + item.name, data, context); 
                     if(value!=undefined || value!=null) {
                         results = ( results ?? "" ) + value;
                     }
@@ -270,23 +270,24 @@ export class MigrateBase extends TknOperateHandler {
             }
         } else {
             if(typeof mapper === 'string') {
-                results = this.scratchData(mapper, dataSet, dataTarget, context);
+                results = this.scratchData(mapper, data, context);
             } else {
                 let prefix = mapper.ref == '$' || mapper.ref == '.' ? '' : mapper.ref;
-                results = this.scratchData(prefix + mapper.name, dataSet, dataTarget, context);
+                results = this.scratchData(prefix + mapper.name, data, context);
             }
         }
         return results;
     }
 
-    public scratchData(mapper: string, dataSet: any, dataTarget: any, context?: KnContextInfo) : any {
+    public scratchData(mapper: string, data: DataScrape, context?: KnContextInfo) : any {
         if(mapper && mapper.trim().length>0) {
-            // % = environment variable, @ = find out from root tag, $ or . = find out from current node
+            // % = environment variable, @ = find out from root tag, $ or . = find out from current data, ^ = find from parent data
             let firstchar = mapper.charAt(0);
+            let parentTag = firstchar=='^';
             let configTag = firstchar=="%";
             let reservedTag = firstchar=='$' || firstchar=='.';
             let rootTag = firstchar=='@'; 
-            if(rootTag || reservedTag || configTag) {
+            if(rootTag || reservedTag || configTag || parentTag) {
                 mapper = mapper.substring(1);
             }
             if(configTag) {
@@ -310,7 +311,7 @@ export class MigrateBase extends TknOperateHandler {
                 if(flag) return value;
                 let rs = item && item[part]; 
                 return rs; 
-            }, rootTag ? dataSet : dataTarget);        
+            }, rootTag ? data.dataChunk || data.dataSet : ( parentTag ? data.dataParent || data.dataSet : data.dataTarget )); 
             return results;
         }
         return mapper;

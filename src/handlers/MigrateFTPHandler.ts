@@ -13,7 +13,7 @@ export class MigrateFTPHandler extends MigrateFileHandler {
     protected override async doManipulating(context: KnContextInfo, model: KnModel = this.model, calling: boolean = DEFAULT_CALLING_SERVICE, fortype?: string) : Promise<MigrateResultSet> {
         await this.validateRequireFields(context,model);
         let taskid = context.params.taskid;
-        let taskmodel = await this.getTaskModel(context,taskid);
+        let taskmodel = await this.getMigrateTaskModel(context,taskid);
         this.logger.debug(this.constructor.name+".doManipulating: taskmodel",taskmodel);
         if(!taskmodel || taskmodel.models?.length==0) {
             return Promise.reject(new VerifyError("Model not found",HTTP.NOT_ACCEPTABLE,-16063));

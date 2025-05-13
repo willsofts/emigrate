@@ -3,13 +3,13 @@ import { KnModel } from "@willsofts/will-db";
 import { KnResultSet } from "@willsofts/will-sql";
 import { KnContextInfo, VerifyError } from '@willsofts/will-core';
 import { ExtractControlHandler } from "./ExtractControlHandler";
-import { MigrateRecords, MigrateRecordSet, MigrateParams, MigrateDataRow, FilterInfo, MigrateState } from "../models/MigrateAlias";
+import { MigrateTask, MigrateRecords, MigrateRecordSet, MigrateParams, MigrateDataRow, FilterInfo, MigrateState } from "../models/MigrateAlias";
 import fs from 'fs';
 
 export class ExtractTextHandler extends ExtractControlHandler {
     public notename : string = "TEXT";
 
-    protected override async performDataSet(context: KnContextInfo, model: KnModel, rc: MigrateRecords, record: MigrateRecordSet, param: MigrateParams, rs: KnResultSet, options: any = {}): Promise<MigrateRecordSet> {
+    protected override async performDataSet(context: KnContextInfo, task: MigrateTask, model: KnModel, rc: MigrateRecords, record: MigrateRecordSet, param: MigrateParams, rs: KnResultSet, options: any = {}): Promise<MigrateRecordSet> {
         let fullfilename = this.getFullFileName(model,record.migrateid);
         this.logger.debug(this.constructor.name+".performDataSet: save as",fullfilename);
         let datafields = this.scrapeDataFields(model?.fields);
@@ -28,7 +28,7 @@ export class ExtractTextHandler extends ExtractControlHandler {
             }
         });
         this.printHeader(model,data);    
-        await super.performDataSet(context,model,rc,record,param,rs,options);
+        await super.performDataSet(context,task,model,rc,record,param,rs,options);
         this.printFooter(model,data);
         if(data.options?.writer) {
             await new Promise<void>((resolve, reject) => {
@@ -54,7 +54,7 @@ export class ExtractTextHandler extends ExtractControlHandler {
         return record;
     }
 
-    protected override async performDataRow(context: KnContextInfo, model: KnModel, rc: MigrateRecords, record: MigrateRecordSet, param: MigrateParams, data: MigrateDataRow): Promise<FilterInfo> {
+    protected override async performDataRow(context: KnContextInfo, task: MigrateTask, model: KnModel, rc: MigrateRecords, record: MigrateRecordSet, param: MigrateParams, data: MigrateDataRow): Promise<FilterInfo> {
         if(data.state == MigrateState.RUN) {
             let writer = data.options?.writer;
             if(writer) {

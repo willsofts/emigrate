@@ -2,7 +2,7 @@ import { HTTP } from "@willsofts/will-api";
 import { VerifyError } from "@willsofts/will-core";
 import { KnModel } from "@willsofts/will-db";
 import { KnContextInfo, KnValidateInfo } from '@willsofts/will-core';
-import { MigrateResultSet, PluginSetting, FileInfo, MigrateModel, MigrateFileInfo } from "../models/MigrateAlias";
+import { MigrateResultSet, PluginSetting, FileInfo, MigrateTask, MigrateFileInfo } from "../models/MigrateAlias";
 import { MigrateTextHandler } from "./MigrateTextHandler";
 import { MigrateJsonHandler } from "./MigrateJsonHandler";
 import { MigrateExcelHandler } from "./MigrateExcelHandler";
@@ -201,7 +201,7 @@ export class MigrateFileHandler extends MigrateTextHandler {
     protected async doManipulating(context: KnContextInfo, model: KnModel = this.model, calling: boolean = DEFAULT_CALLING_SERVICE, fortype?: string) : Promise<MigrateResultSet> {
         await this.validateRequireFields(context,model);
         let taskid = context.params.taskid;
-        let taskmodel = await this.getTaskModel(context,taskid);
+        let taskmodel = await this.getMigrateTaskModel(context,taskid);
         this.logger.debug(this.constructor.name+".doManipulating: taskmodel",taskmodel);
         if(!taskmodel || taskmodel.models?.length==0) {
             return Promise.reject(new VerifyError("Model not found",HTTP.NOT_ACCEPTABLE,-16063));
@@ -227,7 +227,7 @@ export class MigrateFileHandler extends MigrateTextHandler {
         return await this.processFile(context,model,calling,fortype);
     }
 
-    protected async doReconcile(context: KnContextInfo, taskmodel: MigrateModel, model: KnModel = this.model) : Promise<void> {
+    protected async doReconcile(context: KnContextInfo, taskmodel: MigrateTask, model: KnModel = this.model) : Promise<void> {
         let reconcile = taskmodel.configs?.reconcile as PluginSetting;
         let reconcile_model = taskmodel.configs?.reconcile?.model as KnModel;
         if(reconcile && reconcile_model) {

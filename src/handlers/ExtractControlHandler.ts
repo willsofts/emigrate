@@ -49,7 +49,7 @@ export class ExtractControlHandler extends ExtractHandler {
     }
 
     /*
-    protected override async performDataRow(context: KnContextInfo, model: KnModel, rc: MigrateRecords, record: MigrateRecordSet, param: MigrateParams, data: MigrateDataRow): Promise<FilterInfo> {
+    protected override async performDataRow(context: KnContextInfo, task: MigrateTask, model: KnModel, rc: MigrateRecords, record: MigrateRecordSet, param: MigrateParams, data: MigrateDataRow): Promise<FilterInfo> {
         if(data.state == MigrateState.START) {
             let filepath = model.settings?.filepath || EXTRACT_FILE_PATH;
             let filename = (model.settings?.filename || model.name) + ".txt";

@@ -1,18 +1,18 @@
 import { MigrateFileHandler } from "../handlers/MigrateFileHandler";
+import { Arguments } from "@willsofts/will-util";
 
-let taskid = "test_file_text_attach";
-let file = "./assets/tso.txt";
 let args = process.argv.slice(2);
-if(args.length>0) taskid = args[0];
-if(args.length>1) file = args[1];
-async function testMigrateText(file: string, taskid: string) {
-    file = "";
-    let context = { params: { file: file, taskid: taskid }, meta: {} };
+let taskid = Arguments.getString(args,"test_file_text_attach","-task","-t") as string;
+let file = Arguments.getString(args,"","-file","-f") as string;
+let async = Arguments.getBoolean(args,false,"-async","-a") as boolean;
+
+async function testMigrateText() {
+    let context = { params: { file: file, taskid: taskid, async: async }, meta: {} };
     let handler = new MigrateFileHandler();
     let result = await handler.doInserting(context,undefined,false);
     console.log("result:",result);
 }
-testMigrateText(file,taskid);
+testMigrateText();
 
 //node dist/test/test.migrate.file.mail.js
-//node dist/test/test.migrate.file.mail.js test_file_text_attach_naming
+//node dist/test/test.migrate.file.mail.js -t test_file_text_attach_naming

@@ -34,7 +34,7 @@
 					<div class="row row-height">
 						<div class="col-height col-md-12">
 	<label for="tablefields_<%=model%>" id="tablefields_label_<%=model.modelid%>" class="control-label"><%=label.get('tablefields_label','Table Fields')%></label>
-	<div class="input-group"><textarea id="tablefields_<%=model.modelid%>" class="form-control input-md table-fields" rows="15"><%=model.tablefields%></textarea><div class="input-group-required"><label class="required">&#160;</label></div></div><div id="tablefields_<%=model%>_alert" role="alert" class="has-feedback has-error fa-hidden"><%=label.get('tablefields_alert','Invalid setting format')%></div>
+	<div class="input-group"><textarea id="tablefields_<%=model.modelid%>" class="form-control input-md table-fields" rows="15"><%=model.tablefields%></textarea><div class="input-group-required"><label class="required">&#160;</label></div></div><div id="tablefields_<%=model.modelid%>_alert" role="alert" class="has-feedback has-error fa-hidden"><%=label.get('tablefields_alert','Invalid setting format')%></div>
 						</div>
 					</div>
 				</div>
@@ -46,12 +46,24 @@
 					<div class="row row-height">
 						<div class="col-height col-md-12">
 	<label for="tablesettings_<%=model%>" id="tablesettings_label_<%=model.modelid%>" class="control-label"><%=label.get('tablesettings_label','Table Setting')%></label>
-	<div class="input-group"><textarea id="tablesettings_<%=model.modelid%>" class="form-control input-md table-settings" rows="5"><%=model.tablesettings%></textarea><div class="input-group-required"><label class="required">*</label></div></div><div id="tablesetting_<%=model%>_alert" role="alert" class="has-feedback has-error fa-hidden"><%=label.get('tablesettings_alert','Invalid setting format')%></div>
+	<div class="input-group"><textarea id="tablesettings_<%=model.modelid%>" class="form-control input-md table-settings" rows="5"><%=model.tablesettings%></textarea><div class="input-group-required"><label class="required">*</label></div></div><div id="tablesettings_<%=model.modelid%>_alert" role="alert" class="has-feedback has-error fa-hidden"><%=label.get('tablesettings_alert','Invalid setting format')%></div>
 						</div>
 					</div>
 				</div>
 		</div>
 	</div>	
+	<div class="row row-height">
+		<div class="col-md-12 col-height">
+				<div class="table-layer-class">
+					<div class="row row-height">
+						<div class="col-height col-md-12">
+	<label for="submodels_<%=model%>" id="submodels_label_<%=model.modelid%>" class="control-label"><%=label.get('submodels_label','Sub Model')%></label>
+	<div class="input-group"><textarea id="submodels_<%=model.modelid%>" class="form-control input-md table-fields" rows="12"><%=model.submodels%></textarea><div class="input-group-required"><label class="required">&#160;</label></div></div><div id="submodels_<%=model.modelid%>_alert" role="alert" class="has-feedback has-error fa-hidden"><%=label.get('submodels_alert','Invalid json array format')%></div>
+						</div>
+					</div>
+				</div>
+		</div>
+	</div>
 </div>
 <%
 	}

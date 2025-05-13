@@ -1,3 +1,11 @@
+2025-05-13
+version: 1.0.26
++ support sub model
++ add 2 new table schema: tmigratesubmodel & tmigratesubtask
+
+ALTER TABLE `tmigratemodel`
+	ADD COLUMN `submodels` TEXT NULL DEFAULT NULL AFTER `tablesettings`;
+
 2025-05-08
 version: 1.0.25
 + support scrape initialize data category in connection setting

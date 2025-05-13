@@ -457,6 +457,21 @@ function setupDialogComponents() {
 	});
 	$("#connecteditbutton").click(function() { showEditConnection(); });
 	$("#connectnewbutton").click(function() { showNewConnection(); });
+	$("a.model-link",$("#fsmodeltabbar")).each(function(index,element) { 
+		let alink = $(element);
+		let entryid = alink.attr("data-target");
+		let li = alink.parent();
+		let label = alink.find("label").eq(0);
+		let dellink = alink.find(".del-linker").eq(0);
+		dellink.click(function() {
+			confirmRemoveModel([label.html()],function() {
+				li.remove();
+				$(entryid).remove();
+				$("a.model-link:first").trigger("click");
+			});
+		});
+
+	});
 	//#(385000) programmer code end;
 }
 var fs_requiredfields = {
@@ -554,6 +569,8 @@ function validateJSONSettings() {
 		} catch(ex) {
 			valid = false;
 			validator = "#taskconfigs";
+			$("#taskconfigs").parent().addClass("has-error");
+			$("#taskconfigs_alert").show();
 		}
 	}
 	$("div.entry-models").each(function(index,element) {
@@ -564,12 +581,16 @@ function validateJSONSettings() {
 			valid = false;
 			if(!validator) validator = "#modelname_"+id;
 			if(!validid) validid = id;
+			$("#modelname_"+id).parent().addClass("has-error");
+			$("#modelname_"+id+"_alert").show();
 		}
 		str = $("#tablename_"+id).val();
 		if($.trim(str) == "") {
 			valid = false;
 			if(!validator) validator = "#tablename_"+id;
 			if(!validid) validid = id;
+			$("#tablename_"+id).parent().addClass("has-error");
+			$("#tablename_"+id+"_alert").show();
 		}
 		str = $("#tablefields_"+id).val();		
 		if($.trim(str) != "") {
@@ -579,6 +600,8 @@ function validateJSONSettings() {
 				valid = false;
 				if(!validator) validator = "#tablefields_"+id;
 				if(!validid) validid = id;
+				$("#tablefields_"+id).parent().addClass("has-error");
+				$("#tablefields_"+id+"_alert").show();
 			}	
 		}
 		str = $("#tablesettings_"+id).val();
@@ -589,6 +612,27 @@ function validateJSONSettings() {
 				valid = false;
 				if(!validator) validator = "#tablesettings_"+id;
 				if(!validid) validid = id;
+				$("#tablesettings_"+id).parent().addClass("has-error");
+				$("#tablesettings_"+id+"_alert").show();
+			}	
+		}
+		str = $("#submodels_"+id).val();
+		if($.trim(str) != "") {
+			try {
+				let json = JSON.parse(str);
+				if(!Array.isArray(json)) {
+					valid = false;
+					if(!validator) validator = "#submodels_"+id;
+					if(!validid) validid = id;
+					$("#submodels_"+id).parent().addClass("has-error");
+					$("#submodels_"+id+"_alert").show();
+				}
+			} catch(ex) {
+				valid = false;
+				if(!validator) validator = "#submodels_"+id;
+				if(!validid) validid = id;
+				$("#submodels_"+id).parent().addClass("has-error");
+				$("#submodels_"+id+"_alert").show();
 			}	
 		}
 	});
@@ -603,12 +647,16 @@ function scrapeModels() {
 	$("div.entry-models").each(function(index,element) {
 		let e = $(element);
 		let id = e.attr("data-model");
+		let submodels = [];
+		let submodelstr = $.trim($("#submodels_"+id).val());
+		if(submodelstr.length > 0) submodels = JSON.parse(submodelstr);
 		models.push({
 			modelid: id,
 			modelname: $("#modelname_"+id).val(),
 			tablename: $("#tablename_"+id).val(),
 			tablefields: $("#tablefields_"+id).val(),
 			tablesettings: $("#tablesettings_"+id).val(),
+			submodels: submodels,
 		});
 	});
 	$("#models").val(JSON.stringify(models));

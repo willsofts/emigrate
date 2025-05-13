@@ -1,17 +1,18 @@
 import { MigrateTextHandler } from "../handlers/MigrateTextHandler";
+import { Arguments } from "@willsofts/will-util";
 
-let taskid = "test_file_date";
-let file = "./assets/date.txt";
 let args = process.argv.slice(2);
-if(args.length>0) file = args[0];
-if(args.length>1) taskid = args[1];
-async function testMigrateText(file: string, taskid: string) {
-    let context = { params: { file: file, taskid: taskid }, meta: {} };
+let taskid = Arguments.getString(args,"test_file_date","-task","-t") as string;
+let file = Arguments.getString(args,"./assets/date.txt","-file","-f") as string;
+let async = Arguments.getBoolean(args,false,"-async","-a") as boolean;
+
+async function testMigrateText() {
+    let context = { params: { file: file, taskid: taskid, async: async }, meta: {} };
     let handler = new MigrateTextHandler();
     let result = await handler.doInserting(context,undefined,false);
     console.log("result:",result);
 }
-testMigrateText(file,taskid);
+testMigrateText();
 
 //node dist/test/test.migrate.text.date.js 
-//node dist/test/test.migrate.text.date.js ./assets/date_comma.txt test_file_date_comma
+//node dist/test/test.migrate.text.date.js -t test_file_date_comma -f ./assets/date_comma.txt 

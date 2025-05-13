@@ -3,7 +3,7 @@ import { KnModel } from "@willsofts/will-db";
 import { KnRecordSet, KnSQL } from "@willsofts/will-sql";
 import { KnContextInfo, VerifyError } from '@willsofts/will-core';
 import { MigrateSystem } from "./MigrateSystem";
-import { MigrateConnectSetting, MigrateRecordSet, MigrateInfo, MigrateReject, MigrateParams, MigrateField } from "../models/MigrateAlias";
+import { TaskModel, MigrateConnectSetting, MigrateRecordSet, MigrateInfo, MigrateReject, MigrateParams, MigrateField } from "../models/MigrateAlias";
 import { MigrateLogHandler } from "./MigrateLogHandler";
 import querystring from 'querystring';
 
@@ -27,7 +27,7 @@ export class MigrateOperate extends MigrateSystem {
         let errormessage = undefined;
         if(reject.reject) {
             processstatus = "ERROR";
-            errormessage = this.getDBError(reject.throwable).message;
+            errormessage = (reject.throwable?.stack || this.getDBError(reject.throwable).message) + "\n"+JSON.stringify(reject.throwable);
         }
         let { rows, columns, ...mrs} = rs;
         let params = {authtoken: param.authtoken, ...mrs, ...info, processstatus: processstatus, errormessage: errormessage };
@@ -45,7 +45,7 @@ export class MigrateOperate extends MigrateSystem {
         this.logger.error(ex); 
         let err = this.getDBError(ex);
         let { rows, columns, ...mrs} = rs;
-        let params = {authtoken: param.authtoken, ...mrs, processstatus: "ERROR", errormessage: err.message };
+        let params = {authtoken: param.authtoken, ...mrs, processstatus: "ERROR", errormessage: (ex?.stack || err.message) + "\n"+JSON.stringify(err) };
         if(param.calling) {
             this.call("migratelog.update",params).catch(ex => this.logger.error(ex));
         } else {
@@ -56,55 +56,66 @@ export class MigrateOperate extends MigrateSystem {
         }
     }
 
-    public async performTransformation(context: KnContextInfo, model: KnModel, datasource: any, datapart?: any): Promise<any> {
+    public async performTransformation(context: KnContextInfo, model: TaskModel, datasource: any, datapart: any, datachunk: any, dataparent: any): Promise<any> {
         let dataset = datasource;        
-        if(model.settings?.xpath && model.settings?.xpath.trim().length>0) {
+        if(model.settings?.xpath && model.settings?.xpath.trim().length > 0) {
             //find out data set from xpath
-            dataset = this.scrapeData(model.settings.xpath,datasource,datasource,context);
+            dataset = this.scrapeData(model.settings.xpath,{dataSet: datasource, dataTarget: datasource, dataChunk: datachunk, dataParent: dataparent},context);
         }
-        if(Array.isArray(dataset)) {
-            dataset = await this.performReformation(context,model,dataset);
-            dataset = await this.performDataMapper(context,model,datasource,dataset);
-            for(let data of dataset) {
-                await this.performDefaultValues(context,model,data,datasource,datapart);
-                await this.performConversion(context,model,data,datasource);
-            }     
-        } else {
-            dataset = await this.performDataMapper(context,model,datasource,dataset);
-            await this.performDefaultValues(context,model,dataset,datasource,datapart);
-            await this.performConversion(context,model,dataset,datasource);
+        if(dataset) {
+            if(Array.isArray(dataset)) {
+                dataset = await this.performReformation(context,model,dataset);
+                dataset = await this.performDataMapper(context,model,datasource,dataset,datachunk,dataparent);
+                for(let data of dataset) {
+                    await this.performDefaultValues(context,model,data,datasource,datapart);
+                    await this.performConversion(context,model,data,datasource);
+                    if(model.models && model.models.length > 0) {
+                        for(let submodel of model.models) {
+                            await this.performTransformation(context,submodel,data,datapart,datachunk,data);
+                        }
+                    }
+                }     
+            } else {
+                dataset = await this.performDataMapper(context,model,datasource,dataset,datachunk,dataparent);
+                await this.performDefaultValues(context,model,dataset,datasource,datapart);
+                await this.performConversion(context,model,dataset,datasource);
+                if(model.models && model.models.length > 0) {
+                    for(let submodel of model.models) {
+                        await this.performTransformation(context,submodel,dataset,datapart,datachunk,datasource);
+                    }
+                }
+            }
         }
-        //this.logger.debug(this.constructor.name+".performTransformation: dataset",dataset);
         return dataset;
     }
 
-    public transformDataMapper(context: KnContextInfo, model: KnModel, dataSet: any, dataTarget: any, dataParams: any) : any {
+    public async performDataMapper(context: KnContextInfo, model: KnModel, datasource: any, dataset: any, datachunk: any, dataparent: any): Promise<any> {
+        if(!model.fields) return dataset;
+        let paras = this.getContextParameters(context);
+        this.logger.debug(this.constructor.name+".performDataMapper: context parameters",paras);
+        if(Array.isArray(dataset)) {
+            for(let data of dataset) {
+                await this.transformDataMapper(context,model,datasource,data,paras,datachunk,dataparent);
+            }     
+        } else {
+            await this.transformDataMapper(context,model,datasource,dataset,paras,datachunk,dataparent);
+        }
+        return dataset;
+    }
+
+    public transformDataMapper(context: KnContextInfo, model: KnModel, dataSet: any, dataTarget: any, dataParams: any, dataChunk: any, dataParent: any) : any {
         if(!model.fields) return dataTarget;
         let dataStructure = model.fields;
         let dataSpec = {...dataParams,...dataTarget};
         let newDataSet : any = {};
         for (let [key, value] of Object.entries(dataStructure)) {
-            let mapper = (value as any)?.options?.mapper;
+            let mapper = value?.options?.mapper;
             if(mapper) {
-                let dataValue = this.scrapeData(mapper,dataSet,dataSpec,context);
+                let dataValue = this.scrapeData(mapper,{dataSet: dataSet, dataTarget: dataSpec, dataChunk: dataChunk, dataParent: dataParent},context);
                 newDataSet[key] = dataValue;
             }
         }    
         return Object.assign(dataTarget,newDataSet);
-    }
-
-    public async performDataMapper(context: KnContextInfo, model: KnModel, datasource: any, dataset: any): Promise<any> {
-        if(!model.fields) return dataset;
-        let paras = this.getContextParameters(context);
-        this.logger.debug(this.constructor.name+".performDataMapper: paras",paras);
-        if(Array.isArray(dataset)) {
-            for(let data of dataset) {
-                await this.transformDataMapper(context,model,datasource,data,paras);
-            }     
-        } else {
-            await this.transformDataMapper(context,model,datasource,dataset,paras);
-        }
-        return dataset;
     }
 
     public async performDefaultValues(context: KnContextInfo, model: KnModel, data: any, dataset: any, datapart?: any): Promise<any> {
@@ -151,8 +162,10 @@ export class MigrateOperate extends MigrateSystem {
                     for(let attrname in model.fields) {
                         let field = model.fields[attrname];
                         let arrayIndex = field?.options?.arrayIndex;
-                        if(arrayIndex === undefined && field?.options?.seqno) arrayIndex = field?.options?.seqno - 1;
-                        if(arrayIndex !== undefined && Array.isArray(data)) {
+                        if(arrayIndex === undefined && field?.options?.seqno) {
+                            arrayIndex = field?.options?.seqno - 1;
+                        }
+                        if(arrayIndex !== undefined) {
                             item[attrname] = data[arrayIndex];
                         }
                     }
@@ -199,7 +212,7 @@ export class MigrateOperate extends MigrateSystem {
         } else {
             let dsmapper = field.field?.options?.datasource;
             if(dsmapper) {
-                response = this.scrapeData(dsmapper,context.params,context.params,context);
+                response = this.scrapeData(dsmapper,{dataSet: context.params, dataTarget: context.params, dataChunk: context.params, dataParent: context.params},context);
             }
         }
         let attrname = field.name;
@@ -207,7 +220,7 @@ export class MigrateOperate extends MigrateSystem {
             let conmapper = connection?.mapper;
             let values = response;
             if(conmapper) {
-                values = this.scrapeData(conmapper,response,response,context);
+                values = this.scrapeData(conmapper,{dataSet: response, dataTarget: response, dataChunk: response, dataParent: response},context);
                 this.logger.debug(this.constructor.name+".performFetching: mapper="+conmapper,", scrapeData=",values);
             }
             if(values) {
@@ -385,12 +398,12 @@ export class MigrateOperate extends MigrateSystem {
                     let data = this.tryParseXmlToJSON(xml);
                     //in case of manual check error (api always response ok)
                     if(config?.options?.errorChecker && config?.options?.errorCheckerValue) {
-                        let checkerValue = this.scrapeData(config.options.errorChecker,data,data);
+                        let checkerValue = this.scrapeData(config.options.errorChecker,{dataSet: data, dataTarget: data, dataChunk: data, dataParent: data});
                         if(checkerValue) {
                             if(config.options.errorCheckerValue.includes(checkerValue)) {
                                 let msg = "Request error";
                                 if(config?.options?.errorCheckerMessage) {
-                                    let checkerMessage = this.scrapeData(config?.options?.errorCheckerMessage,data,data);
+                                    let checkerMessage = this.scrapeData(config?.options?.errorCheckerMessage,{dataSet: data, dataTarget: data, dataChunk: data, dataParent: data});
                                     if(checkerMessage) msg = checkerMessage;
                                 }
                                 this.logger.debug(this.constructor.name+".requestAPI: request error:",msg);

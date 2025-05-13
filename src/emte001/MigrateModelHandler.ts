@@ -19,6 +19,7 @@ export class MigrateModelHandler extends TknOperateHandler {
             tablename: { type: "STRING" },
             tablefields: { type: "STRING" },
             tablesettings: { type: "STRING" },
+            submodels: { type: "STRING" },
             createmillis: { type: "BIGINT", selected: true, created: true, updated: false, defaultValue: Utilities.currentTimeMillis() },
             createdate: { type: "DATE", selected: true, created: true, updated: false, defaultValue: Utilities.now() },
             createtime: { type: "TIME", selected: true, created: true, updated: false, defaultValue: Utilities.now() },
@@ -165,6 +166,7 @@ export class MigrateModelHandler extends TknOperateHandler {
     }
 
     public async processInsert(context: KnContextInfo, db: KnDBConnector, model: KnModel = this.model) : Promise<KnResultSet> {
+        if(context.params.submodels) context.params.submodels = JSON.stringify(context.params.submodels,null,4);
         return await this.performCreating(context,model,db);
     }
 

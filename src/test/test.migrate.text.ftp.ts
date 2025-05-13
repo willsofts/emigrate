@@ -1,16 +1,16 @@
 import { MigrateFTPHandler } from "../handlers/MigrateFTPHandler";
+import { Arguments } from "@willsofts/will-util";
 
-let taskid = "test_file_text_ftp";
-let file = "./assets/tso.txt";
 let args = process.argv.slice(2);
-if(args.length>0) taskid = args[0];
-if(args.length>1) file = args[1];
-async function testMigrateText(file: string, taskid: string) {
-    let context = { params: { taskid: taskid }, meta: {} };
+let taskid = Arguments.getString(args,"test_file_text_ftp","-task","-t") as string;
+let async = Arguments.getBoolean(args,false,"-async","-a") as boolean;
+
+async function testMigrateText() {
+    let context = { params: { taskid: taskid, async: async }, meta: {} };
     let handler = new MigrateFTPHandler();
     let result = await handler.doInserting(context,undefined,false);
     console.log("result:",result);
 }
-testMigrateText(file,taskid);
+testMigrateText();
 
 //node dist/test/test.migrate.text.ftp.js

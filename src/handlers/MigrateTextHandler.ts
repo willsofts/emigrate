@@ -5,7 +5,7 @@ import { VerifyError } from "@willsofts/will-core";
 import { KnDBConnector } from "@willsofts/will-sql";
 import { MigrateHandler } from "./MigrateHandler";
 import { MigrateUtility } from "../utils/MigrateUtility";
-import { TaskModel, MigrateRecordSet, MigrateResultSet, MigrateParams, MigrateRecords } from "../models/MigrateAlias";
+import { TaskModel, MigrateTask, MigrateRecordSet, MigrateResultSet, MigrateParams, MigrateRecords } from "../models/MigrateAlias";
 import { DEFAULT_CALLING_SERVICE, DOWNLOAD_FILE_PATH } from "../utils/EnvironmentVariable";
 import LineByLine from "n-readlines";
 import fs from 'fs';
@@ -73,7 +73,7 @@ export class MigrateTextHandler extends MigrateHandler {
         }        
         let taskmodel = context.meta.taskmodel;
         if(!taskmodel) {
-            taskmodel = await this.getTaskModel(context,context.params.taskid);
+            taskmodel = await this.getMigrateTaskModel(context,context.params.taskid);
         }
         if(!taskmodel || taskmodel.models?.length==0) {
             return Promise.reject(new VerifyError("Model not found",HTTP.NOT_ACCEPTABLE,-16063));
@@ -87,14 +87,14 @@ export class MigrateTextHandler extends MigrateHandler {
         return result;
     }
 
-    public override async processInsertingModel(context: KnContextInfo, taskmodel: TaskModel, param: MigrateParams, db: KnDBConnector | undefined): Promise<MigrateRecordSet> {
+    public override async processInsertingModel(context: KnContextInfo, task: MigrateTask, taskmodel: TaskModel, param: MigrateParams, db: KnDBConnector | undefined): Promise<MigrateRecordSet> {
         if(!this.userToken) this.userToken = await this.getUserTokenInfo(context);
         if(!param.authtoken) param.authtoken = this.getTokenKey(context);
         let uuid = this.randomUUID();
         let migrateid = context.params.migrateid || uuid;
         let processid = context.params.processid || uuid;
-        this.logger.debug(this.constructor.name+".processInsertingModel: model",taskmodel,"filename",param.filename);
-        let result : MigrateRecordSet = { migrateid: migrateid, processid: processid, taskid: context.params.taskid, modelname: taskmodel.name, totalrecords: 0, errorrecords: 0, skiprecords: 0, posterror: false, filename: param.filename, originalname: param.fileinfo?.originalname, ...this.createRecordSet() };
+        let result : MigrateRecordSet = { migrateid: migrateid, processid: processid, taskid: task.taskid || context.params.taskid, modelid: taskmodel.modelid, modelname: taskmodel.name, totalrecords: 0, errorrecords: 0, skiprecords: 0, posterror: false, filename: param.filename, originalname: param.fileinfo?.originalname, ...this.createRecordSet() };
+        this.logger.debug(this.constructor.name+".processInsertingModel: task",result.taskid,",model",result.modelname,",filename",result.filename);
         let [datalist,header] = await this.performReading(context, taskmodel, param.filename);
         if(datalist) {
             if(this.isEmptyObject(datalist)) {
@@ -110,7 +110,7 @@ export class MigrateTextHandler extends MigrateHandler {
             let handler = new MigrateHandler();
             handler.obtain(this.broker,this.logger);
             handler.userToken = this.userToken;
-            return await handler.processInsertingModel(context,taskmodel,param,db,rc,datalist,header);
+            return await handler.processInsertingModel(context,task,taskmodel,param,db,rc,datalist,header);
         }
         return result;
     }
@@ -139,9 +139,6 @@ export class MigrateTextHandler extends MigrateHandler {
                 continue;
             }
             let dataset = await this.composeDataSet(taskmodel,taskmodel.fields,text,lineno);
-            //this.logger.debug("Line: "+lineno,", text: ",text);
-            //this.logger.debug("dataset: ",dataset);
-            //this.logger.debug("header: ",header);
             if(dataset) {
                 datalist.push(dataset);
             }

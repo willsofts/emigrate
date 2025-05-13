@@ -2,7 +2,7 @@ import { HTTP } from "@willsofts/will-api";
 import { KnModel } from "@willsofts/will-db";
 import { KnResultSet } from "@willsofts/will-sql";
 import { KnContextInfo, VerifyError } from '@willsofts/will-core';
-import { MigrateRecords, MigrateRecordSet, MigrateParams, MigrateDataRow, MigrateState } from "../models/MigrateAlias";
+import { MigrateTask, MigrateRecords, MigrateRecordSet, MigrateParams, MigrateDataRow, MigrateState } from "../models/MigrateAlias";
 import { ExtractControlHandler } from "./ExtractControlHandler";
 import fs from "fs";
 import jsPDF from "jspdf";
@@ -14,14 +14,14 @@ export class ExtractPDFHandler extends ExtractControlHandler {
     public notename : string = "PDF";
     public cancelDataRow: boolean = false;
 
-    protected override async performDataSet(context: KnContextInfo, model: KnModel, rc: MigrateRecords, record: MigrateRecordSet, param: MigrateParams, rs: KnResultSet, options: any = {}): Promise<MigrateRecordSet> {
+    protected override async performDataSet(context: KnContextInfo, migratetask: MigrateTask, model: KnModel, rc: MigrateRecords, record: MigrateRecordSet, param: MigrateParams, rs: KnResultSet, options: any = {}): Promise<MigrateRecordSet> {
         let fullfilename = this.getFullFileName(model,record.migrateid);
         this.logger.debug(this.constructor.name+".performDataSet: save as",fullfilename);
         let datafields = this.scrapeDataFields(model?.fields);
         let data : MigrateDataRow = {state: MigrateState.START, index: 0, datarow: undefined, rs, fields: datafields || model.cells, options: options};
         data.options.notefile = fullfilename;
         let [captions, column_styles] = this.getDocumentStyles(model,data);
-        await super.performDataSet(context,model,rc,record,param,rs,options);
+        await super.performDataSet(context,migratetask,model,rc,record,param,rs,options);
         const doc = new jsPDF(model.settings?.orientation || "portrait", "pt", model.settings?.paper || "a4");
         let fontname = this.settingDocument(model,doc);
         autoTable(doc, {

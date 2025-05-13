@@ -22,4 +22,4 @@ async function getFileInfo(file: string) {
     let fileinfo = await MigrateUtility.getFileInfo(file);
     console.log("file info:",fileinfo);
 }
-getFileInfo(file);
+getFileInfo(file).catch(err => console.error(err));

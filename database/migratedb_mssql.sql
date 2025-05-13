@@ -36,22 +36,7 @@ INSERT INTO tdialect (dialectid, dialectalias, dialecttitle, dialectname, driver
 	('MYSQL', 'MYSQL2', 'MySQL', 'MySQL', '', '1', '0', 1, '{ "charset": "utf8", "connectionLimit": 100, "dateStrings": true }'),
 	('ORACLE', 'ORACLE', 'ORACLE Database', 'ORACLE', '', '0', '1', 5, NULL),
 	('POSTGRES', 'POSTGRES', 'PostgreSQL', 'PostgreSQL', '', '0', '1', 3, NULL);
-CREATE TABLE tmigrate (
-  field1 varchar(50) DEFAULT NULL,
-  field2 decimal(20,6) DEFAULT NULL,
-  field3 int DEFAULT NULL,
-  field4 date DEFAULT NULL,
-  field5 time DEFAULT NULL,
-  field6 datetime DEFAULT NULL,
-  field7 varchar(50) DEFAULT NULL,
-  field8 varchar(50) DEFAULT NULL,
-  field9 varchar(50) DEFAULT NULL,
-  field10 varchar(50) DEFAULT NULL,
-  field11 varchar(50) DEFAULT NULL,
-  field12 varchar(50) DEFAULT NULL,
-  curtime datetime DEFAULT NULL,
-  remark varchar(100) DEFAULT NULL
-);
+
 CREATE TABLE tmigrateconnect (
   connectid varchar(50) NOT NULL,
   connectname varchar(150) NOT NULL,
@@ -143,6 +128,7 @@ CREATE TABLE tmigratemodel (
   tablename varchar(50) NOT NULL,
   tablefields text DEFAULT NULL,
   tablesettings text DEFAULT NULL,
+  submodels text DEFAULT NULL,
   createdate date DEFAULT NULL,
   createtime time DEFAULT NULL,
   createmillis bigint DEFAULT NULL,
@@ -155,6 +141,21 @@ CREATE TABLE tmigratemodel (
 );
 INSERT INTO tmigratemodel (modelid, modelname, tablename, tablefields, tablesettings, createdate, createtime, createmillis, createuser, editdate, edittime, editmillis, edituser) VALUES
 	('tmigrate', 'Migrate', 'tmigrate', '{\r\n"field1": { "type": "STRING", "key": true },\r\n"field2": { "type": "DECIMAL" },\r\n"field3": { "type": "INTEGER" },\r\n"field4": { "type": "DATE" },\r\n"field5": { "type": "TIME" },\r\n"field6": { "type": "DATETIME" },\r\n"field7": { "type": "STRING" , "options": {\r\n          "handler": "function handler(data,dataset,model,context) { console.log(''model'',model,data,dataset); switch(data.field7) { case ''A'': data.field8 = ''Anonymous''; break; case ''B'': data.field8 = ''Bad Request''; break; case ''C'': data.field8 = ''Counter Attack''; break; } }"\r\n          }\r\n          },\r\n"field8": { "type": "STRING" },\r\n"field9": { "type": "STRING" },\r\n"curtime": { "type": "DATETIME", "defaultValue": "#current_timestamp" }\r\n}', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+
+CREATE TABLE tmigratesubmodel (
+  modelid varchar(50) NOT NULL,
+  submodelid varchar(50) NOT NULL,
+  seqno int NOT NULL DEFAULT (0),
+  PRIMARY KEY (modelid,submodelid)
+);
+
+CREATE TABLE tmigratesubtask (
+  taskid varchar(50) NOT NULL,
+  subtaskid varchar(50) NOT NULL,
+  seqno int NOT NULL DEFAULT (0),
+  PRIMARY KEY (taskid,subtaskid)
+);
+
 CREATE TABLE tmigratetask (
   taskid varchar(50) NOT NULL,
   taskname varchar(150) NOT NULL,
@@ -182,68 +183,3 @@ CREATE TABLE tmigratetaskmodel (
 );
 INSERT INTO tmigratetaskmodel (taskid, modelid, seqno) VALUES
 	('tmigrate', 'tmigrate', 0);
-CREATE TABLE tmigratetest (
-  field1 varchar(50) DEFAULT NULL,
-  field2 decimal(20,6) DEFAULT NULL,
-  field3 int DEFAULT NULL,
-  field4 date DEFAULT NULL,
-  field5 time DEFAULT NULL,
-  field6 datetime DEFAULT NULL,
-  field7 varchar(50) DEFAULT NULL,
-  field8 varchar(50) DEFAULT NULL,
-  field9 varchar(50) DEFAULT NULL,
-  field10 varchar(50) DEFAULT NULL,
-  field11 varchar(50) DEFAULT NULL,
-  field12 varchar(50) DEFAULT NULL,
-  curtime datetime DEFAULT NULL,
-  remark varchar(100) DEFAULT NULL
-);
-CREATE TABLE tmigratetestdate (
-  date1 datetime DEFAULT NULL,
-  date2 datetime DEFAULT NULL,
-  date3 datetime DEFAULT NULL,
-  date4 datetime DEFAULT NULL,
-  date5 datetime DEFAULT NULL,
-  date6 datetime DEFAULT NULL,
-  date7 datetime DEFAULT NULL,
-  date8 datetime DEFAULT NULL,
-  date9 datetime DEFAULT NULL,
-  date10 datetime DEFAULT NULL,
-  date11 datetime DEFAULT NULL,
-  date12 datetime DEFAULT NULL,
-  date13 datetime DEFAULT NULL,
-  date14 datetime DEFAULT NULL,
-  date15 datetime DEFAULT NULL,
-  date16 datetime DEFAULT NULL,
-  remarks varchar(50) DEFAULT NULL
-);
-CREATE TABLE tso (
-  mktid varchar(10) NOT NULL DEFAULT '',
-  share varchar(10) DEFAULT NULL,
-  unit decimal(10,0) DEFAULT NULL,
-  price decimal(10,2) DEFAULT '0.00',
-  yield int DEFAULT NULL,
-  effdate date DEFAULT NULL,
-  efftime time DEFAULT NULL,
-  edittime datetime DEFAULT NULL,
-  sharename varchar(30) DEFAULT NULL,
-  defvalue varchar(50) DEFAULT NULL,
-  message varchar(50) DEFAULT NULL,
-  remarks varchar(200) DEFAULT NULL,
-  defdatetime datetime DEFAULT NULL
-);
-CREATE TABLE ttso (
-  mktid varchar(10) NOT NULL DEFAULT '',
-  share varchar(10) DEFAULT NULL,
-  unit decimal(10,0) DEFAULT NULL,
-  price decimal(10,2) DEFAULT '0.00',
-  yield int DEFAULT NULL,
-  effdate date DEFAULT NULL,
-  efftime time DEFAULT NULL,
-  edittime datetime DEFAULT NULL,
-  sharename varchar(30) DEFAULT NULL,
-  defvalue varchar(50) DEFAULT NULL,
-  message varchar(50) DEFAULT NULL,
-  remarks varchar(200) DEFAULT NULL,
-  defdatetime datetime DEFAULT NULL
-);

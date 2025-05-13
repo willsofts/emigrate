@@ -1,12 +1,15 @@
 import { MigrateTextHandler } from "../handlers/MigrateTextHandler";
+import { Arguments } from "@willsofts/will-util";
 
-let file = "./assets/tso.txt";
 let args = process.argv.slice(2);
-if(args.length>0) file = args[0];
-async function testMigrateText(file: string) {
-    let context = { params: { file: file, taskid: "test_file_multi_model" }, meta: {} };
+let taskid = Arguments.getString(args,"test_file_multi_model","-task","-t") as string;
+let file = Arguments.getString(args,"./assets/tso.txt","-file","-f") as string;
+let async = Arguments.getBoolean(args,false,"-async","-a") as boolean;
+
+async function testMigrateText() {
+    let context = { params: { file: file, taskid: taskid, async: async }, meta: {} };
     let handler = new MigrateTextHandler();
     let result = await handler.doInserting(context,undefined,false);
     console.log("result:",result);
 }
-testMigrateText(file);
+testMigrateText();

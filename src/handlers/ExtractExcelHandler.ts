@@ -2,7 +2,7 @@ import { HTTP } from "@willsofts/will-api";
 import { KnModel } from "@willsofts/will-db";
 import { KnResultSet } from "@willsofts/will-sql";
 import { KnContextInfo, VerifyError } from '@willsofts/will-core';
-import { MigrateRecords, MigrateRecordSet, MigrateParams, MigrateDataRow, FilterInfo, MigrateState } from "../models/MigrateAlias";
+import { MigrateTask, MigrateRecords, MigrateRecordSet, MigrateParams, MigrateDataRow, FilterInfo, MigrateState } from "../models/MigrateAlias";
 import { ExtractControlHandler } from "./ExtractControlHandler";
 import ExcelJS from "exceljs";
 import fs from "fs";
@@ -10,7 +10,7 @@ import fs from "fs";
 export class ExtractExcelHandler extends ExtractControlHandler {
     public notename : string = "EXCEL";
 
-    protected override async performDataSet(context: KnContextInfo, model: KnModel, rc: MigrateRecords, record: MigrateRecordSet, param: MigrateParams, rs: KnResultSet, options: any = {}): Promise<MigrateRecordSet> {
+    protected override async performDataSet(context: KnContextInfo, task: MigrateTask, model: KnModel, rc: MigrateRecords, record: MigrateRecordSet, param: MigrateParams, rs: KnResultSet, options: any = {}): Promise<MigrateRecordSet> {
         let fullfilename = this.getFullFileName(model,record.migrateid);
         this.logger.debug(this.constructor.name+".performDataSet: save as",fullfilename);
         let datafields = this.scrapeDataFields(model?.fields);
@@ -23,7 +23,7 @@ export class ExtractExcelHandler extends ExtractControlHandler {
         data.options.worksheet = worksheet;
         data.options.notefile = fullfilename;
         this.printHeader(model,data);    
-        await super.performDataSet(context,model,rc,record,param,rs,options);
+        await super.performDataSet(context,task,model,rc,record,param,rs,options);
         this.printFooter(model,data);
         await workbook.xlsx.writeFile(data.options.notefile);
         param.notefile = data.options.notefile;
@@ -43,7 +43,7 @@ export class ExtractExcelHandler extends ExtractControlHandler {
         return record;
     }
 
-    protected override async performDataRow(context: KnContextInfo, model: KnModel, rc: MigrateRecords, record: MigrateRecordSet, param: MigrateParams, data: MigrateDataRow): Promise<FilterInfo> {
+    protected override async performDataRow(context: KnContextInfo, task: MigrateTask, model: KnModel, rc: MigrateRecords, record: MigrateRecordSet, param: MigrateParams, data: MigrateDataRow): Promise<FilterInfo> {
         if(data.state == MigrateState.RUN) {
             let worksheet = data.options?.worksheet;
             if(worksheet) {

@@ -2,7 +2,7 @@ import { HTTP } from "@willsofts/will-api";
 import { VerifyError } from "@willsofts/will-core";
 import { KnDBConnector } from "@willsofts/will-sql";
 import { KnContextInfo } from '@willsofts/will-core';
-import { TaskModel, MigrateRecordSet, MigrateParams, MigrateRecords } from "../models/MigrateAlias";
+import { TaskModel, MigrateTask, MigrateRecordSet, MigrateParams, MigrateRecords } from "../models/MigrateAlias";
 import { ExtractHandler } from "./ExtractHandler";
 import { TknOperateHandler } from "@willsofts/will-serv";
 import { ExtractTextHandler } from "./ExtractTextHandler";
@@ -13,7 +13,7 @@ import { ExtractExcelHandler } from "./ExtractExcelHandler";
 import { ExtractPDFHandler } from "./ExtractPDFHandler";
 export class ExtractFileHandler extends ExtractHandler {
 
-    public async processCollectingModel(context: KnContextInfo, taskmodel: TaskModel, param: MigrateParams, db: KnDBConnector | undefined, rc: MigrateRecords): Promise<MigrateRecordSet> {
+    public async processCollectingModel(context: KnContextInfo, task: MigrateTask, taskmodel: TaskModel, param: MigrateParams, db: KnDBConnector | undefined, rc: MigrateRecords): Promise<MigrateRecordSet> {
         let extract = context.params?.extract || taskmodel.settings?.extract || "json";
         this.logger.debug(this.constructor.name+".processCollectingModel: extract",extract);
         let handler : ExtractHandler | undefined = undefined;
@@ -33,7 +33,7 @@ export class ExtractFileHandler extends ExtractHandler {
         if(handler) {
             this.assignHandler(handler);
             param.notename = handler.notename;
-            return await handler.processCollectingModel(context, taskmodel, param, db, rc);
+            return await handler.processCollectingModel(context, task, taskmodel, param, db, rc);
         }
         return Promise.reject(new VerifyError("Not supported",HTTP.NOT_ACCEPTABLE,-16067)); 
     }
