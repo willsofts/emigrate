@@ -4,7 +4,6 @@ import { KnDBConnector } from "@willsofts/will-sql";
 import { KnContextInfo, KnValidateInfo, VerifyError } from '@willsofts/will-core';
 import { MigrateOperate } from "./MigrateOperate";
 import { TaskModel, MigrateRecordSet, MigrateResultSet, MigrateInfo, MigrateReject, MigrateTask, MigrateParams, MigrateRecords, FilterInfo, MigrateField } from "../models/MigrateAlias";
-import { MigrateFilter } from "../utils/MigrateFilter";
 import { DEFAULT_CALLING_SERVICE } from "../utils/EnvironmentVariable";
 
 export class MigrateHandler extends MigrateOperate {
@@ -101,7 +100,7 @@ export class MigrateHandler extends MigrateOperate {
                 let conmapper = field.field.options?.connection?.mapper;
                 let values = response;
                 if(conmapper) {
-                    values = this.scrapeData(conmapper,{dataSet:response, dataTarget:response, dataChunk:response, dataParent:response});
+                    values = this.scrapeData(conmapper,{parentIndex: 0, currentIndex: 0, dataSet:response, dataTarget:response, dataChunk:response, dataParent:response});
                 }
                 this.logger.debug(this.constructor.name+".processInsertingPreceding: mapper="+conmapper,", scrapeData=",values);
                 let paravalues = context.params[field.name] || {};
@@ -211,12 +210,13 @@ export class MigrateHandler extends MigrateOperate {
         if(taskmodel.dataset) {
             dataset = taskmodel.dataset;
         } else {
+            dataset = await this.performTransformFilter(context, taskmodel, dataset);
             dataset = await this.performTransformation(context, taskmodel, dataset, datapart, dataset, dataset);
         }
         let uuid = this.randomUUID();
         let migrateid = context.params.migrateid || uuid;
         let processid = context.params.processid || uuid;
-        let result : MigrateRecordSet = { migrateid: migrateid, processid: processid, taskid: task.taskid || context.params.taskid, modelid: taskmodel.modelid, modelname: taskmodel.name, totalrecords: rc.totalrecords, errorrecords: 0, skiprecords: 0, posterror: false, filename: param.filename, originalname: param.fileinfo?.originalname, ...this.createRecordSet() };
+        let result : MigrateRecordSet = { migrateid: migrateid, processid: processid, taskid: task.taskid || context.params.taskid, modelid: taskmodel.modelid, modelname: taskmodel.name, totalrecords: rc.totalrecords, datarecords: rc.totalrecords, errorrecords: 0, skiprecords: 0, posterror: false, filename: param.filename, originalname: param.fileinfo?.originalname, ...this.createRecordSet() };
         if(taskmodel.name.trim().length == 0 || context.params.stored == "NONE" || String(context.params.stored) == "false") {
             result.rows = dataset;
             result.records = result.rows?.length || 0;
@@ -321,22 +321,22 @@ export class MigrateHandler extends MigrateOperate {
         let uuid = this.randomUUID();
         let migrateid = context.params.migrateid || uuid;
         let processid = context.params.processid || uuid;
-        let result : MigrateRecordSet = { migrateid: migrateid, processid: processid, taskid: task.taskid || context.params.taskid, modelid: model.modelid, modelname: model.name, totalrecords: rc.totalrecords, errorrecords: 0, skiprecords: 0, posterror: false, filename: param.filename, originalname: param.fileinfo?.originalname, ...this.createRecordSet() };
+        let result : MigrateRecordSet = { migrateid: migrateid, processid: processid, taskid: task.taskid || context.params.taskid, modelid: model.modelid, modelname: model.name, totalrecords: rc.totalrecords, datarecords: rc.totalrecords, errorrecords: 0, skiprecords: 0, posterror: false, filename: param.filename, originalname: param.fileinfo?.originalname, ...this.createRecordSet() };
         let datalist = dataset;
         if(!Array.isArray(dataset)) {
-            datalist = [dataset];
+            datalist = Object.keys(dataset).length == 0 ? [] : [dataset];
         }
         let onException = model.settings?.onException;
         let abandonError = model.settings?.abandonError === undefined || String(model.settings?.abandonError)=="true";
         let verifyError = model.settings?.verifyError === undefined || String(model.settings?.verifyError)=="true";
         this.logger.debug(this.constructor.name+": abandonError:",abandonError,", verifyError:",verifyError);
-        result.totalrecords = datalist.length;
+        result.datarecords = datalist.length;
         let info : MigrateInfo = { exception: false, errormessage: "", errorcontents: [] };
         let reject : MigrateReject = { reject: false, throwable: undefined };
         let index = 0;
         while(!info.exception && (index < datalist.length)) {
             let data = datalist[index];
-            let filter = await this.performFiltering(context,model,db,rc,param,data);
+            let filter = await this.performFiltering(context,model,model.settings?.filters,data);
             if(filter?.cancel) {
                 result.skiprecords++;
             } else {
@@ -348,17 +348,10 @@ export class MigrateHandler extends MigrateOperate {
                         for(let submodel of model.models) {
                             if(submodel.settings?.xpath && submodel.settings?.xpath.trim().length > 0) {
                                 let subrc : MigrateRecords = { totalrecords: rc.totalrecords, errorrecords: 0, skiprecords: 0 };
-                                let subdata = this.scrapeData(submodel.settings.xpath,{dataSet:data, dataTarget:data, dataChunk:data, dataParent:data},context);
+                                let subdata = this.scrapeData(submodel.settings.xpath,{parentIndex: 0, currentIndex: 0, dataSet:data, dataTarget:data, dataChunk:data, dataParent:data},context);
                                 if(subdata) {
-                                    let hasData = false;
-                                    if(Array.isArray(subdata) && subdata.length > 0) {
-                                        hasData = true;
-                                    } else {
-                                        if(Object.keys(subdata).length > 0) {
-                                            hasData = true;
-                                        }
-                                    }
-                                    if(hasData) {
+                                    let emptyData = this.isEmptyObject(subdata);
+                                    if(!emptyData) {
                                         let [subresult, subinfo, subreject] = await this.performInsertTransaction(context,task,submodel,db,subrc,param,subdata);
                                         if(!result.subset) {
                                             result.subset = [];                                            
@@ -389,26 +382,6 @@ export class MigrateHandler extends MigrateOperate {
             reject.reject = true;
         }
         return [result,info,reject];
-    }
-
-    protected async performFiltering(context: KnContextInfo, model: KnModel, db: KnDBConnector, rc: MigrateRecords, param: MigrateParams, data: any): Promise<FilterInfo> {
-        let filters = model.settings?.filters;
-        if(filters) {
-            if(filters?.handler) {
-                let func = this.tryParseFunction(filters?.handler,'data','db','model','context');
-                if(func) {
-                    let result = func(data,db,model,context);
-                    if(result != undefined || result != null) {
-                        if(typeof result === "boolean") return { cancel: result };
-                        return result;
-                    }
-                    return { cancel: false };
-                }
-            }
-            let filter = new MigrateFilter({ model: model, filters: filters, logger: this.logger });
-            return await filter.performFilter(data);
-        }
-        return { cancel: false };
     }
 
 }

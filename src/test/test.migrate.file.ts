@@ -21,3 +21,4 @@ testMigrateText();
 //node dist/test/test.migrate.file.js -t test_simple_text_plugin_connection
 //node dist/test/test.migrate.file.js -t test_file_text_request_params
 //node dist/test/test.migrate.file.js -t test_file_json_sub_model -f ./assets/tso_json_sub.txt -type json
+//node dist/test/test.migrate.file.js -t test_file_api_verifier

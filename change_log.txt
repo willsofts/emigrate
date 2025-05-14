@@ -1,3 +1,13 @@
+2025-05-14
+version: 1.0.27
++ support model on field options setting in order to transform data set
++ support transformFilters to take action before transforming in order to reduce data set
+    + defined new attribute datarecords into MigrateRecordSet
++ support dynamic verify function handler before fetch data from api/db 
+    + check return info = {valid: boolean, value: any} if not info.valid then return info.value
+    + always set params.verifier = info.value then it can use #params.verifier in setting
++ support current index of parent data row reference in sub model traversal
+
 2025-05-13
 version: 1.0.26
 + support sub model

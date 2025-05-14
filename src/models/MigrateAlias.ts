@@ -26,6 +26,8 @@ export interface MigrateSetting {
 export interface MigrateConnectSetting extends KnDBConfig, MigrateSetting {
     connectid?: string;
     parameters?: ParameterInfo[];
+    verifier?: string;
+    verifierType?: string;
 }
 
 export interface MigrateRecords {
@@ -41,6 +43,7 @@ export interface MigrateRecordSet extends KnRecordSet {
     modelid: string;
     modelname: string;
     totalrecords: number;
+    datarecords: number;
     errorrecords: number;
     skiprecords: number;
     posterror: boolean;
@@ -190,7 +193,12 @@ export interface MigrateFileInfo {
     fortype?: string;
 }
 
-export interface DataScrape {
+export interface DataIndex {
+    parentIndex: number;
+    currentIndex: number;
+}
+
+export interface DataScrape extends DataIndex {
     dataSet: any;
     dataTarget: any;
     dataChunk: any;

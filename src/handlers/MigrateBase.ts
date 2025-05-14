@@ -46,6 +46,24 @@ export class MigrateBase extends TknOperateHandler {
         return false;
     }
 
+    public omitDataObject(data: any, keys: string[]) : any {
+        for (let key in data) {
+            if (!keys.includes(key)) {
+                delete data[key];
+            }
+        }
+        return data;    
+    }
+
+    public isReturnInfo(object: any) : boolean {
+        if(object) {
+            if(object.hasOwnProperty('valid') && object.hasOwnProperty('value')) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public parseDefaultValue(defaultValue: string | undefined, context?: KnContextInfo) : [any,boolean] {
         if("#current_date"==defaultValue || "#current_time"==defaultValue || "#current_timestamp"==defaultValue || "#systemdate"==defaultValue || "#systemtime"==defaultValue || "#systemtimestamp"==defaultValue || "#kndate"==defaultValue) {
             return [new Date(),true];
@@ -65,7 +83,7 @@ export class MigrateBase extends TknOperateHandler {
                     if(defaultValue.indexOf("#params.") >= 0) {
                         let key = defaultValue.substring(8);
                         if(key.indexOf(".") > 0 && context) {
-                            let value = this.scrapeData(key,{ dataSet: context.params, dataTarget: context.params, dataChunk: context.params, dataParent: context.params });
+                            let value = this.scrapeData(key,{ parentIndex: 0, currentIndex: 0, dataSet: context.params, dataTarget: context.params, dataChunk: context.params, dataParent: context.params });
                             if(value) {
                                 return [value,true];
                             } else {
@@ -81,7 +99,7 @@ export class MigrateBase extends TknOperateHandler {
                     if(first=='#' || first=='$' || first=='?') {
                         let key = defaultValue.substring(1);
                         if(key.indexOf(".") > 0 && context) {
-                            let value = this.scrapeData(key,{ dataSet: context.params, dataTarget: context.params, dataChunk: context.params, dataParent: context.params });
+                            let value = this.scrapeData(key,{ parentIndex: 0, currentIndex: 0, dataSet: context.params, dataTarget: context.params, dataChunk: context.params, dataParent: context.params });
                             if(value) { 
                                 return [value,true];
                             } else {
@@ -227,7 +245,7 @@ export class MigrateBase extends TknOperateHandler {
                         values.push(param);
                     } else {
                         if(val.indexOf(".") > 0) {
-                            let mapvalues = this.scrapeData(val,{ dataSet: context.params, dataTarget: context.params, dataChunk: context.params, dataParent: context.params },context);
+                            let mapvalues = this.scrapeData(val,{ parentIndex: 0, currentIndex: 0, dataSet: context.params, dataTarget: context.params, dataChunk: context.params, dataParent: context.params },context);
                             if(mapvalues) {
                                 body[key] = mapvalues;
                                 values.push(mapvalues);
@@ -295,16 +313,25 @@ export class MigrateBase extends TknOperateHandler {
             }
             let path = mapper.split('.');
             //find out data in array at index specified
-            let regex = new RegExp(`\\[(\\d+)\\]$`);
+            //let regex = new RegExp(`\\[(\\d+)\\]$`);
+            let regex = new RegExp(`\\[([^\\]]+)\\]$`);
             let results = path.reduce((item: any, part: any) => { 
                 let match = part.match(regex); 
                 if (match && match[1]) {
-                    let index = parseInt(match[1], 10);
-                    let idx = part.lastIndexOf('[');
-                    let token = part.substring(0,idx);
-                    let array = item[token];
-                    if(Array.isArray(array) && array.length>index) {
-                        return array[index];
+                    let idxstr = match[1];
+                    if(idxstr == 'currentIndex') {
+                        idxstr = String(data.currentIndex);
+                    } else if(idxstr == 'parentIndex') {
+                        idxstr = String(data.parentIndex);
+                    }
+                    if(!isNaN(idxstr)) {                   
+                        let index = parseInt(idxstr, 10);
+                        let idx = part.lastIndexOf('[');
+                        let token = part.substring(0,idx);
+                        let array = item[token];
+                        if(Array.isArray(array) && array.length > index) {
+                            return array[index];
+                        }
                     }
                 }                
                 let [value,flag] = this.parseDefaultValue(part,context);

@@ -3,7 +3,8 @@ import { KnModel } from "@willsofts/will-db";
 import { KnRecordSet, KnSQL } from "@willsofts/will-sql";
 import { KnContextInfo, VerifyError } from '@willsofts/will-core';
 import { MigrateSystem } from "./MigrateSystem";
-import { TaskModel, MigrateConnectSetting, MigrateRecordSet, MigrateInfo, MigrateReject, MigrateParams, MigrateField } from "../models/MigrateAlias";
+import { TaskModel, MigrateConnectSetting, MigrateRecordSet, MigrateInfo, MigrateReject, MigrateParams, MigrateField, FilterInfo, DataScrape, DataIndex } from "../models/MigrateAlias";
+import { FiltersSetting, MigrateFilter } from "../utils/MigrateFilter";
 import { MigrateLogHandler } from "./MigrateLogHandler";
 import querystring from 'querystring';
 
@@ -56,32 +57,80 @@ export class MigrateOperate extends MigrateSystem {
         }
     }
 
-    public async performTransformation(context: KnContextInfo, model: TaskModel, datasource: any, datapart: any, datachunk: any, dataparent: any): Promise<any> {
+    public async performTransformFilter(context: KnContextInfo, model: TaskModel, dataset: any): Promise<any> {
+        if(dataset && model.settings?.transformFilters) {
+            if(Array.isArray(dataset)) {
+                let newdataset : any[] = [];
+                for(let data of dataset) {
+                    let filter = await this.performFiltering(context,model,model.settings?.transformFilters,data);
+                    if(!filter?.cancel) {
+                        newdataset.push(data);
+                    }
+                }
+                return newdataset;
+            } else {
+                let filter = await this.performFiltering(context,model,model.settings?.filters,dataset);
+                if(filter?.cancel) {
+                    return undefined;
+                }
+            }
+        }
+        return dataset;
+    }
+
+    public async performTransformation(context: KnContextInfo, model: TaskModel, datasource: any, datapart: any, datachunk: any, dataparent: any, dataindex: DataIndex = {parentIndex: 0, currentIndex: 0}): Promise<any> {
         let dataset = datasource;        
         if(model.settings?.xpath && model.settings?.xpath.trim().length > 0) {
             //find out data set from xpath
-            dataset = this.scrapeData(model.settings.xpath,{dataSet: datasource, dataTarget: datasource, dataChunk: datachunk, dataParent: dataparent},context);
+            dataset = this.scrapeData(model.settings.xpath,{...dataindex, dataSet: datasource, dataTarget: datasource, dataChunk: datachunk, dataParent: dataparent},context);
         }
         if(dataset) {
             if(Array.isArray(dataset)) {
                 dataset = await this.performReformation(context,model,dataset);
-                dataset = await this.performDataMapper(context,model,datasource,dataset,datachunk,dataparent);
-                for(let data of dataset) {
+                dataset = await this.performDataMapper(context,model,datasource,dataset,datachunk,dataparent,dataindex);
+                for(let index = 0, isz = dataset.length; index < isz; index++) {
+                    let data = dataset[index];
                     await this.performDefaultValues(context,model,data,datasource,datapart);
+                    if(model.fields) {
+                        for(let attrname in model.fields) {
+                            let field = model.fields[attrname];
+                            if(field) {
+                                let fieldmodel = field?.options?.model as TaskModel;
+                                if(fieldmodel) {
+                                    if(!fieldmodel.settings) fieldmodel.settings = { };                                    
+                                    fieldmodel.settings.xpath = fieldmodel.settings.xpath || attrname;
+                                    data[attrname] = await this.performTransformModel(context,fieldmodel,data,datapart,datachunk,data,{parentIndex: dataindex.parentIndex, currentIndex: index});
+                                }
+                            }
+                        }
+                    }
                     await this.performConversion(context,model,data,datasource);
                     if(model.models && model.models.length > 0) {
                         for(let submodel of model.models) {
-                            await this.performTransformation(context,submodel,data,datapart,datachunk,data);
+                            await this.performTransformation(context,submodel,data,datapart,datachunk,data,{parentIndex: index, currentIndex: 0});
                         }
                     }
                 }     
             } else {
-                dataset = await this.performDataMapper(context,model,datasource,dataset,datachunk,dataparent);
+                dataset = await this.performDataMapper(context,model,datasource,dataset,datachunk,dataparent,dataindex);
                 await this.performDefaultValues(context,model,dataset,datasource,datapart);
+                if(model.fields) {
+                    for(let attrname in model.fields) {
+                        let field = model.fields[attrname];
+                        if(field) {
+                            let fieldmodel = field?.options?.model as TaskModel;
+                            if(fieldmodel) {
+                                if(!fieldmodel.settings) fieldmodel.settings = { };                                    
+                                fieldmodel.settings.xpath = fieldmodel.settings.xpath || attrname;
+                                dataset[attrname] = await this.performTransformModel(context,fieldmodel,dataset,datapart,datachunk,datasource,dataindex);
+                            }
+                        }
+                    }
+                }
                 await this.performConversion(context,model,dataset,datasource);
                 if(model.models && model.models.length > 0) {
                     for(let submodel of model.models) {
-                        await this.performTransformation(context,submodel,dataset,datapart,datachunk,datasource);
+                        await this.performTransformation(context,submodel,dataset,datapart,datachunk,datasource,dataindex);
                     }
                 }
             }
@@ -89,33 +138,66 @@ export class MigrateOperate extends MigrateSystem {
         return dataset;
     }
 
-    public async performDataMapper(context: KnContextInfo, model: KnModel, datasource: any, dataset: any, datachunk: any, dataparent: any): Promise<any> {
+    public async performTransformModel(context: KnContextInfo, model: TaskModel, datasource: any, datapart: any, datachunk: any, dataparent: any, dataindex: DataIndex): Promise<any> {
+        let dataset = datasource;        
+        if(model.settings?.xpath && model.settings?.xpath.trim().length > 0) {
+            //find out data set from xpath
+            dataset = this.scrapeData(model.settings.xpath,{...dataindex, dataSet: datasource, dataTarget: datasource, dataChunk: datachunk, dataParent: dataparent},context);
+        }
+        if(dataset) {
+            dataset = structuredClone(dataset);
+            let keyfields = model.fields ? Object.keys(model.fields) : [];
+            if(Array.isArray(dataset)) {
+                dataset = await this.performReformation(context,model,dataset);
+                dataset = await this.performDataMapper(context,model,datasource,dataset,datachunk,dataparent,dataindex);
+                for(let data of dataset) {
+                    await this.performDefaultValues(context,model,data,datasource,datapart);
+                    await this.performConversion(context,model,data,datasource);
+                    this.omitDataObject(data,keyfields);
+                }                     
+            } else {
+                dataset = await this.performDataMapper(context,model,datasource,dataset,datachunk,dataparent,dataindex);
+                await this.performDefaultValues(context,model,dataset,datasource,datapart);
+                await this.performConversion(context,model,dataset,datasource);
+                this.omitDataObject(dataset,keyfields);
+            }
+        }        
+        return dataset;
+    }
+
+    public async performDataMapper(context: KnContextInfo, model: KnModel, datasource: any, dataset: any, datachunk: any, dataparent: any, dataindex: DataIndex): Promise<any> {
         if(!model.fields) return dataset;
         let paras = this.getContextParameters(context);
         this.logger.debug(this.constructor.name+".performDataMapper: context parameters",paras);
         if(Array.isArray(dataset)) {
-            for(let data of dataset) {
-                await this.transformDataMapper(context,model,datasource,data,paras,datachunk,dataparent);
+            for(let index = 0, isz = dataset.length; index < isz; index++) {
+                let data : DataScrape = { parentIndex: dataindex.parentIndex, currentIndex: index, dataSet: datasource, dataTarget: dataset[index], dataChunk: datachunk, dataParent: dataparent };
+                await this.transformDataMapper(context,model,data,paras);
+                //await this.transformDataMapper(context,model,datasource,data,paras,datachunk,dataparent);
             }     
         } else {
-            await this.transformDataMapper(context,model,datasource,dataset,paras,datachunk,dataparent);
+            let data : DataScrape = { ...dataindex, dataSet: datasource, dataTarget: dataset, dataChunk: datachunk, dataParent: dataparent };
+            await this.transformDataMapper(context,model,data,paras);
+            //await this.transformDataMapper(context,model,datasource,dataset,paras,datachunk,dataparent);
         }
         return dataset;
     }
 
-    public transformDataMapper(context: KnContextInfo, model: KnModel, dataSet: any, dataTarget: any, dataParams: any, dataChunk: any, dataParent: any) : any {
-        if(!model.fields) return dataTarget;
+    //public transformDataMapper(context: KnContextInfo, model: KnModel, dataSet: any, dataTarget: any, dataParams: any, dataChunk: any, dataParent: any) : any {
+    public transformDataMapper(context: KnContextInfo, model: KnModel, data: DataScrape, dataParams: any) : any {
+        if(!model.fields) return data.dataTarget;
         let dataStructure = model.fields;
-        let dataSpec = {...dataParams,...dataTarget};
+        let dataSpec = {...dataParams,...data.dataTarget};
         let newDataSet : any = {};
         for (let [key, value] of Object.entries(dataStructure)) {
             let mapper = value?.options?.mapper;
             if(mapper) {
-                let dataValue = this.scrapeData(mapper,{dataSet: dataSet, dataTarget: dataSpec, dataChunk: dataChunk, dataParent: dataParent},context);
+                let dataValue = this.scrapeData(mapper,{parentIndex: data.parentIndex, currentIndex: data.currentIndex, 
+                    dataSet: data.dataSet, dataTarget: dataSpec, dataChunk: data.dataChunk, dataParent: data.dataParent},context);
                 newDataSet[key] = dataValue;
             }
         }    
-        return Object.assign(dataTarget,newDataSet);
+        return Object.assign(data.dataTarget,newDataSet);
     }
 
     public async performDefaultValues(context: KnContextInfo, model: KnModel, data: any, dataset: any, datapart?: any): Promise<any> {
@@ -183,16 +265,25 @@ export class MigrateOperate extends MigrateSystem {
                 let field = model.fields[attrname];
                 //try to call handler function
                 let handler = field?.options?.handler;
-                let func = this.tryParseFunction(handler,'data','dataset','model','context');
+                let func = this.tryParseFunction(handler,'data','dataset','field','model','context');
                 if(func) {
                     //ensure handler return value if function or procedure?
                     let alwaysAccept = field?.options?.handlerType == "function";
-                    let result = func(data,dataset,model,context);
+                    let result = func(data,dataset,field,model,context);
                     if(alwaysAccept) {
-                        data[attrname] = result;
+                        //check return info {valid: boolean, value: any}
+                        if(this.isReturnInfo(result)) {
+                            data[attrname] = result.value;
+                        } else {
+                            data[attrname] = result;
+                        }
                     } else {
                         if(result != undefined || result != null) {
-                            data[attrname] = result;
+                            if(this.isReturnInfo(result)) {
+                                data[attrname] = result.value;
+                            } else {
+                                data[attrname] = result;
+                            }
                         }
                     }
                 }        
@@ -204,7 +295,7 @@ export class MigrateOperate extends MigrateSystem {
 
     public async performFetching(context: KnContextInfo, model: KnModel, field: MigrateField, data: any, dataset: any) : Promise<any> {
         let response;
-        let connection = field.field?.options?.connection;
+        let connection = field.field?.options?.connection as MigrateConnectSetting;
         if(connection) {
             this.logger.debug(this.constructor.name+".performFetching: connection",connection);
             response = await this.performFetchData(context,model,field,data,dataset);
@@ -212,7 +303,7 @@ export class MigrateOperate extends MigrateSystem {
         } else {
             let dsmapper = field.field?.options?.datasource;
             if(dsmapper) {
-                response = this.scrapeData(dsmapper,{dataSet: context.params, dataTarget: context.params, dataChunk: context.params, dataParent: context.params},context);
+                response = this.scrapeData(dsmapper,{parentIndex: 0, currentIndex: 0, dataSet: context.params, dataTarget: context.params, dataChunk: context.params, dataParent: context.params},context);
             }
         }
         let attrname = field.name;
@@ -220,7 +311,7 @@ export class MigrateOperate extends MigrateSystem {
             let conmapper = connection?.mapper;
             let values = response;
             if(conmapper) {
-                values = this.scrapeData(conmapper,{dataSet: response, dataTarget: response, dataChunk: response, dataParent: response},context);
+                values = this.scrapeData(conmapper,{parentIndex: 0, currentIndex: 0, dataSet: response, dataTarget: response, dataChunk: response, dataParent: response},context);
                 this.logger.debug(this.constructor.name+".performFetching: mapper="+conmapper,", scrapeData=",values);
             }
             if(values) {
@@ -243,16 +334,24 @@ export class MigrateOperate extends MigrateSystem {
                     data[attrname] = value;
                 }
             }
-            let conhandler = connection?.handler;
-            let confunc = this.tryParseFunction(conhandler,'response','data','dataset','model','context');
+            let confunc = this.tryParseFunction(connection?.handler,'response','data','dataset','field','model','context');
             if(confunc) {
                 let conAccept = connection?.handlerType == "function";
-                let conresult = confunc(response,data,dataset,model,context);
+                let conResult = confunc(response,data,dataset,field,model,context);
                 if(conAccept) {
-                    data[attrname] = conresult;
+                    //check return info {valid: boolean, value: any}
+                    if(this.isReturnInfo(conResult)) {
+                        data[attrname] = conResult.value;
+                    } else {
+                        data[attrname] = conResult;
+                    }
                 } else {
-                    if(conresult != undefined || conresult != null) {
-                        data[attrname] = conresult;
+                    if(conResult != undefined || conResult != null) {
+                        if(this.isReturnInfo(conResult)) {
+                            data[attrname] = conResult.value;
+                        } else {
+                            data[attrname] = conResult;
+                        }
                     }        
                 }
             }
@@ -262,6 +361,34 @@ export class MigrateOperate extends MigrateSystem {
     public async performFetchData(context: KnContextInfo, model: KnModel, field: MigrateField, data: any, dataset: any) : Promise<any> {
         let connection = field.field?.options?.connection as MigrateConnectSetting;
         if(connection) {
+            let verifyfunc = this.tryParseFunction(connection?.verifier,'data','dataset','field','model','context');
+            if(verifyfunc) {
+                let verifyAccept = connection?.verifierType == "function";
+                let verifyResult = verifyfunc(data,dataset,field,model,context);
+                this.logger.debug(this.constructor.name+".performFetchData: field:",field.name,", verifyResult:",verifyResult);
+                if(verifyAccept) {
+                    //check return info {valid: boolean, value: any}
+                    if(this.isReturnInfo(verifyResult)) {
+                        context.params.verifier = verifyResult.value;
+                        if(!verifyResult.valid) return verifyResult.value;
+                    } else {
+                        if(typeof verifyResult === 'boolean') {
+                            if(!verifyResult) return verifyResult;
+                        }
+                    }
+                } else {
+                    if(verifyResult != undefined || verifyResult != null) {
+                        if(this.isReturnInfo(verifyResult)) {
+                            context.params.verifier = verifyResult.value;
+                            if(!verifyResult.valid) return verifyResult.value;
+                        } else {
+                            if(typeof verifyResult === 'boolean') {
+                                if(!verifyResult) return verifyResult;
+                            }
+                        }
+                    }        
+                }
+            }
             let type = connection?.type;
             if(type=="API") {
                 return await this.performRequestAPI(context,field,connection,data);
@@ -359,6 +486,7 @@ export class MigrateOperate extends MigrateSystem {
             let setting = config?.setting || {};
             let headers = { ...setting };
             this.scrapeDataValues(context,headers,data,[]);
+            this.logger.debug(this.constructor.name+".performRequestAPI: context params",context.params);
             response = await this.requestAPI(config.api,headers,body,config);
             this.logger.debug(this.constructor.name+".performRequestAPI: field:",field.name,", response:",response);
             if(response) {
@@ -398,12 +526,12 @@ export class MigrateOperate extends MigrateSystem {
                     let data = this.tryParseXmlToJSON(xml);
                     //in case of manual check error (api always response ok)
                     if(config?.options?.errorChecker && config?.options?.errorCheckerValue) {
-                        let checkerValue = this.scrapeData(config.options.errorChecker,{dataSet: data, dataTarget: data, dataChunk: data, dataParent: data});
+                        let checkerValue = this.scrapeData(config.options.errorChecker,{parentIndex: 0, currentIndex: 0, dataSet: data, dataTarget: data, dataChunk: data, dataParent: data});
                         if(checkerValue) {
                             if(config.options.errorCheckerValue.includes(checkerValue)) {
                                 let msg = "Request error";
                                 if(config?.options?.errorCheckerMessage) {
-                                    let checkerMessage = this.scrapeData(config?.options?.errorCheckerMessage,{dataSet: data, dataTarget: data, dataChunk: data, dataParent: data});
+                                    let checkerMessage = this.scrapeData(config?.options?.errorCheckerMessage,{parentIndex: 0, currentIndex: 0, dataSet: data, dataTarget: data, dataChunk: data, dataParent: data});
                                     if(checkerMessage) msg = checkerMessage;
                                 }
                                 this.logger.debug(this.constructor.name+".requestAPI: request error:",msg);
@@ -419,6 +547,29 @@ export class MigrateOperate extends MigrateSystem {
             this.logger.error(this.constructor.name+".requestAPI: error:",ex);
             return Promise.reject(new VerifyError(ex.message,HTTP.INTERNAL_SERVER_ERROR,-11102));
         } 
+    }
+
+    public async performFiltering(context: KnContextInfo, model: KnModel, filters: FiltersSetting | undefined, data: any): Promise<FilterInfo> {
+        if(filters) {
+            if(filters?.handler) {
+                let func = this.tryParseFunction(filters?.handler,'data','model','context');
+                if(func) {
+                    let result = func(data,model,context);
+                    if(result != undefined || result != null) {
+                        if(this.isReturnInfo(result)) {
+                            return { cancel: result.valid };
+                        } else {
+                            if(typeof result === "boolean") return { cancel: result };
+                            return result;
+                        }
+                    }
+                    return { cancel: false };
+                }
+            }
+            let filter = new MigrateFilter({ model: model, filters: filters, logger: this.logger });
+            return await filter.performFilter(data);
+        }
+        return { cancel: false };
     }
 
 }

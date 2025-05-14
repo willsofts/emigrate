@@ -23,6 +23,7 @@ export interface FilterSetting {
 
 export interface FiltersSetting {
     operator: string;
+    handler?: string;
     filter: FilterSetting[];
 }
 

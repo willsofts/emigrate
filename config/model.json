@@ -1,5 +1,7 @@
 {
-    "test_file_text": { 
+    "test_file_text": {
+        "testfile": "./assets/tso.txt", 
+        "description": "this example how to import text file",
         "models": [ {
             "name": "tso",
             "alias": { "privateAlias": "PROMPTDB" },
@@ -21,6 +23,8 @@
         } ] 
     },
     "test_file_csv": {
+        "testfile": "./assets/tso.csv", 
+        "description": "this example how to import csv file",
         "models": [ {
             "name": "tso",
             "alias": { "privateAlias": "PROMPTDB" },
@@ -42,6 +46,8 @@
         } ]
     },
     "test_file_text_quote": {
+        "testfile": "./assets/tso_quote.txt", 
+        "description": "this example how to import text file with quotable",
         "models": [ {
             "name": "tso",
             "alias": { "privateAlias": "PROMPTDB" },
@@ -63,6 +69,8 @@
         } ]
     },
     "test_file_text_fix_length": {
+        "testfile": "./assets/tso_fix.txt", 
+        "description": "this example how to import fix length text file",
         "models": [ {
             "name": "tso",
             "alias": { "privateAlias": "PROMPTDB" },
@@ -84,6 +92,8 @@
         } ]
     },
     "test_file_text_tab": {
+        "testfile": "./assets/tso_tab.txt", 
+        "description": "this example how to import text file using TAB as delimiter",
         "models": [ {
             "name": "tso",
             "alias": { "privateAlias": "PROMPTDB" },
@@ -105,6 +115,8 @@
         } ]
     },
     "test_file_text_header": {
+        "testfile": "./assets/tso_header.txt", 
+        "description": "this example how to import text file with header declaration",
         "models": [ {
             "name": "tso",
             "alias": { "privateAlias": "PROMPTDB" },
@@ -131,6 +143,8 @@
         } ]
     },
     "test_file_json": {
+        "testfile": "./assets/tso_json.txt", 
+        "description": "this example how to import json file",
         "models": [ {
             "name": "tso",
             "alias": { "privateAlias": "PROMPTDB" },
@@ -152,6 +166,8 @@
         } ]
     },
     "test_file_json_array": {
+        "testfile": "./assets/tso_json_array.txt", 
+        "description": "this example how to import json array file",
         "models": [ {
             "name": "tso",
             "alias": { "privateAlias": "PROMPTDB" },
@@ -172,6 +188,8 @@
         } ]
     },
     "test_file_text_no_save": {
+        "testfile": "./assets/tso.txt", 
+        "description": "this example how to out put json data with no saving",
         "models": [ {
             "name": "",
             "alias": { "privateAlias": "PROMPTDB" },
@@ -193,6 +211,8 @@
         } ]
     },
     "test_file_excel": {
+        "testfile": "./assets/tso.xls", 
+        "description": "this example how to import excel file",
         "models": [ {
             "name": "tso",
             "alias": { "privateAlias": "PROMPTDB" },
@@ -214,6 +234,8 @@
         } ]
     },
     "test_file_excel_header": {
+        "testfile": "./assets/tso_header.xls", 
+        "description": "this example how to import excel file with header declaration",
         "models": [ {
             "name": "tso",
             "alias": { "privateAlias": "PROMPTDB" },
@@ -240,6 +262,8 @@
         }]
     },
     "test_file_xlsx": {
+        "testfile": "./assets/tso.xlsx", 
+        "description": "this example how to import open xml excel file",
         "models": [ {
             "name": "tso",
             "alias": { "privateAlias": "PROMPTDB" },
@@ -261,6 +285,8 @@
         } ]
     },
     "test_file_xlsx_header": {
+        "testfile": "./assets/tso_header.xlsx", 
+        "description": "this example how to import open xml excel file with header declaration",
         "models": [ {
             "name": "tso",
             "alias": { "privateAlias": "PROMPTDB" },
@@ -287,6 +313,8 @@
         }]
     },
     "test_file_api": {
+        "testfile": "./assets/tso_api.txt", 
+        "description": "this example how to import text file with calling api as mapper data category",
         "models": [ {
             "name": "tso",
             "alias": { "privateAlias": "PROMPTDB" },
@@ -319,6 +347,8 @@
         } ]
     },
     "test_file_api_response_xml": {
+        "testfile": "./assets/tso_api.txt", 
+        "description": "this example how to import text file with calling api that response xml",
         "models": [ {
             "name": "tso",
             "alias": { "privateAlias": "PROMPTDB" },
@@ -352,6 +382,8 @@
         } ]
     },
     "test_file_xml": {
+        "testfile": "./assets/tso.xml", 
+        "description": "this example how to import xml file",
         "models": [ {
             "name": "tso",
             "alias": { "privateAlias": "PROMPTDB" },
@@ -373,6 +405,8 @@
         } ]
     },
     "test_file_xml_complex": {
+        "testfile": "./assets/tso_data.xml", 
+        "description": "this example how to import complex xml file",
         "models": [ {
             "name": "tso",
             "alias": { "privateAlias": "PROMPTDB" },
@@ -394,6 +428,8 @@
         } ]
     },
     "test_file_text_error": {
+        "testfile": "./assets/tso_error.txt", 
+        "description": "this example how to import text file with error",
         "models": [ {
             "name": "tso",
             "alias": { "privateAlias": "PROMPTDB" },
@@ -415,6 +451,8 @@
         } ]
     },
     "test_file_text_error_verify": {
+        "testfile": "./assets/tso_error.txt", 
+        "description": "this example how to handle error",
         "models": [ {
             "name": "tso",
             "alias": { "privateAlias": "PROMPTDB" },
@@ -436,6 +474,8 @@
         } ]
     },
     "test_file_text_error_abandon": {
+        "testfile": "./assets/tso_error.txt", 
+        "description": "this example how to abandon error",
         "models": [ {
             "name": "tso",
             "alias": { "privateAlias": "PROMPTDB" },
@@ -451,12 +491,14 @@
                 "sharename": { "type": "STRING", "options": { "seqno": 8 } },
                 "defvalue": { "type": "STRING" },
                 "message": { "type": "STRING" },
-                "remarks": { "type": "STRING", "defaultValue": "test_file_text_error_verify" }
+                "remarks": { "type": "STRING", "defaultValue": "test_file_text_error_abandon" }
             },
             "settings": { "skip": 1, "delimiter": ",", "quotable": true, "abandonError": false, "verifyError": false, "remarks": "This do not throw if error and try to all data" }
         } ]
     },
     "test_file_text_autocommit": {
+        "testfile": "./assets/tso.txt", 
+        "description": "this example how to set auto commit or not",
         "models": [ {
             "name": "tso",
             "alias": { "privateAlias": "PROMPTDB" },
@@ -478,6 +520,8 @@
         } ]
     },
     "test_file_post_statement": {
+        "testfile": "./assets/tso.txt", 
+        "description": "this example how to use pre and post statement",
         "models": [ {
             "name": "tso",
             "alias": { "privateAlias": "PROMPTDB" },
@@ -508,6 +552,8 @@
         } ]
     },
     "test_file_post_statement_params": {
+        "testfile": "./assets/tso.txt", 
+        "description": "this example how to declare parameter on pre and post statement",
         "models": [ {
             "name": "tso",
             "alias": { "privateAlias": "PROMPTDB" },
@@ -539,6 +585,8 @@
         } ]
     },
     "test_file_post_statement_error": {
+        "testfile": "./assets/tso.txt", 
+        "description": "this example how to cancel post error",
         "models": [ {
             "name": "tso",
             "alias": { "privateAlias": "PROMPTDB" },
@@ -568,6 +616,8 @@
         } ]
     },
     "test_file_statement_element": {
+        "testfile": "./assets/tso.txt", 
+        "description": "this example how to define statement elements",
         "models": [ {
             "name": "tso_temp",
             "alias": { "privateAlias": "PROMPTDB" },
@@ -603,6 +653,8 @@
         } ]
     },
     "test_file_statement_params_validate": {
+        "testfile": "./assets/tso.txt", 
+        "description": "this example how to validate input parameters",
         "models": [ {
             "name": "tso",
             "alias": { "privateAlias": "PROMPTDB" },
@@ -668,7 +720,7 @@
                 "field6": { "type": "DATETIME" },
                 "field7": { "type": "STRING" , "options": {
                         "handlerType": "procedure",
-                        "handler": "function handler(data,dataset,model,context) { console.log('model',model,'data',data,'dataset',dataset); switch(data.field7) { case 'A': data.field8 = 'Anonymous'; break; case 'B': data.field8 = 'Bad Request'; break; case 'C': data.field8 = 'Counter Attack'; break; } }"
+                        "handler": "function handler(data,dataset,field,model,context) { console.log('model',model,'data',data,'dataset',dataset); switch(data.field7) { case 'A': data.field8 = 'Anonymous'; break; case 'B': data.field8 = 'Bad Request'; break; case 'C': data.field8 = 'Counter Attack'; break; } }"
                     }
                 },
                 "field8": { "type": "STRING" },
@@ -698,7 +750,7 @@
                 "field6": { "type": "DATETIME" },
                 "field7": { "type": "STRING" , "options": {
                         "handlerType": "procedure",
-                        "handler": "function handler(data,dataset,model,context) { console.log('model',model,'data',data,'dataset',dataset); switch(data.field7) { case 'A': data.field8 = 'Anonymous'; break; case 'B': data.field8 = 'Bad Request'; break; case 'C': data.field8 = 'Counter Attack'; break; } }"
+                        "handler": "function handler(data,dataset,field,model,context) { console.log('model',model,'data',data,'dataset',dataset); switch(data.field7) { case 'A': data.field8 = 'Anonymous'; break; case 'B': data.field8 = 'Bad Request'; break; case 'C': data.field8 = 'Counter Attack'; break; } }"
                     }
                 },
                 "field8": { "type": "STRING" },
@@ -728,7 +780,7 @@
                 "field6": { "type": "DATETIME", "options": { "mapper": ["entity.asdate"," ","entity.astime"] } },
                 "field7": { "type": "STRING" , "options": {
                         "handlerType": "procedure",
-                        "handler": "function handler(data,dataset,model,context) { console.log('model',model,'data',data,'dataset',dataset); switch(data.field7) { case 'A': data.field8 = 'Anonymous'; break; case 'B': data.field8 = 'Bad Request'; break; case 'C': data.field8 = 'Counter Attack'; break; } }"
+                        "handler": "function handler(data,dataset,field,model,context) { console.log('model',model,'data',data,'dataset',dataset); switch(data.field7) { case 'A': data.field8 = 'Anonymous'; break; case 'B': data.field8 = 'Bad Request'; break; case 'C': data.field8 = 'Counter Attack'; break; } }"
                     }
                 },
                 "field8": { "type": "STRING" },
@@ -758,7 +810,7 @@
                 "field6": { "type": "DATETIME" },
                 "field7": { "type": "STRING" , "options": {
                         "handlerType": "procedure",
-                        "handler": "function handler(data,dataset,model,context) { console.log('model',model,'data',data,'dataset',dataset); switch(data.field7) { case 'A': data.field8 = 'Anonymous'; break; case 'B': data.field8 = 'Bad Request'; break; case 'C': data.field8 = 'Counter Attack'; break; } }"
+                        "handler": "function handler(data,dataset,field,model,context) { console.log('model',model,'data',data,'dataset',dataset); switch(data.field7) { case 'A': data.field8 = 'Anonymous'; break; case 'B': data.field8 = 'Bad Request'; break; case 'C': data.field8 = 'Counter Attack'; break; } }"
                     }
                 },
                 "field8": { "type": "STRING" },
@@ -789,7 +841,7 @@
                 "field6": { "type": "DATETIME", "options": { "mapper": ["@entity.asdate"," ","@entity.astime"] } },
                 "field7": { "type": "STRING" , "options": {
                         "handlerType": "procedure",
-                        "handler": "function handler(data,dataset,model,context) { console.log('model',model,data,dataset); switch(data.field7) { case 'A': data.field8 = 'Anonymous'; break; case 'B': data.field8 = 'Bad Request'; break; case 'C': data.field8 = 'Counter Attack'; break; } }"
+                        "handler": "function handler(data,dataset,field,model,context) { console.log('model',model,data,dataset); switch(data.field7) { case 'A': data.field8 = 'Anonymous'; break; case 'B': data.field8 = 'Bad Request'; break; case 'C': data.field8 = 'Counter Attack'; break; } }"
                     }
                 },
                 "field8": { "type": "STRING" },
@@ -822,7 +874,7 @@
                     { "ref": "@", "name": "entity.astime" } ] } },
                 "field7": { "type": "STRING" , "options": {
                         "handlerType": "procedure", 
-                        "handler": "function handler(data,dataset,model,context) { console.log('model',model,data,dataset); switch(data.field7) { case 'A': data.field8 = 'Anonymous'; break; case 'B': data.field8 = 'Bad Request'; break; case 'C': data.field8 = 'Counter Attack'; break; } }"
+                        "handler": "function handler(data,dataset,field,model,context) { console.log('model',model,data,dataset); switch(data.field7) { case 'A': data.field8 = 'Anonymous'; break; case 'B': data.field8 = 'Bad Request'; break; case 'C': data.field8 = 'Counter Attack'; break; } }"
                     }
                 },
                 "field8": { "type": "STRING" },
@@ -1314,6 +1366,8 @@
         ]
     },
     "test_file_multi_model": { 
+        "testfile": "./assets/tso.txt", 
+        "description": "this example how to define multi models",
         "models": [ 
             {
                 "name": "tso",
@@ -1356,6 +1410,8 @@
         ] 
     },
     "test_file_multi_model_dominate": {
+        "testfile": "./assets/tso.txt", 
+        "description": "this example how to dominate and isolate connection",
         "configs": { "isolateConnection": false },
         "models": [ 
             {
@@ -1399,6 +1455,8 @@
         ] 
     },
     "test_file_text_download": { 
+        "testfile": "./assets/tso.txt", 
+        "description": "this example how to download text file before import",
         "configs": { 
             "plugin": { 
                 "name": "download", 
@@ -1426,6 +1484,8 @@
         } ] 
     },
     "test_file_text_download_naming": { 
+        "testfile": "./assets/tso.txt", 
+        "description": "this example how to download text file with auto naming before import",
         "configs": { 
             "plugin": {
                 "name": "download",
@@ -1453,6 +1513,8 @@
         } ] 
     },
     "test_file_text_ftp": { 
+        "testfile": "./assets/tso.txt", 
+        "description": "this example how to sftp file before import",
         "configs": { 
             "plugin": {
                 "name": "transfer",
@@ -1480,6 +1542,8 @@
         } ] 
     },
     "test_file_text_ftp_naming": { 
+        "testfile": "./assets/tso.txt", 
+        "description": "this example how to sftp file with auto naming before import",
         "configs": { 
             "plugin": {
                 "name": "transfer",
@@ -1507,6 +1571,8 @@
         } ] 
     },
     "test_file_text_attach": { 
+        "testfile": "./assets/tso.txt", 
+        "description": "this example how to read attach mail file before import",
         "configs": { 
             "plugin": {
                 "name": "mail",
@@ -1534,6 +1600,8 @@
         } ] 
     },
     "test_file_text_attach_naming": { 
+        "testfile": "./assets/tso.txt", 
+        "description": "this example how to read attach mail file with auto naming before import",
         "configs": { 
             "plugin": {
                 "name": "mail",
@@ -1613,6 +1681,7 @@
         } ] 
     },
     "test_file_text_download_reconcile": { 
+        "description": "this example how to reconcile file before import",
         "configs": { 
             "plugin": { 
                 "name": "download", 
@@ -1755,6 +1824,7 @@
                     }
                 },
                 "filters": {
+                    "remark": "this filter action while persisting",
                     "operator": "or",
                     "filter": [
                         {
@@ -1762,6 +1832,45 @@
                             "columns": [
                                 {"name": "share", "condition": "==", "value": "BBL" },
                                 {"name": "unit", "condition": "#inner-range", "from": "1", "to": "1000" }
+                            ]
+                        }
+                    ]
+                }
+            }
+        } ] 
+    },
+    "test_file_text_transform_filter": { 
+        "models": [ {
+            "name": "tso",
+            "alias": { "privateAlias": "PROMPTDB" },
+            "fields": {
+                "mktid": { "type": "STRING", "options": { "seqno": 1 } },
+                "share": { "type": "STRING", "options": { "seqno": 2 } },
+                "unit": { "type": "DECIMAL", "options": { "seqno": 3 } },
+                "price": { "type": "DECIMAL", "options": { "seqno": 4 } },
+                "yield": { "type": "INTEGER" },
+                "effdate": { "type": "DATE", "options": { "seqno": 5 } },
+                "efftime": { "type": "TIME", "options": { "seqno": 6 } },
+                "edittime": { "type": "DATETIME", "options": { "seqno": 7 } },
+                "sharename": { "type": "STRING", "options": { "seqno": 8 } },
+                "defvalue": { "type": "STRING" },
+                "message": { "type": "STRING" },
+                "remarks": { "type": "STRING", "defaultValue": "test_file_text_transform_filter" }
+            },
+            "settings": { "skip": 1, "delimiter": ",", "quotable": true,
+                "statement": {
+                    "prestatement": {
+                        "sql": "delete from tso "
+                    }
+                },
+                "transformFilters": {
+                    "remark": "this filter action before transforming in order to reduce data set",
+                    "operator": "or",
+                    "filter": [
+                        {
+                            "operator": "and",
+                            "columns": [
+                                {"name": "share", "condition": "==", "value": "BBL" }
                             ]
                         }
                     ]
@@ -2614,20 +2723,22 @@
         } ]
     },
     "test_file_json_sub_model": { 
+        "testfile": "./assets/tso_json_sub.txt",
+        "description": "this example how to use sub model persist with master/detail tables",
         "models": [ 
             {
                 "name": "tso",
                 "alias": { "privateAlias": "PROMPTDB" },
                 "fields": {
-                    "mktid": { "type": "STRING", "options": { "seqno": 1 } },
-                    "share": { "type": "STRING", "options": { "seqno": 2 } },
-                    "unit": { "type": "DECIMAL", "options": { "seqno": 3 } },
-                    "price": { "type": "DECIMAL", "options": { "seqno": 4 } },
+                    "mktid": { "type": "STRING" },
+                    "share": { "type": "STRING" },
+                    "unit": { "type": "DECIMAL" },
+                    "price": { "type": "DECIMAL" },
                     "yield": { "type": "INTEGER" },
-                    "effdate": { "type": "DATE", "options": { "seqno": 5 } },
-                    "efftime": { "type": "TIME", "options": { "seqno": 6 } },
-                    "edittime": { "type": "DATETIME", "options": { "seqno": 7 } },
-                    "sharename": { "type": "STRING", "options": { "seqno": 8 } },
+                    "effdate": { "type": "DATE" },
+                    "efftime": { "type": "TIME" },
+                    "edittime": { "type": "DATETIME" },
+                    "sharename": { "type": "STRING" },
                     "defvalue": { "type": "STRING", "options": { "mapper": "@body.defvalue" } },
                     "message": { "type": "STRING", "options": { "mapper": "message.remark" }  },
                     "remarks": { "type": "STRING", "defaultValue": "test_file_sub_model" }
@@ -2649,15 +2760,15 @@
                         "name": "ttso",
                         "alias": { "privateAlias": "PROMPTDB" },
                         "fields": {
-                            "mktid": { "type": "STRING", "options": { "seqno": 1 } },
-                            "share": { "type": "STRING", "options": { "seqno": 2 } },
-                            "unit": { "type": "DECIMAL", "options": { "seqno": 3 } },
-                            "price": { "type": "DECIMAL", "options": { "seqno": 4 } },
+                            "mktid": { "type": "STRING" },
+                            "share": { "type": "STRING" },
+                            "unit": { "type": "DECIMAL" },
+                            "price": { "type": "DECIMAL" },
                             "yield": { "type": "INTEGER" },
-                            "effdate": { "type": "DATE", "options": { "seqno": 5 } },
-                            "efftime": { "type": "TIME", "options": { "seqno": 6 } },
-                            "edittime": { "type": "DATETIME", "options": { "seqno": 7 } },
-                            "sharename": { "type": "STRING", "options": { "seqno": 8 } },
+                            "effdate": { "type": "DATE" },
+                            "efftime": { "type": "TIME" },
+                            "edittime": { "type": "DATETIME" },
+                            "sharename": { "type": "STRING" },
                             "defvalue": { "type": "STRING", "options": { "mapper": "@body.defvalue" } },
                             "message": { "type": "STRING", "options": { "mapper": "^message", "remark": "this point to parent model message field" }  },
                             "remarks": { "type": "STRING", "defaultValue": "test_file_sub_model" }
@@ -2668,18 +2779,198 @@
                                 "name": "ttas",
                                 "alias": { "privateAlias": "PROMPTDB" },
                                 "fields": {
-                                    "mktid": { "type": "STRING", "options": { "seqno": 1 } },
-                                    "share": { "type": "STRING", "options": { "seqno": 2 } },
-                                    "unit": { "type": "DECIMAL", "options": { "seqno": 3 } },
-                                    "price": { "type": "DECIMAL", "options": { "seqno": 4 } },
+                                    "mktid": { "type": "STRING" },
+                                    "share": { "type": "STRING" },
+                                    "unit": { "type": "DECIMAL" },
+                                    "price": { "type": "DECIMAL" },
                                     "yield": { "type": "INTEGER" },
-                                    "effdate": { "type": "DATE", "options": { "seqno": 5 } },
-                                    "efftime": { "type": "TIME", "options": { "seqno": 6 } },
-                                    "edittime": { "type": "DATETIME", "options": { "seqno": 7 } },
-                                    "sharename": { "type": "STRING", "options": { "seqno": 8 } },
+                                    "effdate": { "type": "DATE" },
+                                    "efftime": { "type": "TIME" },
+                                    "edittime": { "type": "DATETIME" },
+                                    "sharename": { "type": "STRING" },
                                     "defvalue": { "type": "STRING", "options": { "mapper": "@body.defvalue" } },
                                     "message": { "type": "STRING", "options": { "mapper": "^message", "remark": "this point to parent model message field" }  },
                                     "remarks": { "type": "STRING", "defaultValue": "test_file_sub_model" }
+                                },
+                                "settings": { "xpath": "elements" }
+                            } 
+                        ]
+                    } 
+                ]
+            }
+        ] 
+    },
+    "test_file_json_field_model": { 
+        "testfile": "./assets/tso_json_field_model.txt",
+        "description": "this example how to serialize data array by setting model on field options and pass it as parameter when call api",
+        "models": [ 
+            {
+                "name": "tso",
+                "alias": { "privateAlias": "PROMPTDB" },
+                "fields": {
+                    "mktid": { "type": "STRING" },
+                    "share": { "type": "STRING" },
+                    "unit": { "type": "DECIMAL" },
+                    "price": { "type": "DECIMAL" },
+                    "yield": { "type": "INTEGER" },
+                    "effdate": { "type": "DATE" },
+                    "efftime": { "type": "TIME" },
+                    "edittime": { "type": "DATETIME" },
+                    "sharename": { "type": "STRING" },
+                    "defvalue": { "type": "STRING", "options": { "mapper": "@body.defvalue" } },
+                    "message": { "type": "STRING", "options": { "mapper": "message.remark" }  },
+                    "remarks": { "type": "STRING", "defaultValue": "test_file_json_field_model" },
+                    "rowitems": { "type": "STRING", "calculated": true, "options": {
+                            "model": {
+                                "name": "ttso",
+                                "alias": { "privateAlias": "PROMPTDB" },
+                                "fields": {
+                                    "mktid": { "type": "STRING" },
+                                    "share": { "type": "STRING" },
+                                    "defvalue": { "type": "STRING", "options": { "mapper": "@body.defvalue" } },
+                                    "message": { "type": "STRING", "options": { "mapper": "^message", "remark": "this point to parent model message field" }  }
+                                },
+                                "settings": { "xpath": "items", "remark": "this model does not persist but transform data only" }
+                            }
+                        }
+                    },
+                    "appstype": { "type": "STRING", "calculated": true,  
+                        "options": { 
+                            "connection": {
+                                "type": "API",
+                                "api": "http://localhost:8080/api/category/groups", 
+                                "setting": {},
+                                "body": { "names" : "tkappstype", "items": "?rowitems" },
+                                "mapper": "@body.tkappstype"
+                            }
+                        }                    
+                    }
+                },
+                "settings": { 
+                    "xpath": "rows", 
+                    "statement": {
+                        "prestatement": {
+                            "statements": [
+                                { "sql": "delete from tso" }
+                            ]                            
+                        }
+                    }
+                }
+            }
+        ]
+    },
+    "test_file_api_verifier": {
+        "testfile": "./assets/tso.txt",
+        "description": "this example how to verify data before calling api",
+        "models": [ {
+            "name": "tso",
+            "alias": { "privateAlias": "PROMPTDB" },
+            "fields": {
+                "mktid": { "type": "STRING", "options": { "seqno": 1 } },
+                "share": { "type": "STRING", "options": { "seqno": 2 } },
+                "unit": { "type": "DECIMAL", "options": { "seqno": 3 } },
+                "price": { "type": "DECIMAL", "options": { "seqno": 4 } },
+                "yield": { "type": "INTEGER" },
+                "effdate": { "type": "DATE", "options": { "seqno": 5 } },
+                "efftime": { "type": "TIME", "options": { "seqno": 6 } },
+                "edittime": { "type": "DATETIME", "options": { "seqno": 7 } },
+                "sharename": { "type": "STRING", "options": { "seqno": 8 } },
+                "healthcheck": { "type": "STRING", "calculated": true, "options": {
+                        "connection": {
+                            "type": "API",
+                            "api": "http://localhost:8080/api/health/check", 
+                            "setting": {},
+                            "body": {},
+                            "verifier": "function verifier(data,dataset,field,model,context) { console.log('verifier: data',data); return data.share == 'BBL' ? { valid: false, value: 'BBL' } : { valid: true, value: data.share } }"
+                        }
+                    }                    
+                },
+                "defvalue": { "type": "STRING", "options": { "mapper": "healthcheck.hostname" } },
+                "message": { "type": "STRING", "options": { "mapper": "healthcheck.status" } },
+                "remarks": { "type": "STRING", "defaultValue": "test_file_api_verifier" }
+            },
+            "settings": { "skip": 1, "quotable": true,  
+                "statement": {
+                    "prestatement": {
+                        "statements": [
+                            { "sql": "delete from tso" }
+                        ]                            
+                    }
+                }
+            }
+        } ]
+    },
+    "test_file_json_sub_model_index": { 
+        "testfile": "./assets/tso_json_sub.txt",
+        "description": "this example how to use sub model access parent data by index",
+        "models": [ 
+            {
+                "name": "tso",
+                "alias": { "privateAlias": "PROMPTDB" },
+                "fields": {
+                    "mktid": { "type": "STRING" },
+                    "share": { "type": "STRING" },
+                    "unit": { "type": "DECIMAL" },
+                    "price": { "type": "DECIMAL" },
+                    "yield": { "type": "INTEGER" },
+                    "effdate": { "type": "DATE" },
+                    "efftime": { "type": "TIME" },
+                    "edittime": { "type": "DATETIME" },
+                    "sharename": { "type": "STRING" },
+                    "defvalue": { "type": "STRING", "options": { "mapper": "@body.defvalue" } },
+                    "message": { "type": "STRING", "options": { "mapper": "message.remark" }  },
+                    "remarks": { "type": "STRING", "defaultValue": "test_file_json_sub_model_index" }
+                },
+                "settings": { 
+                    "xpath": "rows", 
+                    "statement": {
+                        "prestatement": {
+                            "statements": [
+                                { "sql": "delete from ttas" },
+                                { "sql": "delete from ttso" },
+                                { "sql": "delete from tso" }
+                            ]                            
+                        }
+                    }
+                },
+                "models": [
+                    {
+                        "name": "ttso",
+                        "alias": { "privateAlias": "PROMPTDB" },
+                        "fields": {
+                            "mktid": { "type": "STRING" },
+                            "share": { "type": "STRING" },
+                            "unit": { "type": "DECIMAL" },
+                            "price": { "type": "DECIMAL" },
+                            "yield": { "type": "INTEGER" },
+                            "effdate": { "type": "DATE" },
+                            "efftime": { "type": "TIME" },
+                            "edittime": { "type": "DATETIME" },
+                            "sharename": { "type": "STRING" },
+                            "defvalue": { "type": "STRING", "options": { "mapper": "@body.defvalue" } },
+                            "message": { "type": "STRING", "options": { "mapper": "^message", "remark": "this point to parent model message field" }  },
+                            "remarks": { "type": "STRING", "defaultValue": "test_file_json_sub_model_index" },
+                            "rowdata": { "type": "STRING", "calculated": true, "options": { "mapper": "@rows[parentIndex]" } }
+                        },
+                        "settings": { "xpath": "items" },
+                        "models": [
+                            {
+                                "name": "ttas",
+                                "alias": { "privateAlias": "PROMPTDB" },
+                                "fields": {
+                                    "mktid": { "type": "STRING" },
+                                    "share": { "type": "STRING" },
+                                    "unit": { "type": "DECIMAL" },
+                                    "price": { "type": "DECIMAL" },
+                                    "yield": { "type": "INTEGER" },
+                                    "effdate": { "type": "DATE" },
+                                    "efftime": { "type": "TIME" },
+                                    "edittime": { "type": "DATETIME" },
+                                    "sharename": { "type": "STRING" },
+                                    "defvalue": { "type": "STRING", "options": { "mapper": "@body.defvalue" } },
+                                    "message": { "type": "STRING", "options": { "mapper": "^message", "remark": "this point to parent model message field" }  },
+                                    "remarks": { "type": "STRING", "defaultValue": "test_file_json_sub_model_index" },
+                                    "itemdata": { "type": "STRING", "calculated": true, "options": { "mapper": "^rowdata.items[parentIndex]" } }
                                 },
                                 "settings": { "xpath": "elements" }
                             } 

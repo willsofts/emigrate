@@ -17,3 +17,5 @@ testMigrateJSON();
 //node dist/test/test.migrate.json.js
 //node dist/test/test.migrate.json.js -t test_file_json -f ./assets/tso_json.txt
 //node dist/test/test.migrate.json.js -t test_file_json_sub_model -f ./assets/tso_json_sub.txt
+//node dist/test/test.migrate.json.js -t test_file_json_field_model -f ./assets/tso_json_field_model.txt
+//node dist/test/test.migrate.json.js -t test_file_json_sub_model_index -f ./assets/tso_json_sub.txt

@@ -277,9 +277,17 @@ export class MigrateSystem extends MigrateBase {
             let func = this.tryParseFunction(handler,'dataset','param','model','context');
             if(func) {
                 let res = func(dataset,param,model,context);
-                //expect boolean as result
-                if(res != undefined || res != null) {
-                    if(!res) return res;        
+                //expect boolean as result or {valid: boolean, value: any}
+                if(this.isReturnInfo(res)) {
+                    if(!res.valid) return res;
+                } else {
+                    if(res != undefined || res != null) {
+                        if(this.isReturnInfo(res)) {
+                            if(!res.valid) return res;
+                        } else {
+                            if(!res) return res;        
+                        }
+                    }
                 }
             }            
             await this.performQueryStatements(context,model,db,rc,dataset,model.settings?.statement?.prestatement?.statements)
@@ -298,9 +306,17 @@ export class MigrateSystem extends MigrateBase {
             let func = this.tryParseFunction(handler,'dataset','param','model','context');
             if(func) {
                 let res = func(dataset,param,model,context);
-                //expect boolean as result
-                if(res != undefined || res != null) {
-                    if(!res) return result;        
+                //expect boolean as result or {valid: boolean, value: any}
+                if(this.isReturnInfo(res)) {
+                    if(!res.valid) return result;
+                } else {
+                    if(res != undefined || res != null) {
+                        if(this.isReturnInfo(res)) {
+                            if(!res.valid) return result;
+                        } else {
+                            if(!res) return result;        
+                        }
+                    }
                 }
             }
             await this.performQueryStatements(context,model,db,rc,dataset,model.settings?.statement?.poststatement?.statements)

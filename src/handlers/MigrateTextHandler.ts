@@ -93,7 +93,7 @@ export class MigrateTextHandler extends MigrateHandler {
         let uuid = this.randomUUID();
         let migrateid = context.params.migrateid || uuid;
         let processid = context.params.processid || uuid;
-        let result : MigrateRecordSet = { migrateid: migrateid, processid: processid, taskid: task.taskid || context.params.taskid, modelid: taskmodel.modelid, modelname: taskmodel.name, totalrecords: 0, errorrecords: 0, skiprecords: 0, posterror: false, filename: param.filename, originalname: param.fileinfo?.originalname, ...this.createRecordSet() };
+        let result : MigrateRecordSet = { migrateid: migrateid, processid: processid, taskid: task.taskid || context.params.taskid, modelid: taskmodel.modelid, modelname: taskmodel.name, totalrecords: 0, datarecords: 0, errorrecords: 0, skiprecords: 0, posterror: false, filename: param.filename, originalname: param.fileinfo?.originalname, ...this.createRecordSet() };
         this.logger.debug(this.constructor.name+".processInsertingModel: task",result.taskid,",model",result.modelname,",filename",result.filename);
         let [datalist,header] = await this.performReading(context, taskmodel, param.filename);
         if(datalist) {

@@ -1,7 +1,7 @@
 {
   "name": "emigrate",
-  "version": "1.0.26",
-  "description": "This is project introduce to node application with http server and express framework under moleculer engine",
+  "version": "1.0.27",
+  "description": "This project implement for migrate data into database",
   "main": "index.js",
   "scripts": {
     "build": "tsc --project ./",
@@ -88,6 +88,6 @@
     "typescript": "^5.7.2"
   },
   "engines": {
-    "node": ">=15"
+    "node": ">=20"
   }
 }

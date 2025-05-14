@@ -10,7 +10,7 @@ let async = Arguments.getBoolean(args,false,"-async","-a") as boolean;
 async function testMigrate() {
     let buffer = fs.readFileSync(file);
     let dataset = JSON.parse(buffer.toString());
-    let context = { params: { dataset, taskid: taskid, async: async }, meta: {} };
+    let context = { params: { taskid: taskid, async: async, dataset }, meta: {} };
     let handler = new MigrateHandler();
     let result = await handler.doInserting(context,undefined,false);
     console.log("result:",result);
@@ -19,3 +19,4 @@ testMigrate();
 
 //node dist/test/test.migrate.js
 //node dist/test/test.migrate.js -t test_simple_call_api_response_error_checker
+//node dist/test/test.migrate.js -t test_simple_call_api_list

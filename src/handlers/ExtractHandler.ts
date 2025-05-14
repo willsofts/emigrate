@@ -72,7 +72,7 @@ export class ExtractHandler extends ExtractOperate {
                 let conmapper = field.field.options?.connection?.mapper;
                 let values = response;
                 if(conmapper) {
-                    values = this.scrapeData(conmapper,{dataSet: response, dataTarget: response, dataChunk: response, dataParent: response});
+                    values = this.scrapeData(conmapper,{parentIndex: 0, currentIndex: 0, dataSet: response, dataTarget: response, dataChunk: response, dataParent: response});
                 }
                 this.logger.debug(this.constructor.name+".processCollectingPreceding: mapper="+conmapper,", scrapeData=",values);
                 let paravalues = context.params[field.name] || {};
@@ -117,7 +117,7 @@ export class ExtractHandler extends ExtractOperate {
         let migrateid = context.params.migrateid || uuid;
         let processid = context.params.processid || uuid;
         this.logger.debug(this.constructor.name+".processCollectingModel: param",param);
-        let result : MigrateRecordSet = { migrateid: migrateid, processid: processid, taskid: task.taskid || context.params.taskid, modelid: taskmodel.modelid, modelname: taskmodel.name, totalrecords: rc.totalrecords, errorrecords: 0, skiprecords: 0, posterror: false, ...this.createRecordSet() };
+        let result : MigrateRecordSet = { migrateid: migrateid, processid: processid, taskid: task.taskid || context.params.taskid, modelid: taskmodel.modelid, modelname: taskmodel.name, totalrecords: rc.totalrecords, datarecords: rc.totalrecords, errorrecords: 0, skiprecords: 0, posterror: false, ...this.createRecordSet() };
         this.insertLogging(context, taskmodel, param, result);
         if(param.async) {
             this.performCollecting(context, task, taskmodel, undefined, rc, param).then(value => {
@@ -184,7 +184,7 @@ export class ExtractHandler extends ExtractOperate {
         let uuid = this.randomUUID();
         let migrateid = context.params.migrateid || uuid;
         let processid = context.params.processid || uuid;
-        let result : MigrateRecordSet = { migrateid: migrateid, processid: processid, taskid: task.taskid || context.params.taskid, modelid: model.modelid, modelname: model.name, totalrecords: rc.totalrecords, errorrecords: 0, skiprecords: 0, posterror: false, ...this.createRecordSet() };
+        let result : MigrateRecordSet = { migrateid: migrateid, processid: processid, taskid: task.taskid || context.params.taskid, modelid: model.modelid, modelname: model.name, totalrecords: rc.totalrecords, datarecords: rc.totalrecords, errorrecords: 0, skiprecords: 0, posterror: false, ...this.createRecordSet() };
         let abandonError = model.settings?.abandonError === undefined || String(model.settings?.abandonError)=="true";
         result.totalrecords = 0;
         let info : MigrateInfo = { exception: false, errormessage: "", errorcontents: [] };
@@ -205,6 +205,7 @@ export class ExtractHandler extends ExtractOperate {
         if(abandonError && reject.throwable) {
             reject.reject = true;
         }
+        result.datarecords = result.rows?.length;
         return [result,info,reject];
     }
 
@@ -319,14 +320,14 @@ export class ExtractHandler extends ExtractOperate {
             if(datasource && datasource.trim().length > 0) {
                 let ds = info.rs[datasource];
                 if(ds) {
-                    let mapvalue = this.scrapeData(mapper,{dataSet: info.rs, dataTarget: info.rs, dataChunk: info.rs, dataParent: info.rs});
+                    let mapvalue = this.scrapeData(mapper,{parentIndex: 0, currentIndex: 0, dataSet: info.rs, dataTarget: info.rs, dataChunk: info.rs, dataParent: info.rs});
                     if(mapvalue) {
-                        let values = this.scrapeData(mapvalue,{dataSet: ds, dataTarget: ds, dataChunk: ds, dataParent: ds});
+                        let values = this.scrapeData(mapvalue,{parentIndex: 0, currentIndex: 0, dataSet: ds, dataTarget: ds, dataChunk: ds, dataParent: ds});
                         info.value = values;
                     }
                 }
             } else {
-                let values = this.scrapeData(mapper,{dataSet: info.rs, dataTarget: info.rs, dataChunk: info.rs, dataParent: info.rs});
+                let values = this.scrapeData(mapper,{parentIndex: 0, currentIndex: 0, dataSet: info.rs, dataTarget: info.rs, dataChunk: info.rs, dataParent: info.rs});
                 info.value = values;
             }
         }
