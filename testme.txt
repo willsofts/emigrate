@@ -321,6 +321,9 @@ curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/migra
 test import file from azure storage
 curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/migrate/path -d "{\"taskid\":\"test_file_text_azure_storage\"}"
 
+test import json file with sub model
+curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/migratefile/file -d "{\"taskid\":\"test_file_json_sub_model\", \"file\": \"./assets/tso_json_sub.txt\", \"type\":\"json\"}"
+
 
 setting up sftp server on windows:
 1. add OpenSSH Server 
