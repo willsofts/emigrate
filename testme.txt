@@ -322,7 +322,12 @@ test import file from azure storage
 curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/migrate/path -d "{\"taskid\":\"test_file_text_azure_storage\"}"
 
 test import json file with sub model
+- master/detail tables
 curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/migratefile/file -d "{\"taskid\":\"test_file_json_sub_model\", \"file\": \"./assets/tso_json_sub.txt\", \"type\":\"json\"}"
+- sub model can refer to parent model data with parentIndex
+curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/migratefile/file -d "{\"taskid\":\"test_file_json_sub_model_index\", \"file\": \"./assets/tso_json_sub.txt\", \"type\":\"json\"}"
+- sub model on field options setting
+curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/migratefile/file -d "{\"taskid\":\"test_file_json_field_model\", \"file\": \"./assets/tso_json_field_model.txt\", \"type\":\"json\"}"
 
 
 setting up sftp server on windows:
