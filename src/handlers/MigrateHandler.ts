@@ -3,7 +3,7 @@ import { KnModel, KnDBField } from "@willsofts/will-db";
 import { KnDBConnector } from "@willsofts/will-sql";
 import { KnContextInfo, KnValidateInfo, VerifyError } from '@willsofts/will-core';
 import { MigrateOperate } from "./MigrateOperate";
-import { TaskModel, MigrateRecordSet, MigrateResultSet, MigrateInfo, MigrateReject, MigrateTask, MigrateParams, MigrateRecords, FilterInfo, MigrateField } from "../models/MigrateAlias";
+import { TaskModel, MigrateRecordSet, MigrateResultSet, MigrateInfo, MigrateReject, MigrateTask, MigrateParams, MigrateRecords, MigrateField } from "../models/MigrateAlias";
 import { DEFAULT_CALLING_SERVICE } from "../utils/EnvironmentVariable";
 
 export class MigrateHandler extends MigrateOperate {
@@ -211,7 +211,7 @@ export class MigrateHandler extends MigrateOperate {
             dataset = taskmodel.dataset;
         } else {
             dataset = await this.performTransformFilter(context, taskmodel, dataset);
-            dataset = await this.performTransformation(context, taskmodel, dataset, datapart, dataset, dataset);
+            dataset = await this.performTransformation(context, taskmodel, {dataSource: dataset, dataPart: datapart, dataChunk: dataset, dataParent: dataset});
         }
         let uuid = this.randomUUID();
         let migrateid = context.params.migrateid || uuid;
@@ -305,9 +305,11 @@ export class MigrateHandler extends MigrateOperate {
     }
 
     public async performSaveTransaction(context: KnContextInfo, task: MigrateTask, model: TaskModel, db: KnDBConnector, rc: MigrateRecords, param: MigrateParams, dataset: any): Promise<[MigrateRecordSet,MigrateInfo,MigrateReject]> {
+        await this.performPrecedent(context,task,model,db,rc,param,dataset);
         await this.performPreTransaction(context,task,model,db,rc,param,dataset);
         let [result,info,reject] = await this.performInsertTransaction(context,task,model,db,rc,param,dataset);
         if(!reject.reject) {
+            await this.performSuccedent(context,task,model,db,rc,param,dataset);            
             let post = await this.performPostTransaction(context,task,model,db,rc,param,dataset);            
             if(post?.throwable) {
                 result.posterror = true;

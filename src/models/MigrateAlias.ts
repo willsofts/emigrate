@@ -204,3 +204,10 @@ export interface DataScrape extends DataIndex {
     dataChunk: any;
     dataParent: any;
 }
+
+export interface DataSources {
+    dataSource: any;
+    dataPart: any;
+    dataChunk: any;
+    dataParent: any;
+}

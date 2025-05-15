@@ -2979,6 +2979,77 @@
                 ]
             }
         ] 
+    },
+    "test_file_precedent_succedent": {
+        "testfile": "./assets/tso.txt",
+        "description": "this example how to setting call api on model precedent and succedent",
+        "models": [ {
+            "name": "tso",
+            "alias": { "privateAlias": "PROMPTDB" },
+            "fields": {
+                "mktid": { "type": "STRING", "options": { "seqno": 1 } },
+                "share": { "type": "STRING", "options": { "seqno": 2 } },
+                "unit": { "type": "DECIMAL", "options": { "seqno": 3 } },
+                "price": { "type": "DECIMAL", "options": { "seqno": 4 } },
+                "yield": { "type": "INTEGER" },
+                "effdate": { "type": "DATE", "options": { "seqno": 5 } },
+                "efftime": { "type": "TIME", "options": { "seqno": 6 } },
+                "edittime": { "type": "DATETIME", "options": { "seqno": 7 } },
+                "sharename": { "type": "STRING", "options": { "seqno": 8 } },
+                "defvalue": { "type": "STRING" },
+                "message": { "type": "STRING" },
+                "remarks": { "type": "STRING", "defaultValue": "test_file_precedent_succedent" }
+            },
+            "settings": { "skip": 1, "quotable": true,  
+                "precedent": {
+                    "connection": {
+                        "type": "API",
+                        "api": "http://localhost:8080/api/health/check", 
+                        "setting": {},
+                        "body": {}
+                    }
+                },
+                "statement": {
+                    "prestatement": {
+                        "statements": [
+                            { "sql": "delete from tso" }
+                        ]                            
+                    }
+                },
+                "succedent": {
+                    "connection": {
+                        "type": "API",
+                        "api": "http://localhost:8080/api/health/check", 
+                        "setting": {},
+                        "body": {}
+                    }
+                }
+            }
+        } ]
+    },
+    "test_field_model": {
+        "models": [ 
+            {
+                "name": "",
+                "alias": { "privateAlias": "PROMPTDB" },
+                "fields": {
+                    "dmy": { "type": "STRING" },
+                    "POPERTYPOLICY": { "type": "STRING", "options": {
+                            "model": {
+                                "name": "",
+                                "alias": { "privateAlias": "PROMPTDB" },
+                                "fields": {
+                                    "COMP_CODE": { "type": "STRING" },
+                                    "CUR_COMP_CODE": { "type": "STRING", "options": { "mapper": "@POPERTYPOLICY[currentIndex].COMP_CODE" } },
+                                    "MAP_COMP_CODE": { "type": "STRING", "options": { "mapper": "COMP_CODE" } }
+                                },
+                                "settings": { "xpath": "POPERTYPOLICY" }
+                            }
+                        } 
+                    }
+                }
+            }
+        ] 
     }
 
 }

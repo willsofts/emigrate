@@ -1,3 +1,7 @@
+2025-05-15
+version: 1.0.28
++ support model setting precedent and succedent (take action before pre/post statement)
+
 2025-05-14
 version: 1.0.27
 + support model on field options setting in order to transform data set

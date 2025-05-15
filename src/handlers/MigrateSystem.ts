@@ -4,7 +4,8 @@ import { KnContextInfo, KnValidateInfo, VerifyError } from "@willsofts/will-core
 import { KnDBConnector, KnSQL } from "@willsofts/will-sql";
 import { OPERATE_HANDLERS } from "@willsofts/will-serv";
 import { ERROR_CANCELATION_CODE, ERROR_CANCELATION_KEY, ALWAYS_THROW_POST_ERROR } from "../utils/EnvironmentVariable";
-import { TaskModel, MigrateTask, MigrateConnectSetting, PluginSetting, StatementInfo, ParameterInfo, MigrateRecords, MigrateParams, FilterInfo } from "../models/MigrateAlias";
+import { TaskModel, MigrateTask, MigrateConnectSetting, PluginSetting, StatementInfo, ParameterInfo, MigrateRecords, MigrateParams, MigrateField, FilterInfo } from "../models/MigrateAlias";
+import { FiltersSetting, MigrateFilter } from "../utils/MigrateFilter";
 import { FileDownloadHandler } from "./FileDownloadHandler";
 import { FileTransferHandler } from "./FileTransferHandler";
 import { FileAttachmentHandler } from './FileAttachmentHandler';
@@ -339,6 +340,29 @@ export class MigrateSystem extends MigrateBase {
             }            
         }
         return result;
+    }
+
+    public async performFiltering(context: KnContextInfo, model: KnModel, filters: FiltersSetting | undefined, data: any): Promise<FilterInfo> {
+        if(filters) {
+            if(filters?.handler) {
+                let func = this.tryParseFunction(filters?.handler,'data','model','context');
+                if(func) {
+                    let result = func(data,model,context);
+                    if(result != undefined || result != null) {
+                        if(this.isReturnInfo(result)) {
+                            return { cancel: result.valid };
+                        } else {
+                            if(typeof result === "boolean") return { cancel: result };
+                            return result;
+                        }
+                    }
+                    return { cancel: false };
+                }
+            }
+            let filter = new MigrateFilter({ model: model, filters: filters, logger: this.logger });
+            return await filter.performFilter(data);
+        }
+        return { cancel: false };
     }
 
 }
