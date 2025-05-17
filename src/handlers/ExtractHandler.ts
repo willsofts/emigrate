@@ -72,7 +72,7 @@ export class ExtractHandler extends ExtractOperate {
                 let conmapper = field.field.options?.connection?.mapper;
                 let values = response;
                 if(conmapper) {
-                    values = this.scrapeData(conmapper,{parentIndex: 0, currentIndex: 0, dataSet: response, dataTarget: response, dataChunk: response, dataParent: response});
+                    values = this.scrapeData(conmapper,{parentIndex: 0, currentIndex: 0, parentLength: 0, currentLength: 0, dataSet: response, dataTarget: response, dataChunk: response, dataParent: response});
                 }
                 this.logger.debug(this.constructor.name+".processCollectingPreceding: mapper="+conmapper,", scrapeData=",values);
                 let paravalues = context.params[field.name] || {};
@@ -320,14 +320,14 @@ export class ExtractHandler extends ExtractOperate {
             if(datasource && datasource.trim().length > 0) {
                 let ds = info.rs[datasource];
                 if(ds) {
-                    let mapvalue = this.scrapeData(mapper,{parentIndex: 0, currentIndex: 0, dataSet: info.rs, dataTarget: info.rs, dataChunk: info.rs, dataParent: info.rs});
+                    let mapvalue = this.scrapeData(mapper,{parentIndex: 0, currentIndex: 0, parentLength: 0, currentLength: 0, dataSet: info.rs, dataTarget: info.rs, dataChunk: info.rs, dataParent: info.rs});
                     if(mapvalue) {
-                        let values = this.scrapeData(mapvalue,{parentIndex: 0, currentIndex: 0, dataSet: ds, dataTarget: ds, dataChunk: ds, dataParent: ds});
+                        let values = this.scrapeData(mapvalue,{parentIndex: 0, currentIndex: 0, parentLength: 0, currentLength: 0, dataSet: ds, dataTarget: ds, dataChunk: ds, dataParent: ds});
                         info.value = values;
                     }
                 }
             } else {
-                let values = this.scrapeData(mapper,{parentIndex: 0, currentIndex: 0, dataSet: info.rs, dataTarget: info.rs, dataChunk: info.rs, dataParent: info.rs});
+                let values = this.scrapeData(mapper,{parentIndex: 0, currentIndex: 0, parentLength: 0, currentLength: 0, dataSet: info.rs, dataTarget: info.rs, dataChunk: info.rs, dataParent: info.rs});
                 info.value = values;
             }
         }

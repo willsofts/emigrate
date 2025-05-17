@@ -100,7 +100,7 @@ export class MigrateHandler extends MigrateOperate {
                 let conmapper = field.field.options?.connection?.mapper;
                 let values = response;
                 if(conmapper) {
-                    values = this.scrapeData(conmapper,{parentIndex: 0, currentIndex: 0, dataSet:response, dataTarget:response, dataChunk:response, dataParent:response});
+                    values = this.scrapeData(conmapper,{parentIndex: 0, currentIndex: 0, parentLength: 0, currentLength: 0, dataSet:response, dataTarget:response, dataChunk:response, dataParent:response});
                 }
                 this.logger.debug(this.constructor.name+".processInsertingPreceding: mapper="+conmapper,", scrapeData=",values);
                 let paravalues = context.params[field.name] || {};
@@ -350,7 +350,7 @@ export class MigrateHandler extends MigrateOperate {
                         for(let submodel of model.models) {
                             if(submodel.settings?.xpath && submodel.settings?.xpath.trim().length > 0) {
                                 let subrc : MigrateRecords = { totalrecords: rc.totalrecords, errorrecords: 0, skiprecords: 0 };
-                                let subdata = this.scrapeData(submodel.settings.xpath,{parentIndex: 0, currentIndex: 0, dataSet:data, dataTarget:data, dataChunk:data, dataParent:data},context);
+                                let subdata = this.scrapeData(submodel.settings.xpath,{parentIndex: 0, currentIndex: 0, parentLength: 0, currentLength: 0, dataSet:data, dataTarget:data, dataChunk:data, dataParent:data},context);
                                 if(subdata) {
                                     let emptyData = this.isEmptyObject(subdata);
                                     if(!emptyData) {

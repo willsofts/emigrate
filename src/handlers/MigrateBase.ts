@@ -83,7 +83,7 @@ export class MigrateBase extends TknOperateHandler {
                     if(defaultValue.indexOf("#params.") >= 0) {
                         let key = defaultValue.substring(8);
                         if(key.indexOf(".") > 0 && context) {
-                            let value = this.scrapeData(key,{ parentIndex: 0, currentIndex: 0, dataSet: context.params, dataTarget: context.params, dataChunk: context.params, dataParent: context.params });
+                            let value = this.scrapeData(key,{ parentIndex: 0, currentIndex: 0, parentLength: 0, currentLength: 0, dataSet: context.params, dataTarget: context.params, dataChunk: context.params, dataParent: context.params });
                             if(value) {
                                 return [value,true];
                             } else {
@@ -99,7 +99,7 @@ export class MigrateBase extends TknOperateHandler {
                     if(first=='#' || first=='$' || first=='?') {
                         let key = defaultValue.substring(1);
                         if(key.indexOf(".") > 0 && context) {
-                            let value = this.scrapeData(key,{ parentIndex: 0, currentIndex: 0, dataSet: context.params, dataTarget: context.params, dataChunk: context.params, dataParent: context.params });
+                            let value = this.scrapeData(key,{ parentIndex: 0, currentIndex: 0, parentLength: 0, currentLength: 0, dataSet: context.params, dataTarget: context.params, dataChunk: context.params, dataParent: context.params });
                             if(value) { 
                                 return [value,true];
                             } else {
@@ -245,7 +245,7 @@ export class MigrateBase extends TknOperateHandler {
                         values.push(param);
                     } else {
                         if(val.indexOf(".") > 0) {
-                            let mapvalues = this.scrapeData(val,{ parentIndex: 0, currentIndex: 0, dataSet: context.params, dataTarget: context.params, dataChunk: context.params, dataParent: context.params },context);
+                            let mapvalues = this.scrapeData(val,{ parentIndex: 0, currentIndex: 0, parentLength: 0, currentLength: 0, dataSet: context.params, dataTarget: context.params, dataChunk: context.params, dataParent: context.params },context);
                             if(mapvalues) {
                                 body[key] = mapvalues;
                                 values.push(mapvalues);
@@ -323,6 +323,10 @@ export class MigrateBase extends TknOperateHandler {
                         idxstr = String(data.currentIndex);
                     } else if(idxstr == 'parentIndex') {
                         idxstr = String(data.parentIndex);
+                    } else if(idxstr == 'currentLength') {
+                        idxstr = String(data.currentLength);
+                    } else if(idxstr == 'parentLength') {
+                        idxstr = String(data.parentLength);
                     }
                     if(!isNaN(idxstr)) {                   
                         let index = parseInt(idxstr, 10);

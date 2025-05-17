@@ -196,6 +196,8 @@ export interface MigrateFileInfo {
 export interface DataIndex {
     parentIndex: number;
     currentIndex: number;
+    parentLength: number;
+    currentLength: number;
 }
 
 export interface DataScrape extends DataIndex {

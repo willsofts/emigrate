@@ -78,7 +78,7 @@ export class MigrateOperate extends MigrateSystem {
     }
 
     //public async performTransformation(context: KnContextInfo, model: TaskModel, datasource: any, datapart: any, datachunk: any, dataparent: any, dataindex: DataIndex = {parentIndex: 0, currentIndex: 0}): Promise<any> {
-    public async performTransformation(context: KnContextInfo, model: TaskModel, ds: DataSources, dataindex: DataIndex = {parentIndex: 0, currentIndex: 0}): Promise<any> {
+    public async performTransformation(context: KnContextInfo, model: TaskModel, ds: DataSources, dataindex: DataIndex = {parentIndex: 0, currentIndex: 0, parentLength: 0, currentLength: 0}): Promise<any> {
         let dataset = ds.dataSource;        
         if(model.settings?.xpath && model.settings?.xpath.trim().length > 0) {
             //find out data set from xpath
@@ -87,7 +87,7 @@ export class MigrateOperate extends MigrateSystem {
         if(dataset) {
             if(Array.isArray(dataset)) {
                 dataset = await this.performReformation(context,model,dataset);
-                dataset = await this.performDataMapper(context,model,{dataSource: ds.dataSource, dataPart: dataset, dataChunk: ds.dataChunk, dataParent: ds.dataParent},dataindex);
+                dataset = await this.performDataMapper(context,model,{dataSource: ds.dataSource, dataPart: dataset, dataChunk: ds.dataChunk, dataParent: ds.dataParent},{ ...dataindex, currentLength: dataset.length});
                 for(let index = 0, isz = dataset.length; index < isz; index++) {
                     let data = dataset[index];
                     await this.performDefaultValues(context,model,data,ds.dataSource,ds.dataPart);
@@ -99,7 +99,7 @@ export class MigrateOperate extends MigrateSystem {
                                 if(fieldmodel) {
                                     if(!fieldmodel.settings) fieldmodel.settings = { };                                    
                                     fieldmodel.settings.xpath = fieldmodel.settings.xpath || attrname;
-                                    data[attrname] = await this.performTransformModel(context,fieldmodel,{dataSource: data, dataPart: ds.dataPart, dataChunk: ds.dataChunk, dataParent: data},{parentIndex: dataindex.parentIndex, currentIndex: index});
+                                    data[attrname] = await this.performTransformModel(context,fieldmodel,{dataSource: data, dataPart: ds.dataPart, dataChunk: ds.dataChunk, dataParent: data},{parentIndex: dataindex.parentIndex, currentIndex: index, parentLength: data.parentLength, currentLength: isz });
                                 }
                             }
                         }
@@ -107,7 +107,7 @@ export class MigrateOperate extends MigrateSystem {
                     await this.performConversion(context,model,data,ds.dataSource);
                     if(model.models && model.models.length > 0) {
                         for(let submodel of model.models) {
-                            await this.performTransformation(context,submodel,{dataSource: data, dataPart: ds.dataPart, dataChunk: ds.dataChunk, dataParent: data},{parentIndex: index, currentIndex: 0});
+                            await this.performTransformation(context,submodel,{dataSource: data, dataPart: ds.dataPart, dataChunk: ds.dataChunk, dataParent: data},{parentIndex: index, currentIndex: 0, parentLength: data.parentLength, currentLength: isz});
                         }
                     }
                 }     
@@ -122,7 +122,7 @@ export class MigrateOperate extends MigrateSystem {
                             if(fieldmodel) {
                                 if(!fieldmodel.settings) fieldmodel.settings = { };                                    
                                 fieldmodel.settings.xpath = fieldmodel.settings.xpath || attrname;
-                                dataset[attrname] = await this.performTransformModel(context,fieldmodel,{dataSource: dataset, dataPart: ds.dataPart, dataChunk: ds.dataChunk, dataParent: ds.dataSource},dataindex);
+                                dataset[attrname] = await this.performTransformModel(context,fieldmodel,{dataSource: dataset, dataPart: ds.dataPart, dataChunk: ds.dataChunk, dataParent: ds.dataSource},{ ...dataindex, currentLength: 1});
                             }
                         }
                     }
@@ -130,7 +130,7 @@ export class MigrateOperate extends MigrateSystem {
                 await this.performConversion(context,model,dataset,ds.dataSource);
                 if(model.models && model.models.length > 0) {
                     for(let submodel of model.models) {
-                        await this.performTransformation(context,submodel,{dataSource: dataset,dataPart: ds.dataPart, dataChunk: ds.dataChunk, dataParent: ds.dataSource},dataindex);
+                        await this.performTransformation(context,submodel,{dataSource: dataset,dataPart: ds.dataPart, dataChunk: ds.dataChunk, dataParent: ds.dataSource},{ ...dataindex, currentLength: 1});
                     }
                 }
             }
@@ -173,12 +173,12 @@ export class MigrateOperate extends MigrateSystem {
         this.logger.debug(this.constructor.name+".performDataMapper: context parameters",paras);
         if(Array.isArray(ds.dataPart)) {
             for(let index = 0, isz = ds.dataPart.length; index < isz; index++) {
-                let data : DataScrape = { parentIndex: dataindex.parentIndex, currentIndex: index, dataSet: ds.dataSource, dataTarget: ds.dataPart[index], dataChunk: ds.dataChunk, dataParent: ds.dataParent };
+                let data : DataScrape = { parentIndex: dataindex.parentIndex, currentIndex: index, parentLength: dataindex.parentLength, currentLength: isz, dataSet: ds.dataSource, dataTarget: ds.dataPart[index], dataChunk: ds.dataChunk, dataParent: ds.dataParent };
                 await this.transformDataMapper(context,model,data,paras);
                 //await this.transformDataMapper(context,model,datasource,data,paras,datachunk,dataparent);
             }     
         } else {
-            let data : DataScrape = { ...dataindex, dataSet: ds.dataSource, dataTarget: ds.dataPart, dataChunk: ds.dataChunk, dataParent: ds.dataParent };
+            let data : DataScrape = { ...dataindex, currentLength: 1, dataSet: ds.dataSource, dataTarget: ds.dataPart, dataChunk: ds.dataChunk, dataParent: ds.dataParent };
             await this.transformDataMapper(context,model,data,paras);
             //await this.transformDataMapper(context,model,datasource,dataset,paras,datachunk,dataparent);
         }
@@ -194,7 +194,7 @@ export class MigrateOperate extends MigrateSystem {
         for (let [key, value] of Object.entries(dataStructure)) {
             let mapper = value?.options?.mapper;
             if(mapper) {
-                let dataValue = this.scrapeData(mapper,{parentIndex: data.parentIndex, currentIndex: data.currentIndex, 
+                let dataValue = this.scrapeData(mapper,{parentIndex: data.parentIndex, currentIndex: data.currentIndex, parentLength: data.parentLength, currentLength: data.currentLength, 
                     dataSet: data.dataSet, dataTarget: dataSpec, dataChunk: data.dataChunk, dataParent: data.dataParent},context);
                 newDataSet[key] = dataValue;
             }
@@ -305,7 +305,7 @@ export class MigrateOperate extends MigrateSystem {
         } else {
             let dsmapper = field.field?.options?.datasource;
             if(dsmapper) {
-                response = this.scrapeData(dsmapper,{parentIndex: 0, currentIndex: 0, dataSet: context.params, dataTarget: context.params, dataChunk: context.params, dataParent: context.params},context);
+                response = this.scrapeData(dsmapper,{parentIndex: 0, currentIndex: 0, parentLength: 0, currentLength: 0, dataSet: context.params, dataTarget: context.params, dataChunk: context.params, dataParent: context.params},context);
             }
         }
         let attrname = field.name;
@@ -313,7 +313,7 @@ export class MigrateOperate extends MigrateSystem {
             let conmapper = connection?.mapper;
             let values = response;
             if(conmapper) {
-                values = this.scrapeData(conmapper,{parentIndex: 0, currentIndex: 0, dataSet: response, dataTarget: response, dataChunk: response, dataParent: response},context);
+                values = this.scrapeData(conmapper,{parentIndex: 0, currentIndex: 0, parentLength: 0, currentLength: 0, dataSet: response, dataTarget: response, dataChunk: response, dataParent: response},context);
                 this.logger.debug(this.constructor.name+".performFetching: mapper="+conmapper,", scrapeData=",values);
             }
             if(values) {
@@ -528,12 +528,12 @@ export class MigrateOperate extends MigrateSystem {
                     let data = this.tryParseXmlToJSON(xml);
                     //in case of manual check error (api always response ok)
                     if(config?.options?.errorChecker && config?.options?.errorCheckerValue) {
-                        let checkerValue = this.scrapeData(config.options.errorChecker,{parentIndex: 0, currentIndex: 0, dataSet: data, dataTarget: data, dataChunk: data, dataParent: data});
+                        let checkerValue = this.scrapeData(config.options.errorChecker,{parentIndex: 0, currentIndex: 0, parentLength: 0, currentLength: 0, dataSet: data, dataTarget: data, dataChunk: data, dataParent: data});
                         if(checkerValue) {
                             if(config.options.errorCheckerValue.includes(checkerValue)) {
                                 let msg = "Request error";
                                 if(config?.options?.errorCheckerMessage) {
-                                    let checkerMessage = this.scrapeData(config?.options?.errorCheckerMessage,{parentIndex: 0, currentIndex: 0, dataSet: data, dataTarget: data, dataChunk: data, dataParent: data});
+                                    let checkerMessage = this.scrapeData(config?.options?.errorCheckerMessage,{parentIndex: 0, currentIndex: 0, parentLength: 0, currentLength: 0, dataSet: data, dataTarget: data, dataChunk: data, dataParent: data});
                                     if(checkerMessage) msg = checkerMessage;
                                 }
                                 this.logger.debug(this.constructor.name+".requestAPI: request error:",msg);
@@ -581,7 +581,7 @@ export class MigrateOperate extends MigrateSystem {
                 let conmapper = field.field.options?.connection?.mapper;
                 let values = response;
                 if(conmapper) {
-                    values = this.scrapeData(conmapper,{parentIndex: 0, currentIndex: 0, dataSet:response, dataTarget:response, dataChunk:response, dataParent:response});
+                    values = this.scrapeData(conmapper,{parentIndex: 0, currentIndex: 0, parentLength: 0, currentLength: 0, dataSet:response, dataTarget:response, dataChunk:response, dataParent:response});
                 }
                 this.logger.debug(this.constructor.name+".performPrecedent: mapper="+conmapper,", scrapeData=",values);
                 let paravalues = context.params[field.name] || {};

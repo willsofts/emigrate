@@ -1,6 +1,7 @@
-2025-05-15
+2025-05-17
 version: 1.0.28
 + support model setting precedent and succedent (take action before pre/post statement)
++ support scrape mapper key word: parentLength, currentLength
 
 2025-05-14
 version: 1.0.27
@@ -11,6 +12,7 @@ version: 1.0.27
     + check return info = {valid: boolean, value: any} if not info.valid then return info.value
     + always set params.verifier = info.value then it can use #params.verifier in setting
 + support current index of parent data row reference in sub model traversal
+    + scrape mapper key word: parentIndex, currentIndex
 
 2025-05-13
 version: 1.0.26
