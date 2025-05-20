@@ -25,3 +25,4 @@ testMigrateText();
 //node dist/test/test.migrate.text.js -t test_file_api
 //node dist/test/test.migrate.text.js -t test_file_api -f ./assets/tso_api.txt
 //node dist/test/test.migrate.text.js -t test_file_initialize
+//node dist/test/test.migrate.text.js -t test_file_calculate

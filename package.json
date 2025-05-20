@@ -1,6 +1,6 @@
 {
   "name": "emigrate",
-  "version": "1.0.28",
+  "version": "1.0.29",
   "description": "This project implement for migrate data into database",
   "main": "index.js",
   "scripts": {
@@ -45,6 +45,7 @@
     "jspdf-autotable": "^5.0.2",
     "kafka-node": "^5.0.0",
     "mailparser": "^3.7.2",
+    "mathjs": "^14.4.0",
     "mime-types": "^2.1.35",
     "moleculer": "^0.14.35",
     "moleculer-io": "^2.2.0",

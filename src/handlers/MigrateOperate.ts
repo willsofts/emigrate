@@ -6,6 +6,9 @@ import { MigrateSystem } from "./MigrateSystem";
 import { TaskModel, MigrateTask, MigrateRecords, MigrateConnectSetting, MigrateRecordSet, MigrateInfo, MigrateReject, MigrateParams, MigrateField, DataScrape, DataIndex, DataSources } from "../models/MigrateAlias";
 import { MigrateLogHandler } from "./MigrateLogHandler";
 import querystring from 'querystring';
+import { evaluate } from 'mathjs';
+
+const variablePattern = /\$\{(.*?)\}/g;
 
 export class MigrateOperate extends MigrateSystem {
     
@@ -104,6 +107,7 @@ export class MigrateOperate extends MigrateSystem {
                             }
                         }
                     }
+                    await this.performCalculator(context,model,{dataSource: data, dataPart: ds.dataPart, dataChunk: ds.dataChunk, dataParent: ds.dataParent},{parentIndex: dataindex.parentIndex, currentIndex: index, parentLength: data.parentLength, currentLength: isz });
                     await this.performConversion(context,model,data,ds.dataSource);
                     if(model.models && model.models.length > 0) {
                         for(let submodel of model.models) {
@@ -112,7 +116,7 @@ export class MigrateOperate extends MigrateSystem {
                     }
                 }     
             } else {
-                dataset = await this.performDataMapper(context,model,{dataSource: ds.dataSource, dataPart: dataset, dataChunk: ds.dataChunk, dataParent: ds.dataParent},dataindex);
+                dataset = await this.performDataMapper(context,model,{dataSource: ds.dataSource, dataPart: dataset, dataChunk: ds.dataChunk, dataParent: ds.dataParent},{ ...dataindex, currentLength: 1});
                 await this.performDefaultValues(context,model,dataset,ds.dataSource,ds.dataPart);
                 if(model.fields) {
                     for(let attrname in model.fields) {
@@ -127,6 +131,7 @@ export class MigrateOperate extends MigrateSystem {
                         }
                     }
                 }
+                await this.performCalculator(context,model,{dataSource: dataset, dataPart: ds.dataPart, dataChunk: ds.dataChunk, dataParent: ds.dataParent},{ ...dataindex, currentLength: 1});
                 await this.performConversion(context,model,dataset,ds.dataSource);
                 if(model.models && model.models.length > 0) {
                     for(let submodel of model.models) {
@@ -150,15 +155,18 @@ export class MigrateOperate extends MigrateSystem {
             let keyfields = model.fields ? Object.keys(model.fields) : [];
             if(Array.isArray(dataset)) {
                 dataset = await this.performReformation(context,model,dataset);
-                dataset = await this.performDataMapper(context,model,{dataSource: ds.dataSource, dataPart: dataset, dataChunk: ds.dataChunk, dataParent: ds.dataParent},dataindex);
-                for(let data of dataset) {
+                dataset = await this.performDataMapper(context,model,{dataSource: ds.dataSource, dataPart: dataset, dataChunk: ds.dataChunk, dataParent: ds.dataParent},{ ...dataindex, currentLength: dataset.length});
+                for(let index = 0, isz = dataset.length; index < isz; index++) {
+                    let data = dataset[index];
                     await this.performDefaultValues(context,model,data,ds.dataSource,ds.dataPart);
+                    await this.performCalculator(context,model,{dataSource: data, dataPart: ds.dataPart, dataChunk: ds.dataChunk, dataParent: ds.dataParent},{parentIndex: dataindex.parentIndex, currentIndex: index, parentLength: data.parentLength, currentLength: isz });
                     await this.performConversion(context,model,data,ds.dataSource);
                     this.omitDataObject(data,keyfields);
                 }                     
             } else {
-                dataset = await this.performDataMapper(context,model,{dataSource: ds.dataSource, dataPart: dataset, dataChunk: ds.dataChunk, dataParent: ds.dataParent},dataindex);
+                dataset = await this.performDataMapper(context,model,{dataSource: ds.dataSource, dataPart: dataset, dataChunk: ds.dataChunk, dataParent: ds.dataParent},{ ...dataindex, currentLength: 1});
                 await this.performDefaultValues(context,model,dataset,ds.dataSource,ds.dataPart);
+                await this.performCalculator(context,model,{dataSource: dataset, dataPart: ds.dataPart, dataChunk: ds.dataChunk, dataParent: ds.dataParent},{ ...dataindex, currentLength: 1});
                 await this.performConversion(context,model,dataset,ds.dataSource);
                 this.omitDataObject(dataset,keyfields);
             }
@@ -621,6 +629,36 @@ export class MigrateOperate extends MigrateSystem {
             let response = await this.performFetchData(context,this.model,field,data,dataset);
             this.logger.debug(this.constructor.name+".performSuccedent: fetch data",response);
         }
+    }
+
+    public async performCalculator(context: KnContextInfo, model: KnModel, ds: DataSources, dataindex: DataIndex): Promise<any> {
+        if(model.fields) {
+            for(let attrname in model.fields) {
+                let field = model.fields[attrname];
+                let calculate = field?.options?.calculate;
+                if(calculate) {
+                    let expression = calculate.expr as string;
+                    if(expression && expression.trim().length > 0) {
+                        const variables = [...expression.matchAll(variablePattern)].map(match => match[1]);
+                        //this.logger.debug(this.constructor.name+".performCalculator: variables",variables);
+                        if(variables && variables.length > 0) {
+                            const uniqueVariables = Array.from(new Set(variables));
+                            //this.logger.debug(this.constructor.name+".performCalculator: uniqueVariables",uniqueVariables);
+                            let datavalues : any = {};
+                            for(let varname of uniqueVariables) {
+                                datavalues[varname] = this.scrapeData(varname,{...dataindex, dataSet: ds.dataSource, dataTarget: ds.dataSource, dataChunk: ds.dataChunk, dataParent: ds.dataParent},context);                                
+                            }
+                            const evaluatedExpression = expression.replace(variablePattern, (substr: string, varName: string) => {
+                                return datavalues[varName].toString();
+                            });
+                            this.logger.debug(this.constructor.name+".performCalculator: expression",expression,", evaluated",evaluatedExpression);
+                            ds.dataSource[attrname] = evaluate(evaluatedExpression);
+                        }
+                    }
+                }
+            }
+        }
+        return ds.dataSource;
     }
 
 }

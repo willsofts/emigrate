@@ -3050,6 +3050,42 @@
                 }
             }
         ] 
+    },
+    "test_file_calculate": {
+        "testfile": "./assets/tso.txt", 
+        "description": "this example how to defined calculate expression",
+        "models": [ {
+            "name": "tso",
+            "alias": { "privateAlias": "PROMPTDB" },
+            "fields": {
+                "mktid": { "type": "STRING", "options": { "seqno": 1 } },
+                "share": { "type": "STRING", "options": { "seqno": 2 } },
+                "unit": { "type": "DECIMAL", "options": { "seqno": 3 } },
+                "price": { "type": "DECIMAL", "options": { "seqno": 4 } },
+                "yield": { "type": "INTEGER", "options": { 
+                    "calculate": { "expr": "( ${unit} * ${price} ) / 100" }
+                } },
+                "amount": { "type": "DECIMAL", "options": { 
+                    "calculate": { "expr": "( ${unit} * ${price} ) + 100" }
+                } },
+                "effdate": { "type": "DATE", "options": { "seqno": 5 } },
+                "efftime": { "type": "TIME", "options": { "seqno": 6 } },
+                "edittime": { "type": "DATETIME", "options": { "seqno": 7 } },
+                "sharename": { "type": "STRING", "options": { "seqno": 8 } },
+                "defvalue": { "type": "STRING" },
+                "message": { "type": "STRING" },
+                "remarks": { "type": "STRING", "defaultValue": "test_file_calculate" }
+            },
+            "settings": { "skip": 1, "delimiter": ",", "quotable": true, 
+                "statement": {
+                    "prestatement": {
+                        "statements": [
+                            { "sql": "delete from tso" }
+                        ]                            
+                    }
+                }
+            }
+        } ] 
     }
 
 }
