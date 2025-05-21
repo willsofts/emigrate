@@ -23,3 +23,4 @@ testMigrateText();
 //node dist/test/test.migrate.file.js -t test_file_json_sub_model -f ./assets/tso_json_sub.txt -type json
 //node dist/test/test.migrate.file.js -t test_file_api_verifier
 //node dist/test/test.migrate.file.js -t test_file_precedent_succedent
+//node dist/test/test.migrate.file.js -t test_file_calculate_functional_sub_model -f ./assets/tso_json_sub.txt -type json

@@ -2,6 +2,7 @@ import { HTTP } from "@willsofts/will-api";
 import { KnModel, KnDBField } from "@willsofts/will-db";
 import { KnRecordSet, KnSQL, KnDBConnector } from "@willsofts/will-sql";
 import { KnContextInfo, VerifyError } from '@willsofts/will-core';
+import { Utilities } from "@willsofts/will-util";
 import { MigrateSystem } from "./MigrateSystem";
 import { TaskModel, MigrateTask, MigrateRecords, MigrateConnectSetting, MigrateRecordSet, MigrateInfo, MigrateReject, MigrateParams, MigrateField, DataScrape, DataIndex, DataSources } from "../models/MigrateAlias";
 import { MigrateLogHandler } from "./MigrateLogHandler";
@@ -90,7 +91,7 @@ export class MigrateOperate extends MigrateSystem {
         if(dataset) {
             if(Array.isArray(dataset)) {
                 dataset = await this.performReformation(context,model,dataset);
-                dataset = await this.performDataMapper(context,model,{dataSource: ds.dataSource, dataPart: dataset, dataChunk: ds.dataChunk, dataParent: ds.dataParent},{ ...dataindex, currentLength: dataset.length});
+                dataset = await this.performDataMapper(context,model,{dataSource: ds.dataSource, dataPart: dataset, dataChunk: ds.dataChunk, dataParent: ds.dataParent},{ ...dataindex, currentLength: dataset.length-1});
                 for(let index = 0, isz = dataset.length; index < isz; index++) {
                     let data = dataset[index];
                     await this.performDefaultValues(context,model,data,ds.dataSource,ds.dataPart);
@@ -102,16 +103,16 @@ export class MigrateOperate extends MigrateSystem {
                                 if(fieldmodel) {
                                     if(!fieldmodel.settings) fieldmodel.settings = { };                                    
                                     fieldmodel.settings.xpath = fieldmodel.settings.xpath || attrname;
-                                    data[attrname] = await this.performTransformModel(context,fieldmodel,{dataSource: data, dataPart: ds.dataPart, dataChunk: ds.dataChunk, dataParent: data},{parentIndex: dataindex.parentIndex, currentIndex: index, parentLength: data.parentLength, currentLength: isz });
+                                    data[attrname] = await this.performTransformModel(context,fieldmodel,{dataSource: data, dataPart: ds.dataPart, dataChunk: ds.dataChunk, dataParent: data},{parentIndex: dataindex.parentIndex, currentIndex: index, parentLength: data.parentLength, currentLength: isz-1 });
                                 }
                             }
                         }
                     }
-                    await this.performCalculator(context,model,{dataSource: data, dataPart: ds.dataPart, dataChunk: ds.dataChunk, dataParent: ds.dataParent},{parentIndex: dataindex.parentIndex, currentIndex: index, parentLength: data.parentLength, currentLength: isz });
+                    await this.performCalculator(context,model,{dataSource: data, dataPart: dataset, dataChunk: ds.dataChunk, dataParent: ds.dataParent},{parentIndex: dataindex.parentIndex, currentIndex: index, parentLength: data.parentLength, currentLength: isz-1 });
                     await this.performConversion(context,model,data,ds.dataSource);
                     if(model.models && model.models.length > 0) {
                         for(let submodel of model.models) {
-                            await this.performTransformation(context,submodel,{dataSource: data, dataPart: ds.dataPart, dataChunk: ds.dataChunk, dataParent: data},{parentIndex: index, currentIndex: 0, parentLength: data.parentLength, currentLength: isz});
+                            await this.performTransformation(context,submodel,{dataSource: data, dataPart: ds.dataPart, dataChunk: ds.dataChunk, dataParent: data},{parentIndex: index, currentIndex: 0, parentLength: data.parentLength, currentLength: isz-1});
                         }
                     }
                 }     
@@ -131,11 +132,11 @@ export class MigrateOperate extends MigrateSystem {
                         }
                     }
                 }
-                await this.performCalculator(context,model,{dataSource: dataset, dataPart: ds.dataPart, dataChunk: ds.dataChunk, dataParent: ds.dataParent},{ ...dataindex, currentLength: 1});
+                await this.performCalculator(context,model,{dataSource: dataset, dataPart: [dataset], dataChunk: ds.dataChunk, dataParent: ds.dataParent},{ ...dataindex, currentLength: 1});
                 await this.performConversion(context,model,dataset,ds.dataSource);
                 if(model.models && model.models.length > 0) {
                     for(let submodel of model.models) {
-                        await this.performTransformation(context,submodel,{dataSource: dataset,dataPart: ds.dataPart, dataChunk: ds.dataChunk, dataParent: ds.dataSource},{ ...dataindex, currentLength: 1});
+                        await this.performTransformation(context,submodel,{dataSource: dataset, dataPart: ds.dataPart, dataChunk: ds.dataChunk, dataParent: ds.dataSource},{ ...dataindex, currentLength: 1});
                     }
                 }
             }
@@ -155,18 +156,18 @@ export class MigrateOperate extends MigrateSystem {
             let keyfields = model.fields ? Object.keys(model.fields) : [];
             if(Array.isArray(dataset)) {
                 dataset = await this.performReformation(context,model,dataset);
-                dataset = await this.performDataMapper(context,model,{dataSource: ds.dataSource, dataPart: dataset, dataChunk: ds.dataChunk, dataParent: ds.dataParent},{ ...dataindex, currentLength: dataset.length});
+                dataset = await this.performDataMapper(context,model,{dataSource: ds.dataSource, dataPart: dataset, dataChunk: ds.dataChunk, dataParent: ds.dataParent},{ ...dataindex, currentLength: dataset.length-1});
                 for(let index = 0, isz = dataset.length; index < isz; index++) {
                     let data = dataset[index];
                     await this.performDefaultValues(context,model,data,ds.dataSource,ds.dataPart);
-                    await this.performCalculator(context,model,{dataSource: data, dataPart: ds.dataPart, dataChunk: ds.dataChunk, dataParent: ds.dataParent},{parentIndex: dataindex.parentIndex, currentIndex: index, parentLength: data.parentLength, currentLength: isz });
+                    await this.performCalculator(context,model,{dataSource: data, dataPart: dataset, dataChunk: ds.dataChunk, dataParent: ds.dataParent},{parentIndex: dataindex.parentIndex, currentIndex: index, parentLength: data.parentLength, currentLength: isz-1 });
                     await this.performConversion(context,model,data,ds.dataSource);
                     this.omitDataObject(data,keyfields);
                 }                     
             } else {
                 dataset = await this.performDataMapper(context,model,{dataSource: ds.dataSource, dataPart: dataset, dataChunk: ds.dataChunk, dataParent: ds.dataParent},{ ...dataindex, currentLength: 1});
                 await this.performDefaultValues(context,model,dataset,ds.dataSource,ds.dataPart);
-                await this.performCalculator(context,model,{dataSource: dataset, dataPart: ds.dataPart, dataChunk: ds.dataChunk, dataParent: ds.dataParent},{ ...dataindex, currentLength: 1});
+                await this.performCalculator(context,model,{dataSource: dataset, dataPart: [dataset], dataChunk: ds.dataChunk, dataParent: ds.dataParent},{ ...dataindex, currentLength: 1});
                 await this.performConversion(context,model,dataset,ds.dataSource);
                 this.omitDataObject(dataset,keyfields);
             }
@@ -178,10 +179,10 @@ export class MigrateOperate extends MigrateSystem {
     public async performDataMapper(context: KnContextInfo, model: KnModel, ds: DataSources, dataindex: DataIndex): Promise<any> {
         if(!model.fields) return ds.dataPart;
         let paras = this.getContextParameters(context);
-        this.logger.debug(this.constructor.name+".performDataMapper: context parameters",paras);
+        //this.logger.debug(this.constructor.name+".performDataMapper: context parameters",paras);
         if(Array.isArray(ds.dataPart)) {
             for(let index = 0, isz = ds.dataPart.length; index < isz; index++) {
-                let data : DataScrape = { parentIndex: dataindex.parentIndex, currentIndex: index, parentLength: dataindex.parentLength, currentLength: isz, dataSet: ds.dataSource, dataTarget: ds.dataPart[index], dataChunk: ds.dataChunk, dataParent: ds.dataParent };
+                let data : DataScrape = { parentIndex: dataindex.parentIndex, currentIndex: index, parentLength: dataindex.parentLength, currentLength: isz-1, dataSet: ds.dataSource, dataTarget: ds.dataPart[index], dataChunk: ds.dataChunk, dataParent: ds.dataParent };
                 await this.transformDataMapper(context,model,data,paras);
                 //await this.transformDataMapper(context,model,datasource,data,paras,datachunk,dataparent);
             }     
@@ -637,28 +638,149 @@ export class MigrateOperate extends MigrateSystem {
                 let field = model.fields[attrname];
                 let calculate = field?.options?.calculate;
                 if(calculate) {
+                    let funresult = await this.performCalculateFunctional(context,model,ds,dataindex,calculate);
                     let expression = calculate.expr as string;
                     if(expression && expression.trim().length > 0) {
-                        const variables = [...expression.matchAll(variablePattern)].map(match => match[1]);
-                        //this.logger.debug(this.constructor.name+".performCalculator: variables",variables);
-                        if(variables && variables.length > 0) {
-                            const uniqueVariables = Array.from(new Set(variables));
-                            //this.logger.debug(this.constructor.name+".performCalculator: uniqueVariables",uniqueVariables);
-                            let datavalues : any = {};
-                            for(let varname of uniqueVariables) {
-                                datavalues[varname] = this.scrapeData(varname,{...dataindex, dataSet: ds.dataSource, dataTarget: ds.dataSource, dataChunk: ds.dataChunk, dataParent: ds.dataParent},context);                                
-                            }
-                            const evaluatedExpression = expression.replace(variablePattern, (substr: string, varName: string) => {
-                                return datavalues[varName].toString();
-                            });
-                            this.logger.debug(this.constructor.name+".performCalculator: expression",expression,", evaluated",evaluatedExpression);
-                            ds.dataSource[attrname] = evaluate(evaluatedExpression);
+                        //reserved variable initialize and calculate for auto data binding
+                        let dataset : any = { initialize: context.params.initialize, calculate : funresult };
+                        for(let p in ds.dataSource) {
+                            dataset[p] = ds.dataSource[p];
                         }
+                        let datavalue = await this.performCalculateExpression(context,model,{dataSource: dataset, dataPart: ds.dataPart, dataChunk: ds.dataChunk, dataParent: ds.dataParent},dataindex,expression,calculate.verify);
+                        ds.dataSource[attrname] = datavalue;
                     }
                 }
             }
         }
         return ds.dataSource;
+    }
+
+    public async performCalculateExpression(context: KnContextInfo, model: KnModel, ds: DataSources, dataindex: DataIndex, expression: string, verify: boolean = true): Promise<any> {
+        if(expression && expression.trim().length > 0) {
+            const variables = this.getExpressionVariables(expression);
+            //this.logger.debug(this.constructor.name+".performCalculateExpression: variables",variables);
+            if(variables && variables.length > 0) {
+                let datavalues : any = {};
+                for(let varname of variables) {
+                    let mapvalue = this.scrapeData(varname,{...dataindex, dataSet: ds.dataSource, dataTarget: ds.dataSource, dataChunk: ds.dataChunk, dataParent: ds.dataParent},context);                                
+                    if(mapvalue === undefined || mapvalue === null) mapvalue = 0;
+                    else if(typeof mapvalue === 'string') mapvalue = Utilities.parseFloat(mapvalue,0);
+                    datavalues[varname] = mapvalue;
+                }
+                const evaluatedExpression = expression.replace(variablePattern, (substr: string, varName: string) => {
+                    return datavalues[varName].toString();
+                });
+                //this.logger.debug(this.constructor.name+".performCalculateExpression: expression",expression,", evaluated",evaluatedExpression);
+                try {
+                    let value = evaluate(evaluatedExpression);
+                    if(isFinite(value)) return value;
+                    if(isNaN(value)) return value;
+                } catch(ex) { 
+                    if(verify) {
+                        throw ex;
+                    }
+                }
+            }
+        }
+        return undefined;
+    }
+
+    protected getExpressionVariables(expression: string) : string[] {
+        const variables = [...expression.matchAll(variablePattern)].map(match => match[1]);
+        if(variables && variables.length > 0) {
+            return Array.from(new Set(variables));
+        }
+        return variables;
+    }
+
+    public async performCalculateFunctional(context: KnContextInfo, model: KnModel, ds: DataSources, dataindex: DataIndex, calculate: any): Promise<any> {
+        if(calculate) {
+            let result : any = {};
+            if(calculate.sum) {
+                let expression = calculate.sum.expr as string;
+                let mapname = calculate.sum.mapper || "@current_dataset";
+                if((mapname && mapname.trim().length > 0) && (expression && expression.trim().length > 0)) {
+                    //try to find out data array from mapper setting
+                    let mapvalues = "@current_dataset" == mapname ? ds.dataPart : this.scrapeData(mapname,{...dataindex, dataSet: ds.dataSource, dataTarget: ds.dataSource, dataChunk: ds.dataChunk, dataParent: ds.dataParent},context);
+                    if(mapvalues && Array.isArray(mapvalues)) {
+                        result.sum_count = mapvalues.length;
+                        let values = 0;
+                        for(let mapvalue of mapvalues) {
+                            let datavalue = await this.performCalculateExpression(context,model,{dataSource: mapvalue, dataPart: ds.dataPart, dataChunk: ds.dataChunk, dataParent: ds.dataParent},dataindex,expression,calculate.verify);
+                            if(typeof datavalue === 'number') values += datavalue;
+                        }
+                        result.sum = values;
+                    }
+                }
+            }
+            if(calculate.avg) {
+                let expression = calculate.avg.expr as string;
+                let mapname = calculate.avg.mapper || "@current_dataset";
+                if((mapname && mapname.trim().length > 0) && (expression && expression.trim().length > 0)) {
+                    let mapvalues = "@current_dataset" == mapname ? ds.dataPart : this.scrapeData(mapname,{...dataindex, dataSet: ds.dataSource, dataTarget: ds.dataSource, dataChunk: ds.dataChunk, dataParent: ds.dataParent},context);
+                    if(mapvalues && Array.isArray(mapvalues)) {
+                        result.avg_count = mapvalues.length;
+                        let values = 0;
+                        for(let mapvalue of mapvalues) {
+                            let datavalue = await this.performCalculateExpression(context,model,{dataSource: mapvalue, dataPart: ds.dataPart, dataChunk: ds.dataChunk, dataParent: ds.dataParent},dataindex,expression,calculate.verify);
+                            if(typeof datavalue === 'number') values += datavalue;
+                        }
+                        result.avg = values / result.avg_count;
+                    }
+                }
+            }
+            if(calculate.min) {
+                let expression = calculate.min.expr as string;
+                let mapname = calculate.min.mapper || "@current_dataset";
+                if((mapname && mapname.trim().length > 0) && (expression && expression.trim().length > 0)) {
+                    //try to find out data array from mapper setting
+                    let mapvalues = "@current_dataset" == mapname ? ds.dataPart : this.scrapeData(mapname,{...dataindex, dataSet: ds.dataSource, dataTarget: ds.dataSource, dataChunk: ds.dataChunk, dataParent: ds.dataParent},context);
+                    if(mapvalues && Array.isArray(mapvalues)) {
+                        result.min_count = mapvalues.length;
+                        let values = undefined;
+                        for(let mapvalue of mapvalues) {
+                            let datavalue = await this.performCalculateExpression(context,model,{dataSource: mapvalue, dataPart: ds.dataPart, dataChunk: ds.dataChunk, dataParent: ds.dataParent},dataindex,expression,calculate.verify);
+                            if(typeof datavalue === 'number') {
+                                if(values === undefined) values = datavalue;
+                                if(values > datavalue) values = datavalue;
+                            }
+                        }
+                        result.min = values;
+                    }
+                }
+            }
+            if(calculate.max) {
+                let expression = calculate.max.expr as string;
+                let mapname = calculate.max.mapper || "@current_dataset";
+                if((mapname && mapname.trim().length > 0) && (expression && expression.trim().length > 0)) {
+                    //try to find out data array from mapper setting
+                    let mapvalues = "@current_dataset" == mapname ? ds.dataPart : this.scrapeData(mapname,{...dataindex, dataSet: ds.dataSource, dataTarget: ds.dataSource, dataChunk: ds.dataChunk, dataParent: ds.dataParent},context);
+                    if(mapvalues && Array.isArray(mapvalues)) {
+                        result.max_count = mapvalues.length;
+                        let values = undefined;
+                        for(let mapvalue of mapvalues) {
+                            let datavalue = await this.performCalculateExpression(context,model,{dataSource: mapvalue, dataPart: ds.dataPart, dataChunk: ds.dataChunk, dataParent: ds.dataParent},dataindex,expression,calculate.verify);
+                            if(typeof datavalue === 'number') {
+                                if(values === undefined) values = datavalue;
+                                if(values < datavalue) values = datavalue;
+                            }
+                        }
+                        result.max = values;
+                    }
+                }
+            }
+            if(calculate.count) {
+                let mapname = calculate.count.mapper || "@current_dataset";
+                if(mapname && mapname.trim().length > 0) {
+                    let mapvalues = "@current_dataset" == mapname ? ds.dataPart : this.scrapeData(mapname,{...dataindex, dataSet: ds.dataSource, dataTarget: ds.dataSource, dataChunk: ds.dataChunk, dataParent: ds.dataParent},context);
+                    if(mapvalues && Array.isArray(mapvalues)) {
+                        result.count = mapvalues.length;
+                    }
+                }
+            }
+            return result;
+        }
+        return undefined;
     }
 
 }

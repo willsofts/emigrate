@@ -96,7 +96,7 @@ export class MigrateBase extends TknOperateHandler {
                         }
                     }
                     let first = defaultValue.charAt(0);
-                    if(first=='#' || first=='$' || first=='?') {
+                    if(first=='#' || first=='?' || first=='$' ) {
                         let key = defaultValue.substring(1);
                         if(key.indexOf(".") > 0 && context) {
                             let value = this.scrapeData(key,{ parentIndex: 0, currentIndex: 0, parentLength: 0, currentLength: 0, dataSet: context.params, dataTarget: context.params, dataChunk: context.params, dataParent: context.params });

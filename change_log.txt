@@ -1,6 +1,10 @@
+2025-05-21
+version: 1.0.30
++ support options setting for calculate functional: sum, avg, min, max, count
+
 2025-05-20
 version: 1.0.29
-+ support options calculate setting with expression using mathjs as engine
++ support options calculate setting with custom expression using mathjs as engine
 
 2025-05-17
 version: 1.0.28

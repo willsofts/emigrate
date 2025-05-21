@@ -19,9 +19,8 @@ const evaluatedExpression = expression.replace(variablePattern, (_, varName) => 
   return values[varName].toString();
 });
 
-console.log("evaluatedExpression:",evaluatedExpression);
+console.log("expr:",expression,", evaluatedExpression:",evaluatedExpression);
 
-const result = evaluate(evaluatedExpression);
+let result = evaluate(evaluatedExpression);
 
 console.log("result:",result);
-

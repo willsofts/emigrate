@@ -331,7 +331,7 @@ export class MigrateHandler extends MigrateOperate {
         let onException = model.settings?.onException;
         let abandonError = model.settings?.abandonError === undefined || String(model.settings?.abandonError)=="true";
         let verifyError = model.settings?.verifyError === undefined || String(model.settings?.verifyError)=="true";
-        this.logger.debug(this.constructor.name+": abandonError:",abandonError,", verifyError:",verifyError);
+        this.logger.debug(this.constructor.name+".performInsertTransaction: abandonError:",abandonError,", verifyError:",verifyError);
         result.datarecords = datalist.length;
         let info : MigrateInfo = { exception: false, errormessage: "", errorcontents: [] };
         let reject : MigrateReject = { reject: false, throwable: undefined };

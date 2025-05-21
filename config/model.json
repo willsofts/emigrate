@@ -3028,6 +3028,7 @@
         } ]
     },
     "test_field_model": {
+        "description": "this example how to use current data by index",
         "models": [ 
             {
                 "name": "",
@@ -3086,6 +3087,161 @@
                 }
             }
         } ] 
+    },
+    "test_file_calculate_functional": {
+        "testfile": "./assets/tso.txt", 
+        "description": "this example how to defined calculate functional expression: sum, avg, min, max",
+        "configs": { 
+            "initialize": { 
+                "connection": {
+                    "type": "API",
+                    "api": "http://localhost:8080/api/health/check"
+                }
+            } 
+        },
+        "models": [ {
+            "name": "tso",
+            "alias": { "privateAlias": "PROMPTDB" },
+            "fields": {
+                "mktid": { "type": "STRING", "options": { "seqno": 1 } },
+                "share": { "type": "STRING", "options": { "seqno": 2 } },
+                "unit": { "type": "DECIMAL", "options": { "seqno": 3 } },
+                "price": { "type": "DECIMAL", "options": { "seqno": 4 } },
+                "yield": { "type": "INTEGER", "options": { 
+                    "calculate": { "expr": "( ${unit} * ${price} ) / 100" }
+                } },
+                "amount": { "type": "DECIMAL", "options": { 
+                    "calculate": { 
+                        "expr": "( ( ${unit} * ${price} ) * ${calculate.avg} ) / ( ${calculate.min} + ${calculate.max} ) + ${initialize.pid}",
+                        "sum": { "expr": "${unit} * ${price}" },
+                        "avg": { "expr": "${unit} * ${price}" },
+                        "min": { "expr": "${unit}", "mapper": "@current_dataset" },
+                        "max": { "expr": "${unit}", "mapper": "@current_dataset" },
+                        "remark": "mapper using key word @current_dataset or undefined for current data list"
+                    }
+                } },
+                "effdate": { "type": "DATE", "options": { "seqno": 5 } },
+                "efftime": { "type": "TIME", "options": { "seqno": 6 } },
+                "edittime": { "type": "DATETIME", "options": { "seqno": 7 } },
+                "sharename": { "type": "STRING", "options": { "seqno": 8 } },
+                "defvalue": { "type": "STRING" },
+                "message": { "type": "STRING" },
+                "remarks": { "type": "STRING", "defaultValue": "test_file_calculate_functional" }
+            },
+            "settings": { "skip": 1, "delimiter": ",", "quotable": true, 
+                "statement": {
+                    "prestatement": {
+                        "statements": [
+                            { "sql": "delete from tso" }
+                        ]                            
+                    }
+                }
+            }
+        } ] 
+    },
+    "test_file_calculate_functional_sub_model": { 
+        "testfile": "./assets/tso_json_sub.txt",
+        "description": "this example how to use sub model with calculate function",
+        "models": [ 
+            {
+                "name": "tso",
+                "alias": { "privateAlias": "PROMPTDB" },
+                "fields": {
+                    "mktid": { "type": "STRING" },
+                    "share": { "type": "STRING" },
+                    "unit": { "type": "DECIMAL" },
+                    "price": { "type": "DECIMAL" },
+                    "yield": { "type": "INTEGER", "options": { 
+                        "calculate": { "expr": "( ${unit} * ${price} ) / 100" }
+                    } },
+                    "amount": { "type": "DECIMAL", "options": { 
+                        "calculate": { 
+                            "expr": "( ${unit} * ${price} ) / ${calculate.avg}",
+                            "avg": { "expr": "${unit} * ${price}" }
+                        }
+                    } },
+                    "effdate": { "type": "DATE" },
+                    "efftime": { "type": "TIME" },
+                    "edittime": { "type": "DATETIME" },
+                    "sharename": { "type": "STRING" },
+                    "defvalue": { "type": "STRING", "options": { "mapper": "@body.defvalue" } },
+                    "message": { "type": "STRING", "options": { "mapper": "message.remark" }  },
+                    "remarks": { "type": "STRING", "defaultValue": "test_file_calculate_functional_sub_model" }
+                },
+                "settings": { 
+                    "xpath": "rows", 
+                    "statement": {
+                        "prestatement": {
+                            "statements": [
+                                { "sql": "delete from ttas" },
+                                { "sql": "delete from ttso" },
+                                { "sql": "delete from tso" }
+                            ]                            
+                        }
+                    }
+                },
+                "models": [
+                    {
+                        "name": "ttso",
+                        "alias": { "privateAlias": "PROMPTDB" },
+                        "fields": {
+                            "rowdata": { "type": "STRING", "calculated": true, "options": { "mapper": "@rows" } },
+                            "mktid": { "type": "STRING" },
+                            "share": { "type": "STRING" },
+                            "unit": { "type": "DECIMAL" },
+                            "price": { "type": "DECIMAL" },
+                            "yield": { "type": "INTEGER", "options": { 
+                                "calculate": { "expr": "( ${unit} * ${price} ) / 100" }
+                            } },                            
+                            "amount": { "type": "DECIMAL", "options": { 
+                                "calculate": { 
+                                    "expr": "( ${unit} * ${price} ) / ${calculate.avg}",
+                                    "avg": { "expr": "${unit} * ${price}", "mapper": "rowdata" }
+                                }
+                            } },
+                            "effdate": { "type": "DATE" },
+                            "efftime": { "type": "TIME" },
+                            "edittime": { "type": "DATETIME" },
+                            "sharename": { "type": "STRING" },
+                            "defvalue": { "type": "STRING", "options": { "mapper": "@body.defvalue" } },
+                            "message": { "type": "STRING", "options": { "mapper": "^message", "remark": "this point to parent model message field" }  },
+                            "remarks": { "type": "STRING", "defaultValue": "test_file_calculate_functional_sub_model" }
+                        },
+                        "settings": { "xpath": "items" },
+                        "models": [
+                            {
+                                "name": "ttas",
+                                "alias": { "privateAlias": "PROMPTDB" },
+                                "fields": {
+                                    "itemdata": { "type": "STRING", "calculated": true, "options": { "mapper": "^rowdata[parentIndex].items" } },
+                                    "mktid": { "type": "STRING" },
+                                    "share": { "type": "STRING" },
+                                    "unit": { "type": "DECIMAL" },
+                                    "price": { "type": "DECIMAL" },
+                                    "yield": { "type": "INTEGER", "options": { 
+                                        "calculate": { "expr": "( ${unit} * ${price} ) / 100" }
+                                    } },                            
+                                    "amount": { "type": "DECIMAL", "options": { 
+                                        "calculate": { 
+                                            "expr": "( ${unit} * ${price} ) / ${calculate.avg}",
+                                            "avg": { "expr": "${unit} * ${price}", "mapper": "itemdata" }
+                                        }
+                                    } },
+                                    "effdate": { "type": "DATE" },
+                                    "efftime": { "type": "TIME" },
+                                    "edittime": { "type": "DATETIME" },
+                                    "sharename": { "type": "STRING" },
+                                    "defvalue": { "type": "STRING", "options": { "mapper": "@body.defvalue" } },
+                                    "message": { "type": "STRING", "options": { "mapper": "^message", "remark": "this point to parent model message field" }  },
+                                    "remarks": { "type": "STRING", "defaultValue": "test_file_calculate_functional_sub_model" }
+                                },
+                                "settings": { "xpath": "elements" }
+                            } 
+                        ]
+                    } 
+                ]
+            }
+        ] 
     }
 
 }
