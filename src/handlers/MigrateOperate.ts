@@ -701,8 +701,9 @@ export class MigrateOperate extends MigrateSystem {
                 let mapname = calculate.sum.mapper || "@current_dataset";
                 if((mapname && mapname.trim().length > 0) && (expression && expression.trim().length > 0)) {
                     //try to find out data array from mapper setting
-                    let mapvalues = "@current_dataset" == mapname ? ds.dataPart : this.scrapeData(mapname,{...dataindex, dataSet: ds.dataSource, dataTarget: ds.dataSource, dataChunk: ds.dataChunk, dataParent: ds.dataParent},context);
-                    if(mapvalues && Array.isArray(mapvalues)) {
+                    let mapdataset = "@current_dataset" == mapname ? ds.dataPart : this.scrapeData(mapname,{...dataindex, dataSet: ds.dataSource, dataTarget: ds.dataSource, dataChunk: ds.dataChunk, dataParent: ds.dataParent},context);
+                    if(mapdataset) {
+                        let mapvalues = Array.isArray(mapdataset) ? mapdataset : [mapdataset];
                         result.sum_count = mapvalues.length;
                         let values = 0;
                         for(let mapvalue of mapvalues) {
@@ -717,8 +718,9 @@ export class MigrateOperate extends MigrateSystem {
                 let expression = calculate.avg.expr as string;
                 let mapname = calculate.avg.mapper || "@current_dataset";
                 if((mapname && mapname.trim().length > 0) && (expression && expression.trim().length > 0)) {
-                    let mapvalues = "@current_dataset" == mapname ? ds.dataPart : this.scrapeData(mapname,{...dataindex, dataSet: ds.dataSource, dataTarget: ds.dataSource, dataChunk: ds.dataChunk, dataParent: ds.dataParent},context);
-                    if(mapvalues && Array.isArray(mapvalues)) {
+                    let mapdataset = "@current_dataset" == mapname ? ds.dataPart : this.scrapeData(mapname,{...dataindex, dataSet: ds.dataSource, dataTarget: ds.dataSource, dataChunk: ds.dataChunk, dataParent: ds.dataParent},context);
+                    if(mapdataset) {
+                        let mapvalues = Array.isArray(mapdataset) ? mapdataset : [mapdataset];
                         result.avg_count = mapvalues.length;
                         let values = 0;
                         for(let mapvalue of mapvalues) {
@@ -734,8 +736,9 @@ export class MigrateOperate extends MigrateSystem {
                 let mapname = calculate.min.mapper || "@current_dataset";
                 if((mapname && mapname.trim().length > 0) && (expression && expression.trim().length > 0)) {
                     //try to find out data array from mapper setting
-                    let mapvalues = "@current_dataset" == mapname ? ds.dataPart : this.scrapeData(mapname,{...dataindex, dataSet: ds.dataSource, dataTarget: ds.dataSource, dataChunk: ds.dataChunk, dataParent: ds.dataParent},context);
-                    if(mapvalues && Array.isArray(mapvalues)) {
+                    let mapdataset = "@current_dataset" == mapname ? ds.dataPart : this.scrapeData(mapname,{...dataindex, dataSet: ds.dataSource, dataTarget: ds.dataSource, dataChunk: ds.dataChunk, dataParent: ds.dataParent},context);
+                    if(mapdataset) {
+                        let mapvalues = Array.isArray(mapdataset) ? mapdataset : [mapdataset];
                         result.min_count = mapvalues.length;
                         let values = undefined;
                         for(let mapvalue of mapvalues) {
@@ -754,8 +757,9 @@ export class MigrateOperate extends MigrateSystem {
                 let mapname = calculate.max.mapper || "@current_dataset";
                 if((mapname && mapname.trim().length > 0) && (expression && expression.trim().length > 0)) {
                     //try to find out data array from mapper setting
-                    let mapvalues = "@current_dataset" == mapname ? ds.dataPart : this.scrapeData(mapname,{...dataindex, dataSet: ds.dataSource, dataTarget: ds.dataSource, dataChunk: ds.dataChunk, dataParent: ds.dataParent},context);
-                    if(mapvalues && Array.isArray(mapvalues)) {
+                    let mapdataset = "@current_dataset" == mapname ? ds.dataPart : this.scrapeData(mapname,{...dataindex, dataSet: ds.dataSource, dataTarget: ds.dataSource, dataChunk: ds.dataChunk, dataParent: ds.dataParent},context);
+                    if(mapdataset) {
+                        let mapvalues = Array.isArray(mapdataset) ? mapdataset : [mapdataset];
                         result.max_count = mapvalues.length;
                         let values = undefined;
                         for(let mapvalue of mapvalues) {
@@ -772,8 +776,9 @@ export class MigrateOperate extends MigrateSystem {
             if(calculate.count) {
                 let mapname = calculate.count.mapper || "@current_dataset";
                 if(mapname && mapname.trim().length > 0) {
-                    let mapvalues = "@current_dataset" == mapname ? ds.dataPart : this.scrapeData(mapname,{...dataindex, dataSet: ds.dataSource, dataTarget: ds.dataSource, dataChunk: ds.dataChunk, dataParent: ds.dataParent},context);
-                    if(mapvalues && Array.isArray(mapvalues)) {
+                    let mapdataset = "@current_dataset" == mapname ? ds.dataPart : this.scrapeData(mapname,{...dataindex, dataSet: ds.dataSource, dataTarget: ds.dataSource, dataChunk: ds.dataChunk, dataParent: ds.dataParent},context);
+                    if(mapdataset) {
+                        let mapvalues = Array.isArray(mapdataset) ? mapdataset : [mapdataset];
                         result.count = mapvalues.length;
                     }
                 }
