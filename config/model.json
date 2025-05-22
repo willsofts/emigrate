@@ -3117,6 +3117,7 @@
                         "avg": { "expr": "${unit} * ${price}" },
                         "min": { "expr": "${unit}", "mapper": "@current_dataset" },
                         "max": { "expr": "${unit}", "mapper": "@current_dataset" },
+                        "count": { "mapper": "@current_dataset" },
                         "remark": "mapper using key word @current_dataset or undefined for current data list"
                     }
                 } },
