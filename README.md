@@ -119,6 +119,8 @@ This project contains examples API that it can invoke by [curl](https://curl.se/
 17. Support external storage
 - This can import file from Azure storage and AWS S3 storage.
 
+18. Support custom calculate expression
+- This can defined mathematics expression and built-in functions
 
 #### Extract Data
 
