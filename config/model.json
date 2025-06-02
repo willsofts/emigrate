@@ -3263,7 +3263,7 @@
                 "field8": { "type": "STRING" },
                 "field9": { "type": "STRING" , "options": { 
                         "handlerType": "function",
-                        "handler": "function handler(data,dataset,handle) { let fromDate = handle.utility.utils.parseDate('2025-06-01'); let toDate = handle.utility.utils.parseDate('2025-06-30'); return handle.utility.functions.timing.workingDays(fromDate,toDate); }"
+                        "handler": "function handler(data,dataset,handle) { let fromDate = handle.utility.utils.parseDate(data.field6); let toDate = handle.utility.utils.parseDate('2025-06-30'); return handle.utility.functions.timing.workingDays(fromDate,toDate); }"
                     }
                 },
                 "field10": { "type": "STRING", "options": {
