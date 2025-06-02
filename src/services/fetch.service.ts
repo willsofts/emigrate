@@ -1,6 +1,8 @@
+import { v4 as uuid } from 'uuid';
 import { ServiceSchema } from "moleculer";
 import { JSONReply } from "@willsofts/will-api";
 import { Utilities, Configure } from "@willsofts/will-util";
+var os = require("os");
 
 const FetchService : ServiceSchema = {
     name: "fetch",
@@ -71,12 +73,22 @@ const FetchService : ServiceSchema = {
             response.body = Object.fromEntries(body);
             return response;
         },
-        context(ctx: any) {
-            let id = ctx.params.id;
-            console.log("ctx",ctx);
-            console.log("task: id",id);
-            console.log("params:",ctx.params);
-            return ctx.params;
+        session(ctx: any) {
+            let sid = ctx.meta?.session?.id ?? uuid();            
+            return {id: sid};
+        },
+        version(ctx: any) {
+            ctx.meta.$responseRaw = true; 
+            ctx.meta.$responseType = "application/json";    
+            const packageconfig = require("../../package.json");
+            return { name: packageconfig.name, version: packageconfig.version, description: packageconfig.description };
+        },
+        async info(ctx: any) {
+            let sid = ctx.meta?.session?.id ?? uuid();
+            const result = await ctx.call("fetch.version");
+            ctx.meta.$responseRaw = true; 
+            ctx.meta.$responseType = "application/json";    
+            return { sid: sid, hostname: os.hostname(), ...result };
         },
     },
 };

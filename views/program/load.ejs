@@ -1,0 +1,46 @@
+<% 
+	let url = data.dataset?.url;
+	if(!url) url = "";
+	let path = data.dataset?.progpath;
+	if(path && path.trim().length>0) {
+    	let valid = true;
+		try {
+        	new URL(path);
+    	} catch (err) { valid = false; }
+		if(valid) {
+			url = path;
+		} else {
+			url += path;
+		}
+	}
+	let method = data.dataset?.openmethod == "GET" ? "GET" : "POST";
+ %>
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Program Load</title>
+		<script type="text/javascript" nonce="YXNzdXJl">
+			function startprog() {
+				fsformprogram.submit();
+			}
+		</script>
+	</head>
+	<body onload="startprog()">
+		<form id="fsformprogram" name="fsformprogram" method="<%=method%>" action="<%=url%>">
+			<input type="hidden" name="program" value="<%=data.dataset?.programid%>" />
+			<input type="hidden" name="language" value="<%=meta?.language%>" />
+			<input type="hidden" name="authtoken" value="<%=meta?.token%>" />
+			<% 	let param = data.dataset?.parameters;
+				if(param && param.trim().length>0) {
+					let params = param.split("&");
+					for(let p of params) {
+						let kv = p.split("="); 
+						if(kv.length==2) {%>
+						<input type="hidden" name="<%=kv[0]%>" value="<%=kv[1]%>" />
+						<%}
+					}
+				}
+			%>
+		</form>
+	</body>
+</html>

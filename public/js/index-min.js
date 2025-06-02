@@ -1,4 +1,4 @@
-var mouseX=0;var mouseY=0;var $currPage="";var $ACCESS_TOKEN;var ALERT_BEFORE_TIMEOUT=false;function validInputUser(){if($.trim($("#main_username").val())==""){alertbox("User is undefined");return false;}
+var mouseX=0;var mouseY=0;var $currPage="";var $ACCESS_TOKEN;var ALERT_BEFORE_TIMEOUT=META_INFO.ALERT_BEFORE_TIMEOUT;var ALERT_BEFORE_TIMEOUT=META_INFO.ALERT_BEFORE_TIMEOUT;var sessionTimeout=META_INFO.SESSION_TIMEOUT||(30*60*1000);var alertBeforeTimeout=META_INFO.ALERT_BEFORE_SESSION_TIMEOUT||(5*60*1000);var timeoutAlert;console.log("index.js: ALERT_BEFORE_TIMEOUT",ALERT_BEFORE_TIMEOUT,", sessionTimeout",sessionTimeout,", alertBeforeTimeout",alertBeforeTimeout);function validInputUser(){if($.trim($("#main_username").val())==""){alertbox("User is undefined");return false;}
 return true;}
 function connectServer(){if(!validInputUser())return;logIn();}
 function disConnectServer(){logOut();}
@@ -13,7 +13,7 @@ function startWorking(unloadFirstPage,firstpage){$("#navigatebar").removeClass("
 function createMenu(){$("#sidebarmenu").show();$("#homelayer").show();$("#mainmenu").show();$("#usermenuitem").show();$("#favormenuitem").show();$("#loginlayer").hide();$("#languagemenuitem").removeClass("language-menu-item");}
 function startupPage(unloadFirstPage,firstpage){if(!unloadFirstPage){load_page_first();}
 load_sidebar_menu(firstpage);load_favor_menu();load_prog_item();$("#languagemenuitem").show();$("#fsworkinglayer").addClass("working-control-class");}
-function load_page_first(){load_page("page_first",null,function(){$("#page_first").find("a.fa-link-app").each(function(index,element){$(element).click(function(){let pid=$(this).attr("data-pid");let url=$(this).attr("data-url");open_page(pid,url,null,$(this).attr("data-path"));});});});}
+function load_page_first(){load_page("page_first",null,function(){$("#page_first").find("a.fa-link-app").each(function(index,element){$(element).click(function(){let $e=$(this);let pid=$e.attr("data-pid");let url=$e.attr("data-url");open_page(pid,url,null,$e.attr("data-path"),$e.attr("data-new"),$e.attr("data-method"));});});});}
 function hideMenu(){$("#page_first").hide();}
 function fs_changingPlaceholder(lang){if(!lang)return;let u_placeholder=fs_getLabelName("login_user_placeholder","index",lang);let p_placeholder=fs_getLabelName("login_pass_placeholder","index",lang);if(u_placeholder){$("#main_username").attr("placeholder",u_placeholder);$("#loginframe").contents().find("#main_username").attr("placeholder",u_placeholder);}
 if(p_placeholder){$("#main_pass").attr("placeholder",p_placeholder);$("#loginframe").contents().find("#main_pass").attr("placeholder",p_placeholder);}
@@ -64,6 +64,6 @@ setupComponents();$("#main_pass").on("keydown",function(e){if(e.which==13){conne
 let fh=0;if($("#footerbar").is(":visible")){fh=$("#footerbar").height();}
 $("#workingframe").height((wh-nh-fh)-fs_workingframe_offset);}).trigger("resize");let pos=$("#loginframe").position();if(pos){mouseX=pos.left;mouseY=pos.top;}
 validAccessToken(function(valid,json){console.log("valid = "+valid+", json : "+json);if(!valid){displayLogin();}else{sendMessageInterface(json.body);verifyAfterLogin(json);}});$(window).on("beforeunload",function(e){if(fs_winary.length>0){e.preventDefault();e.returnValue="";return"";}}).on("unload",function(){closeChildWindows();});if(ALERT_BEFORE_TIMEOUT)initSessionTimer();});window.onmessage=function(e){console.log("main: onmessage:",e.data);try{let payload=JSON.parse(e.data);if(payload.type=="accessorinfo"){sendMessageInterface();}}catch(ex){}}
-var sessionTimeout=30*60*1000;var alertBeforeTimeout=5*60*1000;let timeoutAlert;function startSessionTimer(){clearTimeout(timeoutAlert);timeoutAlert=setTimeout(()=>{alert('Your session is about to expire. Please save your work.');},sessionTimeout-alertBeforeTimeout);}
+function startSessionTimer(){clearTimeout(timeoutAlert);timeoutAlert=setTimeout(()=>{alert('Your session is about to expire. Please save your work.');},sessionTimeout-alertBeforeTimeout);}
 function initSessionTimer(){console.log("init session timer ...");startSessionTimer();document.addEventListener('mousemove',startSessionTimer);document.addEventListener('keydown',startSessionTimer);}
 function initWorkingTimer(){const iframe=document.getElementById('workingframe');let framedoc=iframe.contentDocument||iframe.contentWindow.document;framedoc.addEventListener('mousemove',startSessionTimer);framedoc.addEventListener('keydown',startSessionTimer);}

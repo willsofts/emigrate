@@ -2,7 +2,12 @@
 		var mouseY = 0;
 		var $currPage = "";
 		var $ACCESS_TOKEN;
-		var ALERT_BEFORE_TIMEOUT = false;
+		var ALERT_BEFORE_TIMEOUT = META_INFO.ALERT_BEFORE_TIMEOUT;
+		var ALERT_BEFORE_TIMEOUT = META_INFO.ALERT_BEFORE_TIMEOUT;
+        var sessionTimeout = META_INFO.SESSION_TIMEOUT || (30 * 60 * 1000); // 30 minutes
+        var alertBeforeTimeout = META_INFO.ALERT_BEFORE_SESSION_TIMEOUT || (5 * 60 * 1000); // 5 minutes before
+        var timeoutAlert;
+		console.log("index.js: ALERT_BEFORE_TIMEOUT",ALERT_BEFORE_TIMEOUT,", sessionTimeout",sessionTimeout,", alertBeforeTimeout",alertBeforeTimeout);
 		function validInputUser() {
 			if($.trim($("#main_username").val())=="") { alertbox("User is undefined"); return false; }
 			return true;
@@ -127,9 +132,10 @@
 			load_page("page_first",null,function() { 
 				$("#page_first").find("a.fa-link-app").each(function(index,element) {
 					$(element).click(function() {
-						let pid = $(this).attr("data-pid");
-						let url = $(this).attr("data-url");
-						open_page(pid,url,null,$(this).attr("data-path"));
+						let $e = $(this);
+						let pid = $e.attr("data-pid");
+						let url = $e.attr("data-url");
+						open_page(pid,url,null,$e.attr("data-path"),$e.attr("data-new"),$e.attr("data-method"));
 					});
 				});
 			}); //menu/box
@@ -479,9 +485,6 @@
 				}
 			} catch(ex) { }
 		}
-        var sessionTimeout = 30 * 60 * 1000; // 30 minutes
-        var alertBeforeTimeout = 5 * 60 * 1000; // 5 minutes before
-        let timeoutAlert;
         function startSessionTimer() {
             clearTimeout(timeoutAlert);
             timeoutAlert = setTimeout(() => {

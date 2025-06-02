@@ -9,7 +9,7 @@ import { MigrateLogHandler } from "./MigrateLogHandler";
 import querystring from 'querystring';
 import { evaluate } from 'mathjs';
 
-const variablePattern = /\$\{(.*?)\}/g;
+const VARIABLE_PATTERN = /\$\{(.*?)\}/g;
 
 export class MigrateOperate extends MigrateSystem {
     
@@ -667,7 +667,7 @@ export class MigrateOperate extends MigrateSystem {
                     else if(typeof mapvalue === 'string') mapvalue = Utilities.parseFloat(mapvalue,0);
                     datavalues[varname] = mapvalue;
                 }
-                const evaluatedExpression = expression.replace(variablePattern, (substr: string, varName: string) => {
+                const evaluatedExpression = expression.replace(VARIABLE_PATTERN, (substr: string, varName: string) => {
                     return datavalues[varName].toString();
                 });
                 //this.logger.debug(this.constructor.name+".performCalculateExpression: expression",expression,", evaluated",evaluatedExpression);
@@ -686,7 +686,7 @@ export class MigrateOperate extends MigrateSystem {
     }
 
     protected getExpressionVariables(expression: string) : string[] {
-        const variables = [...expression.matchAll(variablePattern)].map(match => match[1]);
+        const variables = [...expression.matchAll(VARIABLE_PATTERN)].map(match => match[1]);
         if(variables && variables.length > 0) {
             return Array.from(new Set(variables));
         }
