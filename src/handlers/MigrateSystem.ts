@@ -15,6 +15,7 @@ import { FileAzureStorageHandler } from "./FileAzureStorageHandler";
 import { FileS3StorageHandler } from "./FileS3StorageHandler";
 import { PluginHandler } from './PluginHandler';
 import { MigrateBase } from "./MigrateBase";
+import { MigrateUtility } from "../utils/MigrateUtility";
 
 const task_models = require("../../config/model.json");
 
@@ -275,9 +276,9 @@ export class MigrateSystem extends MigrateBase {
     public async performPreTransaction(context: KnContextInfo, task: MigrateTask, model: KnModel, db: KnDBConnector, rc: MigrateRecords, param: MigrateParams, dataset: any): Promise<any> {
         if(model.settings?.statement?.prestatement) {
             let handler = model.settings?.statement?.prehandler;
-            let func = this.tryParseFunction(handler,'dataset','param','model','context');
+            let func = this.tryParseFunction(handler,'dataset','param','handle');
             if(func) {
-                let res = func(dataset,param,model,context);
+                let res = func(dataset,param,{model: model,context: context, utility: MigrateUtility});
                 //expect boolean as result or {valid: boolean, value: any}
                 if(this.isReturnInfo(res)) {
                     if(!res.valid) return res;
@@ -304,9 +305,9 @@ export class MigrateSystem extends MigrateBase {
         let result : FilterInfo = { cancel: false };
         if(model.settings?.statement?.poststatement) {
             let handler = model.settings?.statement?.posthandler;
-            let func = this.tryParseFunction(handler,'dataset','param','model','context');
+            let func = this.tryParseFunction(handler,'dataset','param','handle');
             if(func) {
-                let res = func(dataset,param,model,context);
+                let res = func(dataset,param,{model: model,context: context, utility: MigrateUtility});
                 //expect boolean as result or {valid: boolean, value: any}
                 if(this.isReturnInfo(res)) {
                     if(!res.valid) return result;
@@ -345,9 +346,9 @@ export class MigrateSystem extends MigrateBase {
     public async performFiltering(context: KnContextInfo, model: KnModel, filters: FiltersSetting | undefined, data: any): Promise<FilterInfo> {
         if(filters) {
             if(filters?.handler) {
-                let func = this.tryParseFunction(filters?.handler,'data','model','context');
+                let func = this.tryParseFunction(filters?.handler,'data','handle');
                 if(func) {
-                    let result = func(data,model,context);
+                    let result = func(data,{model: model,context: context, utility: MigrateUtility});
                     if(result != undefined || result != null) {
                         if(this.isReturnInfo(result)) {
                             return { cancel: result.valid };

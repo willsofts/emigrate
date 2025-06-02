@@ -1,0 +1,5 @@
+{
+    "taskid":"test_field_model",
+    "stored":"false",
+    "dataset":{"dmy":"123456","POPERTYPOLICY":[{"COMP_CODE":"aaa-bbb-ccc"}, {"COMP_CODE":"eee-fff-ggg"}, {"COMP_CODE":"xxx-yyy-zzz"}]}
+}

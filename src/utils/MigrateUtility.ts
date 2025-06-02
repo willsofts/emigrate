@@ -5,13 +5,17 @@ import { KnParamInfo, KnSQLUtils } from "@willsofts/will-db";
 import { KnDBUtils, KnDBTypes } from "@willsofts/will-sql";
 import { Utilities } from "@willsofts/will-util";
 import { FileInfo, FileType } from "../models/MigrateAlias";
-import { MigrateDate } from "../utils/MigrateDate";
+import { MigrateDate } from "./MigrateDate";
+import { MigrateFunction } from "./MigrateFunction";
 import { XMLParser } from 'fast-xml-parser';
 
 const dateparser = new MigrateDate();
 
 export class MigrateUtility {
     
+    public static functions = MigrateFunction;
+    public static utils = Utilities;
+
     public static maskAttributes(object: any, attributesToMask: string[] = ["password"]) {
         if(!object) return object;
         const data = JSON.parse(JSON.stringify(object));

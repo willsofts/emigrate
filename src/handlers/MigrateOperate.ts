@@ -6,6 +6,7 @@ import { Utilities } from "@willsofts/will-util";
 import { MigrateSystem } from "./MigrateSystem";
 import { TaskModel, MigrateTask, MigrateRecords, MigrateConnectSetting, MigrateRecordSet, MigrateInfo, MigrateReject, MigrateParams, MigrateField, DataScrape, DataIndex, DataSources } from "../models/MigrateAlias";
 import { MigrateLogHandler } from "./MigrateLogHandler";
+import { MigrateUtility } from "../utils/MigrateUtility";
 import querystring from 'querystring';
 import { evaluate } from 'mathjs';
 
@@ -276,11 +277,11 @@ export class MigrateOperate extends MigrateSystem {
                 let field = model.fields[attrname];
                 //try to call handler function
                 let handler = field?.options?.handler;
-                let func = this.tryParseFunction(handler,'data','dataset','field','model','context');
+                let func = this.tryParseFunction(handler,'data','dataset','handle');
                 if(func) {
                     //ensure handler return value if function or procedure?
                     let alwaysAccept = field?.options?.handlerType == "function";
-                    let result = func(data,dataset,field,model,context);
+                    let result = func(data,dataset,{field: field,model: model,context: context, utility: MigrateUtility});
                     if(alwaysAccept) {
                         //check return info {valid: boolean, value: any}
                         if(this.isReturnInfo(result)) {
@@ -345,10 +346,10 @@ export class MigrateOperate extends MigrateSystem {
                     data[attrname] = value;
                 }
             }
-            let confunc = this.tryParseFunction(connection?.handler,'response','data','dataset','field','model','context');
+            let confunc = this.tryParseFunction(connection?.handler,'response','data','dataset','handle');
             if(confunc) {
                 let conAccept = connection?.handlerType == "function";
-                let conResult = confunc(response,data,dataset,field,model,context);
+                let conResult = confunc(response,data,dataset,{field: field,model: model,context: context, utility: MigrateUtility});
                 if(conAccept) {
                     //check return info {valid: boolean, value: any}
                     if(this.isReturnInfo(conResult)) {
@@ -372,10 +373,10 @@ export class MigrateOperate extends MigrateSystem {
     public async performFetchData(context: KnContextInfo, model: KnModel, field: MigrateField, data: any, dataset: any) : Promise<any> {
         let connection = field.field?.options?.connection as MigrateConnectSetting;
         if(connection) {
-            let verifyfunc = this.tryParseFunction(connection?.verifier,'data','dataset','field','model','context');
+            let verifyfunc = this.tryParseFunction(connection?.verifier,'data','dataset','handle');
             if(verifyfunc) {
                 let verifyAccept = connection?.verifierType == "function";
-                let verifyResult = verifyfunc(data,dataset,field,model,context);
+                let verifyResult = verifyfunc(data,dataset,{field: field,model: model,context: context, utility: MigrateUtility});
                 this.logger.debug(this.constructor.name+".performFetchData: field:",field.name,", verifyResult:",verifyResult);
                 if(verifyAccept) {
                     //check return info {valid: boolean, value: any}
@@ -564,9 +565,9 @@ export class MigrateOperate extends MigrateSystem {
         let precedent = model.settings?.precedent;        
         if(precedent) {
             let handler = precedent?.handler;
-            let func = this.tryParseFunction(handler,'dataset','param','model','context');
+            let func = this.tryParseFunction(handler,'dataset','param','handle');
             if(func) {
-                let res = func(dataset,param,model,context);
+                let res = func(dataset,param,{model: model,context: context, utility: MigrateUtility});
                 //expect boolean as result or {valid: boolean, value: any}
                 if(this.isReturnInfo(res)) {
                     if(!res.valid) return res;
@@ -607,9 +608,9 @@ export class MigrateOperate extends MigrateSystem {
         let succedent = model.settings?.succedent;        
         if(succedent) {
             let handler = succedent?.handler;
-            let func = this.tryParseFunction(handler,'dataset','param','model','context');
+            let func = this.tryParseFunction(handler,'dataset','param','handle');
             if(func) {
-                let res = func(dataset,param,model,context);
+                let res = func(dataset,param,{model: model,context: context, utility: MigrateUtility});
                 //expect boolean as result or {valid: boolean, value: any}
                 if(this.isReturnInfo(res)) {
                     if(!res.valid) return res;

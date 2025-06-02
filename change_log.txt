@@ -1,3 +1,8 @@
+2025-06-02
+version: 1.0.31
++ change core menu handler (update will-core & will-serv)
++ support built-in server utility with utils & functions (see model.json task test_handler_functions)
+
 2025-05-21
 version: 1.0.30
 + support options setting for calculate functional: sum, avg, min, max, count
