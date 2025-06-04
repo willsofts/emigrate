@@ -1,4 +1,7 @@
 [
+    {"groupname": "OPERATOR", "nameen": "Operator", "nameth": "Operator", "groupstyle": "fa fa-tasks", "programid": "emtq001", "progname": "Migrate Tracking", "prognameth": "Migrate Tracking", "progpath": "", "url": "", "iconstyle": "fa fa-desktop"},
+    {"groupname": "OPERATOR", "nameen": "Operator", "nameth": "Operator", "groupstyle": "fa fa-tasks", "programid": "sftq001", "progname": "User Tracking", "prognameth": "User Tracking", "progpath": "", "url": "", "iconstyle": "fa fa-desktop"},
+    {"groupname": "SETTING", "nameen": "Setting", "nameth": "Setting", "groupstyle": "fa fa-cogs", "programid": "sftu004", "progname": "Access Token", "prognameth": "Access Token", "progpath": "", "url": "", "iconstyle": "fa fa-desktop"},
     {"groupname": "SETTING", "nameen": "Setting", "nameth": "Setting", "groupstyle": "fa fa-cogs", "programid": "emte001", "progname": "Task Setting", "prognameth": "Task Setting", "progpath": "", "url": "", "iconstyle": "fa fa-desktop"},
-    {"groupname": "SETTING", "nameen": "Setting", "nameth": "Setting", "groupstyle": "fa fa-cogs", "programid": "sftu004", "progname": "Access Token", "prognameth": "Access Token", "progpath": "", "url": "", "iconstyle": "fa fa-desktop"}
+    {"groupname": "SETTING", "nameen": "Setting", "nameth": "Setting", "groupstyle": "fa fa-cogs", "programid": "vmte001", "progname": "Task Setting", "prognameth": "Task Setting", "progpath": "/show/vmte001", "url": "", "iconstyle": "fa fa-desktop"}
 ]
