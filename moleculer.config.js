@@ -1,4 +1,5 @@
-var os = require("os");
+const os = require("os");
+//const MiddlewareTracing = require("./middleware.tracing");
 
 module.exports = {
     nodeID: "emigrate-"+os.hostname().toLowerCase() + "-" + process.pid,
@@ -51,7 +52,7 @@ module.exports = {
                 host: "localhost",
                 port: 6832,
                 tracerOptions: {},
-                defaultTags: [{"module.name":"mext"}]
+                defaultTags: [{"module.name":"emigrate"}]
             }
         }
     },
@@ -76,4 +77,5 @@ module.exports = {
             }
         ]
     }*/	
+    //middlewares: [MiddlewareTracing]
 };
