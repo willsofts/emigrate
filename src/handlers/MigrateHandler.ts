@@ -78,9 +78,9 @@ export class MigrateHandler extends MigrateOperate {
         await this.processInsertingSucceeding(context, task, param, rc, dataset, datapart);
         if(task.tasks && task.tasks.length > 0) {
             result.taskset = [];
-            for(let submodel of task.tasks) {
+            for(let subtask of task.tasks) {
                 let subrc : MigrateRecords = { totalrecords: rc.totalrecords, errorrecords: 0, skiprecords: 0 };
-                let subresult = await this.executeInserting(context, submodel, param, subrc, dataset, datapart);
+                let subresult = await this.executeInserting(context, subtask, param, subrc, dataset, datapart);
                 result.taskset.push(subresult);
             }
         }

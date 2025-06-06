@@ -431,6 +431,7 @@ export class Emte001Handler extends TknOperateHandler {
     }
 
     protected override async performCreating(context: any, model: KnModel, db: KnDBConnector) : Promise<KnResultSet> {
+        this.logger.debug(this.constructor.name+".performCreating: params",context.params);
         let now = Utilities.now();
         let id = context.params.taskid;
         if(!id || id.trim().length == 0) id = uuid();
@@ -567,9 +568,14 @@ export class Emte001Handler extends TknOperateHandler {
     }
 
     public tryParseJSON(texts: string | undefined | null) : any | undefined {
+        if(typeof texts === 'object') return texts;
         if(texts && texts.trim().length>0) {
             try {
-                return JSON.parse(texts);
+                let json = JSON.parse(texts);
+                if(typeof json === 'string') {
+                    json = JSON.parse(json);
+                }
+                return json;
             } catch(ex) {
                 this.logger.error(this.constructor.name,ex);
             }

@@ -147,6 +147,7 @@ export class MigrateBase extends TknOperateHandler {
     }
 
     public tryParseJSON(texts: string | undefined | null) : any | undefined {
+        if(typeof texts === 'object') return texts;
         if(texts && texts.trim().length>0) {
             try {
                 return JSON.parse(texts);

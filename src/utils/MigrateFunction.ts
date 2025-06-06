@@ -1,4 +1,5 @@
 import { Timing } from "./Timing";
+import { v4 as uuid } from 'uuid';
 
 export class MigrateFunction {
 
@@ -32,4 +33,8 @@ export class MigrateFunction {
         return result;
     }
 
+    public static uuid() : string {
+        return uuid();
+    }
+    
 }
