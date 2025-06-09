@@ -29,8 +29,6 @@
     "META_INFO": {"appstype":"", "register": true},
     "CONTENT_SECURITY_PATH": "/,/home,/welcome,/main,/index,/gui",
     "CONTENT_SECURITY_POLICY": "default-src 'self' 'nonce-YXNzdXJl' ws://localhost:9000 http://localhost:9000 https://cdn.jsdelivr.net https://login.microsoftonline.com https://tassanorg.b2clogin.com;base-uri 'self';form-action 'self';frame-ancestors 'self';img-src 'self' https://cdn.jsdelivr.net data:;object-src 'none';script-src 'self' 'nonce-YXNzdXJl' https://cdn.jsdelivr.net;script-src-attr 'self' 'nonce-YXNzdXJl' https://cdn.jsdelivr.net;style-src 'self' https://cdn.jsdelivr.net 'unsafe-inline';upgrade-insecure-requests",
-    "AZURE_STORAGE_CONNECTION": "DefaultEndpointsProtocol=https;AccountName=cs1100320012c325738;AccountKey=wJd5Uzsmrr5g+NzukCKi/ptB8bbDiY3bnStJVCHptJxMCM/wMWbULL1VPXr4Z+u49CZ9WgznMhqOgZNIVrqPDQ==;EndpointSuffix=core.windows.net",
-    "AZURE_STORAGE_BUCKET": "dev-cloranc-blob",
     "S3_STORAGE_REGION": "ap-southeast-1",
     "S3_STORAGE_BUCKET": "mdc-soc-dev"
 }
