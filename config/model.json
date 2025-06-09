@@ -335,7 +335,9 @@
                             "api": "http://localhost:8080/api/category/groups?names=tkappstype", 
                             "setting": {},
                             "body": {},
-                            "mapper": "@body.tkappstype"
+                            "mapper": "@body.tkappstype",
+                            "cached": true,
+                            "remarks": "cached false to specify not cache response, default true"
                         }
                     }                    
                 },

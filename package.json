@@ -1,6 +1,6 @@
 {
   "name": "emigrate",
-  "version": "1.0.31",
+  "version": "1.0.32",
   "description": "This project implement for migrate data into database",
   "main": "index.js",
   "scripts": {

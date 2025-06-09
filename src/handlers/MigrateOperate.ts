@@ -446,12 +446,15 @@ export class MigrateOperate extends MigrateSystem {
             }
             let cfg = await this.getConnectionConfig(context,config?.connectid);
             let db = cfg ? this.getConnector(cfg) : this.getConnector(config);
+            let cached = !(String(config.cached)=="false");
             try {
                 let rs = await knsql.executeQuery(db,context);
                 let records = this.createRecordSet(rs);
                 this.logger.debug(this.constructor.name+".performRequestDB: field:",field.name,", resultset:",records);
                 //try to set cache by context options
-                context.options[hash] = records;
+                if(cached) {
+                    context.options[hash] = records;
+                }
                 return records;
             } catch(ex: any) {
                 this.logger.error(ex);
@@ -471,6 +474,7 @@ export class MigrateOperate extends MigrateSystem {
             config = { ...configure, api, setting, body };
         }
         if(config?.api) {
+            let cached = !(String(config.cached)=="false");
             if(!context.options) context.options = {};
             //try to get from cache
             let databody = config?.body || {};
@@ -503,7 +507,9 @@ export class MigrateOperate extends MigrateSystem {
             this.logger.debug(this.constructor.name+".performRequestAPI: field:",field.name,", response:",response);
             if(response) {
                 //try to set cache by context options
-                context.options[hash] = response;
+                if(cached) { 
+                    context.options[hash] = response;
+                }
             }
             return response;
         }

@@ -19,8 +19,10 @@
     "PRIVATE_SECTION": "PROMPTDB",
     "DB_SECTION": "AUTHDB",
     "DB_TRACKER": "AUTHDB",
-    "AUTHDB" : { "alias": "mysql2", "dialect": "mysql", "url":"", "user": "avnadmin", "password": "U2FsdGVkX1+aGi4UkwT7pa4cSq6evOOXi0oE8KIJIIuq4TLBmrCD6qjMJBURvqnZ", "password_ENCRYPTED": "true", "host": "mysql-tassan-tassunoros-aa6f.e.aivencloud.com", "port": 27177, "database": "migrateauth", "options": { "charset": "utf8", "connectionLimit": 1000 } },
-    "PROMPTDB" : { "alias": "mysql2", "dialect": "mysql", "url":"", "user": "avnadmin", "password": "U2FsdGVkX1+aGi4UkwT7pa4cSq6evOOXi0oE8KIJIIuq4TLBmrCD6qjMJBURvqnZ", "password_ENCRYPTED": "true", "host": "mysql-tassan-tassunoros-aa6f.e.aivencloud.com", "port": 27177, "database": "migratedb", "options": { "charset": "utf8", "connectionLimit": 1000 } },
+    "AUTHDB" : { "alias": "mssql", "dialect": "mssql", "url":"Server=10.22.20.7,1433;Database=migrateauth;User Id=sa;Password=password;TrustServerCertificate=true;Encrypt=false;Trusted_Connection=Yes;" },
+    "PROMPTDB" : { "alias": "mssql", "dialect": "mssql", "url":"Server=10.22.20.7,1433;Database=migratedb;User Id=sa;Password=password;TrustServerCertificate=true;Encrypt=false;Trusted_Connection=Yes;" },
+    "//AUTHDB" : { "alias": "mysql2", "dialect": "mysql", "url":"", "user": "root", "password": "root", "host": "localhost", "port": 3306, "database": "migrateauth", "options": { "charset": "utf8", "connectionLimit": 100 } },
+    "//PROMPTDB" : { "alias": "mysql2", "dialect": "mysql", "url":"", "user": "root", "password": "root", "host": "localhost", "port": 3306, "database": "migratedb", "options": { "charset": "utf8", "connectionLimit": 100 } },
     "authentications": [
         { "authtype":"SYSTEM", "domainname":"freewillgroup.com", "tenanturl":"", "basedn":"" , "enabled": true }
     ],

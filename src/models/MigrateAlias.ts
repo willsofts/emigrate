@@ -28,6 +28,7 @@ export interface MigrateConnectSetting extends KnDBConfig, MigrateSetting {
     parameters?: ParameterInfo[];
     verifier?: string;
     verifierType?: string;
+    cached?: boolean;
 }
 
 export interface MigrateRecords {
