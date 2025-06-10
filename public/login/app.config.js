@@ -1,7 +1,8 @@
 const appVariables = {
+    ALLOW_AUTHEN_SAML: "true",
     CHAT_URL: "",
-    MULTI_LANGUAGES: ["EN","TH","VN"],
-	BASE_CSS: "./css/theme_green_sea.css"
+    MULTI_LANGUAGES: ["EN","TH"],
+    BASE_CSS: ""
 };
 function getAppConfigs() {
     return appVariables;
