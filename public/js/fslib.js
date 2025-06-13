@@ -1171,10 +1171,11 @@ function alertmsg(errcode, fallmsg, params, callback) {
 function confirmmsg(errcode, fallmsg, params, okFn, cancelFn) {
 	confirmbox(errcode, okFn, cancelFn, fallmsg, params);
 }
-function bootAlertDialog(msg, callback, width, height) {
+function bootAlertDialog(msg, callback, title="Alert", icon="fa fa-bell-o") {
 	try {
 		let fs_okbtn = getMessageCode("fsokbtn"); if(!fs_okbtn || (fs_okbtn=="" || fs_okbtn=="fsokbtn")) fs_okbtn = "OK";
     	bootbox.alert({
+			title: "<em class='"+icon+"'></em>&nbsp;<label>"+title+"</label>",
     		message: msg,
     		callback: function() {    		
     			if (callback) callback();
@@ -1189,11 +1190,12 @@ function bootAlertDialog(msg, callback, width, height) {
     //alert(msg);
     if (callback) callback();
 }
-function bootConfirmDialog(msg, okCallback, cancelCallback, width, height) {
+function bootConfirmDialog(msg, okCallback, cancelCallback, title="Confirmation", icon="fa fa-question-circle") {
 	try {
 		let fs_confirmbtn = getMessageCode("fsconfirmbtn"); if(!fs_confirmbtn || (fs_confirmbtn=="" || fs_confirmbtn=="fsconfirmbtn")) fs_confirmbtn = "OK";
 		let fs_cancelbtn = getMessageCode("fscancelbtn"); if(!fs_cancelbtn || (fs_cancelbtn=="" || fs_cancelbtn=="fscancelbtn")) fs_cancelbtn = "Cancel";
     	bootbox.confirm({
+			title: "<em class='"+icon+"'></em>&nbsp;<label>"+title+"</label>",
 			message: msg, 
 			callback: function(result) {
 				if(result) {
@@ -1202,6 +1204,7 @@ function bootConfirmDialog(msg, okCallback, cancelCallback, width, height) {
 					if (cancelCallback) cancelCallback();
 				}
 			},
+			swapButtonOrder: true,
 			buttons: {
 				confirm : { label: fs_confirmbtn, className : "btn-primary btn-base" },
 				cancel: { label: fs_cancelbtn, className : "btn-primary btn-base" }
