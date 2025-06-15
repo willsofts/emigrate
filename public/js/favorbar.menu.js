@@ -2,11 +2,11 @@
 			var fs_favor_prog_ary;
 			function showNewFavorItem() {
 				$("#favorcoverbarmenu").show();
-				$("#favornewitemlayer").show();
+				$("#favornewitemlayer").addClass("show");
 			}
 			function hideNewFavorItem() {
 				$("#favorcoverbarmenu").hide();
-				$("#favornewitemlayer").hide();
+				$("#favornewitemlayer").removeClass("show");
 			}
 			function addBlankMenuItem(alink) {
 				let seqno = alink.attr("seqno");
