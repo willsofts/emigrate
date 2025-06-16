@@ -60,7 +60,7 @@
     "node-fetch": "^3.3.2",
     "node-imap": "^0.9.6",
     "node-rsa": "^1.1.1",
-    "nodemailer": "^6.9.16",
+    "nodemailer": "^7.0.3",
     "odbc": "^2.4.9",
     "oracledb": "^6.7.2",
     "pg": "^8.13.3",
