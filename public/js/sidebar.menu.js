@@ -26,7 +26,7 @@
 				let jsAry = $.map($("#sidebarlayer").find("a.menu-desktop").toArray(),function(element,index) { 
 					let e = $(element);
 					return { 
-						label : e.text(),
+						label : e.text().trim(),
 						element : e
 					};
 				});

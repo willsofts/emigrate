@@ -411,10 +411,12 @@
 			$("#linklangen").click(function() { 
 				let img = $("#linklangen").attr("data-image");
 				$('#languageimage').attr('src',img); fs_switchLanguage('EN',true);
+				sendMessageToFrame({type:"language",language:"EN"});
 			});
 			$("#linklangth").click(function() { 
 				let img = $("#linklangth").attr("data-image");
 				$('#languageimage').attr('src',img); fs_switchLanguage('TH',true);
+				sendMessageToFrame({type:"language",language:"TH"});
 			});
 			$("#forgot_password").click(function() { forgotClick(); });
 			$("#register_user").click(function() { registerClick(); });
